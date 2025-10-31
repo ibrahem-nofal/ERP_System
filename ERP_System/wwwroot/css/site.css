@@ -1,0 +1,164 @@
+﻿body {
+    font-family: 'Cairo', sans-serif;
+    background-color: #f8f9fa;
+    overflow-x: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background: linear-gradient(180deg, #0A1C63 0%, #0D3EA6 35%, #0A58CA 70%, #1976FF 100%);
+    color: white;
+    transition: all 0.4s ease;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 1000;
+    overflow-y: auto;
+    overflow-x: hidden;
+    direction: ltr;
+}
+
+.sidebar * {
+    direction: rtl;
+}
+
+/* ✅ Scrollbar styling */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* ✅ Sidebar header (ERP logo + text) */
+.sidebar-header {
+    margin-top: 5px;
+}
+
+.sidebar-header i {
+    color: #fff;
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
+}
+
+.sidebar-header h5 {
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+.sidebar .nav-link {
+    color: #dfe6ff;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: 0.3s;
+    padding: 10px 15px;
+}
+
+.sidebar .nav-link i {
+    margin-left: 8px;
+}
+
+.sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+.sidebar .nav-link.active {
+    background: linear-gradient(90deg, #0048BA, #007BFF);
+    color: white !important;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.4);
+    border-radius: 8px;
+}
+
+.sidebar h6 {
+    font-size: 14px;
+    color: #aab8ff;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    padding-top: 10px;
+}
+
+.sidebar.hidden {
+    transform: translateX(100%);
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    transition: all 0.4s ease;
+}
+
+.search-box {
+    background-color: #f2f3f5;
+    border: none;
+    border-radius: 25px;
+    padding: 8px 40px 8px 20px;
+    width: 100%;
+    max-width: 450px;
+    text-align: right;
+    direction: rtl;
+}
+
+.notification-badge {
+    position: absolute;
+    top: 3px;
+    left: 8px;
+    font-size: 12px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 1px 6px;
+}
+
+/* Menu icon */
+.menu-toggle {
+    cursor: pointer;
+    color: #0d6efd;
+    transition: color 0.3s ease;
+}
+
+.menu-toggle:hover {
+    color: #0a58ca;
+}
+
+.menu-toggle:active {
+    color: #003c9e;
+}
+
+/* Profile */
+.profile-info span {
+    display: block;
+    line-height: 1.2;
+}
+
+.profile-info small {
+    font-size: 13px;
+    color: #6c757d;
+}
+
+/* Main */
+.main-content {
+    margin-right: 260px;
+    transition: all 0.4s ease;
+}
+
+.main-content.fullwidth {
+    margin-right: 0;
+    width: 100%;
+}

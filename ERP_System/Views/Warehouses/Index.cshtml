@@ -1,0 +1,124 @@
+﻿@{
+    ViewData["Title"] = "إدارة المخازن";
+}
+
+<div class="container-fluid px-4">
+
+    <!-- العنوان -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">إدارة المخازن</h3>
+            <p class="text-muted">إدارة المخازن والسعات التخزينية</p>
+        </div>
+        <button class="btn btn-primary px-4">
+            <i class="bi bi-plus-lg me-2"></i> إضافة مخزن جديد
+        </button>
+    </div>
+
+    <!-- كروت الإحصائيات -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="dashboard-card card-orange">
+                <h6>القيمة الإجمالية</h6>
+                <h4>5,020,000 ريال</h4>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="dashboard-card card-purple">
+                <h6>معدل الاستخدام</h6>
+                <h4>50.4%</h4>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="dashboard-card card-green">
+                <h6>إجمالي الأصناف</h6>
+                <h4>855 صنف</h4>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="dashboard-card card-blue">
+                <h6>إجمالي المخازن</h6>
+                <h4>4 مخازن</h4>
+            </div>
+        </div>
+    </div>
+
+    <!-- الجدول -->
+    <div class="bg-white rounded-4 shadow-sm p-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-semibold mb-0">قائمة المخازن</h5>
+            <div class="d-flex align-items-center">
+                <input type="text" class="form-control" placeholder="ابحث عن مخزن..." style="width: 250px;">
+            </div>
+        </div>
+
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>الكود</th>
+                    <th>اسم المخزن</th>
+                    <th>الموقع</th>
+                    <th>الحالة</th>
+                    <th>نسبة الإشغال</th>
+                    <th>عدد الأصناف</th>
+                    <th>القيمة</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>WH-001</td>
+                    <td>المخزن الرئيسي</td>
+                    <td>الرياض، طريق الملك فهد</td>
+                    <td><span class="badge badge-active">نشط</span></td>
+                    <td>65%</td>
+                    <td>450</td>
+                    <td>2,450,000 ريال</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>WH-002</td>
+                    <td>مخزن جدة</td>
+                    <td>جدة، حي الحمراء</td>
+                    <td><span class="badge badge-active">نشط</span></td>
+                    <td>70%</td>
+                    <td>280</td>
+                    <td>1,680,000 ريال</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>WH-003</td>
+                    <td>مخزن الدمام</td>
+                    <td>الدمام، الكورنيش</td>
+                    <td><span class="badge badge-active">نشط</span></td>
+                    <td>23%</td>
+                    <td>125</td>
+                    <td>890,000 ريال</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>WH-004</td>
+                    <td>مخزن احتياطي</td>
+                    <td>الرياض، حي الصناعية</td>
+                    <td><span class="badge badge-inactive">غير نشط</span></td>
+                    <td>0%</td>
+                    <td>0</td>
+                    <td>0 ريال</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
