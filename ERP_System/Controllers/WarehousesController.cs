@@ -19,10 +19,10 @@ namespace ERP_System.Controllers
         {
             var warehouses = await _context.Warehouses
                 .Include(w => w.StockLevels)
-                .ThenInclude(sl => sl.Product)
+                    .ThenInclude(sl => sl.Product)
                 .ToListAsync();
 
-            // حساب نسبة الإشغال لكل مخزن (عدد المنتجات)
+            // حساب إجمالي عدد المنتجات لجميع المخازن
             var totalProducts = await _context.Products.CountAsync();
             ViewBag.TotalProducts = totalProducts;
 
@@ -34,7 +34,8 @@ namespace ERP_System.Controllers
         {
             var warehouse = await _context.Warehouses
                 .Include(w => w.StockLevels)
-                .ThenInclude(sl => sl.Product)
+                    .ThenInclude(sl => sl.Product)
+                        .ThenInclude(p => p.Category)
                 .FirstOrDefaultAsync(w => w.Id == id);
 
             if (warehouse == null)
@@ -58,8 +59,12 @@ namespace ERP_System.Controllers
             {
                 _context.Warehouses.Add(warehouse);
                 await _context.SaveChangesAsync();
+
+                TempData["Success"] = "تمت إضافة المخزن بنجاح ✅";
                 return RedirectToAction(nameof(Index));
             }
+
+            TempData["Error"] = "حدث خطأ أثناء حفظ البيانات ❌";
             return View(warehouse);
         }
 
@@ -87,6 +92,8 @@ namespace ERP_System.Controllers
                 {
                     _context.Update(warehouse);
                     await _context.SaveChangesAsync();
+
+                    TempData["Success"] = "تم تعديل بيانات المخزن بنجاح ✅";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -96,11 +103,27 @@ namespace ERP_System.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            TempData["Error"] = "حدث خطأ أثناء التعديل ❌";
             return View(warehouse);
         }
 
-        // 🔴 حذف المخزن
+        // 🟡 صفحة تأكيد الحذف
         public async Task<IActionResult> Delete(int id)
+        {
+            var warehouse = await _context.Warehouses
+                .FirstOrDefaultAsync(w => w.Id == id);
+
+            if (warehouse == null)
+                return NotFound();
+
+            return View(warehouse);
+        }
+
+        // 🔴 تنفيذ الحذف
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var warehouse = await _context.Warehouses.FindAsync(id);
             if (warehouse == null)
@@ -108,6 +131,8 @@ namespace ERP_System.Controllers
 
             _context.Warehouses.Remove(warehouse);
             await _context.SaveChangesAsync();
+
+            TempData["Success"] = "تم حذف المخزن بنجاح 🗑️";
             return RedirectToAction(nameof(Index));
         }
     }
