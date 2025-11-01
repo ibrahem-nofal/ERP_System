@@ -21,6 +21,82 @@
     <!-- Custom Styles -->
     <link rel="stylesheet" href="~/css/layout.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+        /* ✅ لون الأيقونة */
+        #menuToggle {
+            color: #212529;
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+
+            #menuToggle:hover {
+                transform: scale(1.1);
+            }
+
+        /* ✅ إشعار جذّاب في منتصف الصفحة */
+        .app-toast {
+            position: fixed;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            min-width: 350px;
+            max-width: 600px;
+            padding: 14px 18px;
+            border-radius: 14px;
+            font-weight: 600;
+            color: #fff;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
+            z-index: 5000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            opacity: 0;
+            transition: all 0.6s ease;
+            backdrop-filter: blur(6px);
+        }
+
+            .app-toast.show {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+
+            .app-toast.hide {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-40px);
+            }
+
+            .app-toast i {
+                font-size: 1.3rem;
+                margin-left: 10px;
+            }
+
+        .app-toast-success {
+            background: linear-gradient(135deg, #198754, #43c680);
+        }
+
+        .app-toast-error {
+            background: linear-gradient(135deg, #dc3545, #ff6b6b);
+        }
+
+        .app-toast-warning {
+            background: linear-gradient(135deg, #ffc107, #ffd965);
+            color: #212529;
+        }
+
+        .app-toast-info {
+            background: linear-gradient(135deg, #0d6efd, #4ea1ff);
+        }
+
+        .app-toast .close-btn {
+            background: transparent;
+            border: none;
+            color: inherit;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+    </style>
 </head>
 <body>
 
@@ -105,16 +181,83 @@
         </main>
     </div>
 
-    <!-- JS -->
+    <!-- ✅ إشعار TempData -->
+    @if (TempData["Success"] != null || TempData["Error"] != null || TempData["Warning"] != null || TempData["Info"] != null)
+    {
+        var klass = "app-toast-success";
+        var icon = "bi bi-check-circle-fill";
+        var msg = "";
+
+        if (TempData["Error"] != null)
+        {
+            klass = "app-toast-error";
+            icon = "bi bi-exclamation-triangle-fill";
+            msg = TempData["Error"]!.ToString();
+        }
+        else if (TempData["Warning"] != null)
+        {
+            klass = "app-toast-warning";
+            icon = "bi bi-exclamation-circle-fill";
+            msg = TempData["Warning"]!.ToString();
+        }
+        else if (TempData["Info"] != null)
+        {
+            klass = "app-toast-info";
+            icon = "bi bi-info-circle-fill";
+            msg = TempData["Info"]!.ToString();
+        }
+        else
+        {
+            msg = TempData["Success"]!.ToString();
+        }
+
+        <div id="appToast" class="app-toast @klass">
+            <i class="@icon"></i>
+            <span>@msg</span>
+            <button type="button" class="close-btn" id="toastCloseBtn">&times;</button>
+        </div>
+    }
+
+    <!-- ✅ JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const menuToggle = document.getElementById("menuToggle");
         const sidebar = document.getElementById("sidebar");
         const mainContent = document.getElementById("mainContent");
 
-        menuToggle.addEventListener("click", () => {
-            sidebar.classList.toggle("hidden");
-            mainContent.classList.toggle("fullwidth");
+        if (menuToggle) {
+            menuToggle.addEventListener("click", () => {
+                sidebar.classList.toggle("hidden");
+                mainContent.classList.toggle("fullwidth");
+
+                // ✅ تغيير لون الأيقونة
+                if (sidebar.classList.contains("hidden")) {
+                    menuToggle.style.color = "#aaa"; // فضي عند الإخفاء
+                } else {
+                    menuToggle.style.color = "#212529"; // غامق عند الظهور
+                }
+            });
+        }
+
+        // ✅ Toast notifications
+        document.addEventListener("DOMContentLoaded", () => {
+            const toastEl = document.getElementById("appToast");
+            if (toastEl) {
+                setTimeout(() => toastEl.classList.add("show"), 100);
+                setTimeout(() => {
+                    toastEl.classList.remove("show");
+                    toastEl.classList.add("hide");
+                    setTimeout(() => toastEl.remove(), 500);
+                }, 4000);
+
+                const closeBtn = document.getElementById("toastCloseBtn");
+                if (closeBtn) {
+                    closeBtn.addEventListener("click", () => {
+                        toastEl.classList.add("hide");
+                        setTimeout(() => toastEl.remove(), 400);
+                    });
+                }
+            }
         });
     </script>
 
