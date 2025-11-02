@@ -1,0 +1,119 @@
+﻿@model IEnumerable<ERP_System.Models.StockTransfer>
+
+@{
+    ViewData["Title"] = "إدارة التحويلات المخزنية";
+
+    var totalTransfers = Model.Count();
+    var completed = Model.Count(t => t.Status == "تم التحويل");
+    var pending = Model.Count(t => t.Status == "قيد النقل" || t.Status == "Pending");
+    var totalValue = Model.Sum(t => t.Items?.Sum(i => i.Product.UnitPrice * i.Quantity) ?? 0);
+}
+
+<div class="container-fluid px-4">
+
+    <!-- ✅ العنوان -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1 text-primary">
+                <i class="bi bi-arrow-left-right"></i> إدارة التحويلات المخزنية
+            </h3>
+            <p class="text-muted">عرض سجل التحويلات بين المخازن</p>
+        </div>
+
+        <a asp-action="Create" class="btn btn-primary px-4">
+            <i class="bi bi-plus-lg me-2"></i> إنشاء تحويل جديد
+        </a>
+    </div>
+
+    <!-- ✅ الكروت الإحصائية -->
+    <div class="row g-3 mb-4 text-white">
+        <div class="col-md-3">
+            <div class="p-3 rounded-4 d-flex justify-content-between align-items-center" style="background:#0D6EFD;">
+                <div>
+                    <h6>إجمالي التحويلات</h6>
+                    <h4>@totalTransfers تحويل</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="p-3 rounded-4 d-flex justify-content-between align-items-center" style="background:#16A34A;">
+                <div>
+                    <h6>المكتملة</h6>
+                    <h4>@completed تحويل</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="p-3 rounded-4 d-flex justify-content-between align-items-center" style="background:#8E44AD;">
+                <div>
+                    <h6>قيد النقل</h6>
+                    <h4>@pending تحويل</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="p-3 rounded-4 d-flex justify-content-between align-items-center" style="background:#FF7A00;">
+                <div>
+                    <h6>القيمة الإجمالية</h6>
+                    <h4>@($"{totalValue:N0} ج.م")</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ الجدول -->
+    <div class="card shadow-sm border-0 rounded-4 p-3 bg-white">
+        <h5 class="fw-semibold mb-3">قائمة التحويلات</h5>
+
+        <div class="table-responsive">
+            <table class="table align-middle text-center">
+                <thead class="table-light">
+                    <tr>
+                        <th>رقم التحويل</th>
+                        <th>من مخزن</th>
+                        <th>إلى مخزن</th>
+                        <th>عدد المنتجات</th>
+                        <th>الحالة</th>
+                        <th>التاريخ</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-muted py-4">لا توجد تحويلات حتى الآن.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var t in Model)
+                        {
+                            var count = t.Items?.Count() ?? 0;
+                            <tr>
+                                <td>@($"TRF-{t.Id:D3}")</td>
+                                <td><i class="bi bi-box-arrow-up text-danger"></i> @t.FromWarehouse?.Name</td>
+                                <td><i class="bi bi-box-arrow-down text-success"></i> @t.ToWarehouse?.Name</td>
+                                <td>@count منتج</td>
+                                <td>
+                                    <span class="badge @(t.Status == "تم التحويل" ? "bg-success" : "bg-warning text-dark")">
+                                        @t.Status
+                                    </span>
+                                </td>
+                                <td>@t.TransferDate.ToString("yyyy/MM/dd HH:mm")</td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@t.Id" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
