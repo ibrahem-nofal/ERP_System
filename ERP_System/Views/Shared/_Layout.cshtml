@@ -124,7 +124,12 @@
                         <i class="bi bi-box-seam"></i> المخازن
                     </a>
                 </li>
-                <li class="nav-item mb-2"><a asp-controller="Products" asp-action="Index" class="nav-link"><i class="bi bi-grid"></i> الأصناف</a></li>
+                <li class="nav-item mb-2">
+                    <a asp-controller="Products" asp-action="Index"
+                       class="nav-link @(currentController == "Products" ? "active" : "")">
+                        <i class="bi bi-grid"></i> المنتجات
+                    </a>
+                </li>
                 <li class="nav-item mb-2"><a asp-controller="Customers" asp-action="Index" class="nav-link"><i class="bi bi-people"></i> العملاء</a></li>
                 <li class="nav-item mb-2"><a asp-controller="Suppliers" asp-action="Index" class="nav-link"><i class="bi bi-truck"></i> الموردين</a></li>
                 <li class="nav-item mb-2"><a asp-controller="SalesInvoices" asp-action="Index" class="nav-link"><i class="bi bi-receipt"></i> فواتير البيع</a></li>

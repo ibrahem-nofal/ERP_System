@@ -21,7 +21,7 @@
         <div class="col-md-3">
             <div class="p-3 rounded-4" style="background:#FF7A00;">
                 <h6>القيمة الإجمالية</h6>
-                <h4>@($"{Model.Sum(w => w.StockLevels?.Sum(sl => sl.Product.UnitPrice * sl.Quantity) ?? 0):N0} ريال")</h4>
+                <h4>@($"{Model.Sum(w => w.StockLevels?.Sum(sl => sl.Product.UnitPrice * sl.Quantity) ?? 0):N0} ج.م")</h4>
             </div>
         </div>
         <div class="col-md-3">
@@ -37,8 +37,8 @@
         </div>
         <div class="col-md-3">
             <div class="p-3 rounded-4" style="background:#16A34A;">
-                <h6>إجمالي الأصناف</h6>
-                <h4>@($"{ViewBag.TotalProducts} صنف")</h4>
+                <h6>إجمالي المنتجات</h6>
+                <h4>@($"{ViewBag.TotalProducts} منتج")</h4>
             </div>
         </div>
         <div class="col-md-3">
@@ -64,7 +64,7 @@
                     <th>الموقع</th>
                     <th>الحالة</th>
                     <th>نسبة الإشغال</th>
-                    <th>عدد الأصناف</th>
+                    <th>عدد المنتجات</th>
                     <th>القيمة</th>
                     <th>الإجراءات</th>
                 </tr>
@@ -93,7 +93,7 @@
                             <small class="text-muted">@($"{ratio:F0}%")</small>
                         </td>
                         <td>@(w.StockLevels?.Count() ?? 0)</td>
-                        <td>@($"{totalValue:N0} ريال")</td>
+                        <td>@($"{totalValue:N0} ج.م")</td>
                         <td>
                             <a asp-action="Details" asp-route-id="@w.Id"
                                class="btn btn-sm btn-outline-primary me-1"

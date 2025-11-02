@@ -57,7 +57,7 @@
     <div class="row g-3 mb-4 text-white">
         <div class="col-md-4">
             <div class="p-3 rounded-4" style="background:#0D6EFD;">
-                <h6>عدد الأصناف</h6>
+                <h6>عدد المنتجات</h6>
                 <h4>@(Model.StockLevels?.Count() ?? 0)</h4>
             </div>
         </div>
@@ -70,7 +70,7 @@
         <div class="col-md-4">
             <div class="p-3 rounded-4" style="background:#FF7A00;">
                 <h6>القيمة الإجمالية</h6>
-                <h4>@($"{totalValue:N0} ريال")</h4>
+                <h4>@($"{totalValue:N0} ج.م")</h4>
             </div>
         </div>
     </div>
@@ -110,8 +110,8 @@
                             <td>@product.Name</td>
                             <td>@product.Category?.Name</td>
                             <td>@sl.Quantity</td>
-                            <td>@($"{product.UnitPrice:N0} ريال")</td>
-                            <td>@($"{value:N0} ريال")</td>
+                            <td>@($"{product.UnitPrice:N0} ج.م")</td>
+                            <td>@($"{value:N0} ج.م")</td>
                         </tr>
                     }
                 </tbody>

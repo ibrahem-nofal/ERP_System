@@ -100,6 +100,13 @@ namespace ERP_System.Data
                 .HasForeignKey(i => i.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // ✅ StockLevel -> Product (Cascade Delete)
+            modelBuilder.Entity<StockLevel>()
+                .HasOne(s => s.Product)
+                .WithMany(p => p.StockLevels)
+                .HasForeignKey(s => s.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             // ✅ ضبط Precision لجميع الخصائص من النوع decimal
             foreach (var property in modelBuilder.Model.GetEntityTypes()
                 .SelectMany(t => t.GetProperties())
@@ -109,12 +116,21 @@ namespace ERP_System.Data
                 property.SetScale(2);
             }
 
-            // ✅ جعل كل العلاقات DeleteBehavior.Restrict
+            // ✅ جعل كل العلاقات DeleteBehavior.Restrict باستثناء Product → StockLevels
             foreach (var relationship in modelBuilder.Model.GetEntityTypes()
                 .SelectMany(e => e.GetForeignKeys()))
             {
+                if (relationship.PrincipalEntityType.ClrType == typeof(Product) &&
+                    relationship.DeclaringEntityType.ClrType == typeof(StockLevel))
+                    continue; // استثناء العلاقة دي فقط
+
                 relationship.DeleteBehavior = DeleteBehavior.Restrict;
             }
+
+            // ✅ Category افتراضية علشان أي منتج يقدر يتسجل بدون مشكلة
+            modelBuilder.Entity<Category>().HasData(
+                new Category { Id = 1, Name = "افتراضي", Description = "الفئة الافتراضية للمنتجات" }
+            );
         }
     }
 }
