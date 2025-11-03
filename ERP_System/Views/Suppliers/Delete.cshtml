@@ -1,0 +1,44 @@
+﻿@model ERP_System.Models.Supplier
+@{
+    ViewData["Title"] = "حذف المورد";
+}
+
+<div class="container mt-4">
+    <h2 class="text-danger mb-3">🗑️ حذف المورد</h2>
+
+    <!-- عرض رسائل التنبيه -->
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@Html.Raw(TempData["Error"])</div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@Html.Raw(TempData["Success"])</div>
+    }
+
+    <div class="card p-4 shadow-sm">
+        <h4>هل أنت متأكد من حذف المورد التالي؟</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-3 fw-bold">الاسم:</dt>
+            <dd class="col-sm-9">@Model.Name</dd>
+
+            <dt class="col-sm-3 fw-bold">رقم الهاتف:</dt>
+            <dd class="col-sm-9">@Model.Phone</dd>
+
+            <dt class="col-sm-3 fw-bold">البريد الإلكتروني:</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+
+            <dt class="col-sm-3 fw-bold">العنوان:</dt>
+            <dd class="col-sm-9">@Model.Address</dd>
+        </dl>
+
+        <form asp-action="Delete" method="post">
+            @* Anti-forgery token *@
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger">🚨 تأكيد الحذف</button>
+            <a asp-action="Index" class="btn btn-secondary ms-2">⬅️ إلغاء</a>
+        </form>
+    </div>
+</div>

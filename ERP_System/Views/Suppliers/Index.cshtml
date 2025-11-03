@@ -1,0 +1,113 @@
+@model IEnumerable<ERP_System.Models.Supplier>
+
+@{
+    ViewData["Title"] = "إدارة الموردين";
+}
+
+<div class="container-fluid px-4">
+
+    <!-- العنوان و زر الإضافة -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">إدارة الموردين</h3>
+            <p class="text-muted">إدارة الموردين وتفاصيلهم</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary px-4">
+            <i class="bi bi-plus-lg me-2"></i> إضافة مورد جديد
+        </a>
+    </div>
+
+    <!-- الكروت الإحصائية -->
+    <div class="row g-3 mb-4 text-white">
+        <div class="col-md-3">
+            <div class="p-3 rounded-4" style="background:#0D6EFD;">
+                <h6>إجمالي الموردين</h6>
+                <h4>@($"{Model.Count()} مورد")</h4>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="p-3 rounded-4" style="background:#198754;">
+                <h6>موردين نشطين</h6>
+                <h4>@($"{Model.Count()} مورد")</h4>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="p-3 rounded-4" style="background:#FFC107;">
+                <h6>موردين غير نشطين</h6>
+                <h4>0 مورد</h4>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="p-3 rounded-4" style="background:#6C757D;">
+                <h6>موردين جدد</h6>
+                <h4>@($"{Model.Count(s => s.PurchaseInvoices.Count == 0)} مورد")</h4>
+            </div>
+        </div>
+    </div>
+
+    <!-- الجدول -->
+    <div class="bg-white rounded-4 shadow-sm p-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-semibold mb-0">قائمة الموردين</h5>
+            <input type="text" id="supplierSearch" class="form-control" placeholder="ابحث عن مورد..." style="width:250px;">
+        </div>
+
+        <table class="table align-middle text-center">
+            <thead class="table-light">
+                <tr>
+                    <th>الرقم</th>
+                    <th>اسم المورد</th>
+                    <th>الهاتف</th>
+                    <th>البريد الإلكتروني</th>
+                    <th>العنوان</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var supplier in Model)
+                {
+                    <tr>
+                        <td>@supplier.Id</td>
+                        <td>@supplier.Name</td>
+                        <td>@supplier.Phone</td>
+                        <td>@supplier.Email</td>
+                        <td>@supplier.Address</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@supplier.Id"
+                               class="btn btn-sm btn-outline-primary me-1 rounded-3" title="عرض التفاصيل">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@supplier.Id"
+                               class="btn btn-sm btn-outline-secondary me-1" title="تعديل">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@supplier.Id"
+                               class="btn btn-sm btn-outline-danger" title="حذف">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- كود البحث -->
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchInput = document.getElementById("supplierSearch");
+            const tableRows = document.querySelectorAll("table tbody tr");
+
+            searchInput.addEventListener("keyup", function () {
+                const query = this.value.toLowerCase();
+
+                tableRows.forEach(row => {
+                    const text = row.innerText.toLowerCase();
+                    row.style.display = text.includes(query) ? "" : "none";
+                });
+            });
+        });
+    </script>
+}

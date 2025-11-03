@@ -1,0 +1,224 @@
+@model ERP_System.Models.Supplier
+@{
+    ViewData["Title"] = "إضافة مورد جديد";
+}
+
+<div class="container-fluid px-4">
+    <!-- 🎯 Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">
+                <i class="bi bi-person-plus-fill text-primary me-2"></i>
+                إضافة مورد جديد
+            </h3>
+            <p class="text-muted mb-0">أدخل بيانات المورد الجديد</p>
+        </div>
+        <a asp-action="Index" class="btn btn-secondary px-4">
+            <i class="bi bi-arrow-right me-2"></i> العودة للقائمة
+        </a>
+    </div>
+
+    <!-- ✅ عرض رسائل النجاح -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            @Html.Raw(TempData["Success"])
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- ❌ عرض رسائل الأخطاء التفصيلية -->
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            @Html.Raw(TempData["Error"])
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- ⚠️ عرض ملخص أخطاء ModelState -->
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <h5 class="alert-heading">
+                <i class="bi bi-exclamation-circle me-2"></i>
+                يرجى تصحيح الأخطاء التالية:
+            </h5>
+            <hr>
+            <ul class="mb-0">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- 📝 Form Section -->
+    <div class="bg-white rounded-4 shadow-sm p-4">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="row g-3">
+                <!-- ✅ اسم المورد -->
+                <div class="col-md-6">
+                    <label asp-for="Name" class="form-label fw-semibold">
+                        <i class="bi bi-person-badge text-primary me-1"></i>
+                        اسم المورد
+                        <span class="text-danger">*</span>
+                    </label>
+                    <input asp-for="Name" 
+                           class="form-control" 
+                           placeholder="أدخل اسم المورد (مثال: شركة الأمل للتجارة)" 
+                           autocomplete="off" />
+                    <span asp-validation-for="Name" class="text-danger small d-block mt-1"></span>
+                </div>
+
+                <!-- ✅ رقم الهاتف -->
+                <div class="col-md-6">
+                    <label asp-for="Phone" class="form-label fw-semibold">
+                        <i class="bi bi-telephone text-success me-1"></i>
+                        رقم الهاتف
+                        <span class="text-danger">*</span>
+                    </label>
+                    <input asp-for="Phone" 
+                           class="form-control" 
+                           placeholder="مثال: 01012345678" 
+                           type="tel"
+                           autocomplete="off" />
+                    <span asp-validation-for="Phone" class="text-danger small d-block mt-1"></span>
+                </div>
+
+                <!-- ✅ البريد الإلكتروني -->
+                <div class="col-md-6">
+                    <label asp-for="Email" class="form-label fw-semibold">
+                        <i class="bi bi-envelope text-info me-1"></i>
+                        البريد الإلكتروني
+                        <span class="text-danger">*</span>
+                    </label>
+                    <input asp-for="Email" 
+                           class="form-control" 
+                           type="email" 
+                           placeholder="مثال: supplier@example.com"
+                           autocomplete="off" />
+                    <span asp-validation-for="Email" class="text-danger small d-block mt-1"></span>
+                </div>
+
+                <!-- ✅ العنوان -->
+                <div class="col-md-6">
+                    <label asp-for="Address" class="form-label fw-semibold">
+                        <i class="bi bi-geo-alt text-warning me-1"></i>
+                        العنوان
+                    </label>
+                    <input asp-for="Address" 
+                           class="form-control" 
+                           placeholder="أدخل عنوان المورد (اختياري)"
+                           autocomplete="off" />
+                    <span asp-validation-for="Address" class="text-danger small d-block mt-1"></span>
+                </div>
+            </div>
+
+            <!-- 🔘 Buttons Section -->
+            <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                <a asp-action="Index" class="btn btn-light px-4 border">
+                    <i class="bi bi-x-lg me-2"></i>
+                    إلغاء
+                </a>
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="bi bi-check-lg me-2"></i>
+                    حفظ المورد
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 💡 ملاحظات إرشادية -->
+    <div class="alert alert-info mt-4" role="alert">
+        <h6 class="alert-heading">
+            <i class="bi bi-info-circle me-2"></i>
+            ملاحظات هامة:
+        </h6>
+        <ul class="mb-0 small">
+            <li>الحقول المميزة بـ <span class="text-danger">*</span> إلزامية</li>
+            <li>تأكد من صحة البريد الإلكتروني ورقم الهاتف</li>
+            <li>يمكنك ترك حقل العنوان فارغاً إذا لم يكن متوفراً</li>
+        </ul>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // ✅ Auto-dismiss alerts after 5 seconds
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');
+        }, 5000);
+
+        // ✅ إضافة تأثيرات على الحقول عند التركيز
+        $('input').focus(function() {
+            $(this).parent().find('label').addClass('text-primary');
+        }).blur(function() {
+            $(this).parent().find('label').removeClass('text-primary');
+        });
+    </script>
+}
+
+<style>
+    /* 🎨 تحسينات CSS إضافية */
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
+
+    .alert {
+        border-radius: 12px;
+        border-left: 4px solid;
+    }
+
+    .alert-success {
+        border-left-color: #198754;
+        background-color: #d1e7dd;
+    }
+
+    .alert-danger {
+        border-left-color: #dc3545;
+        background-color: #f8d7da;
+    }
+
+    .alert-warning {
+        border-left-color: #ffc107;
+        background-color: #fff3cd;
+    }
+
+    .alert-info {
+        border-left-color: #0dcaf0;
+        background-color: #cff4fc;
+    }
+
+    .form-label i {
+        font-size: 1.1em;
+    }
+
+    .btn {
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .bg-white {
+        transition: box-shadow 0.3s ease;
+    }
+
+    .bg-white:hover {
+        box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.1) !important;
+    }
+</style>
