@@ -1,0 +1,157 @@
+@model IEnumerable<ERP_System.Models.Inventory>
+
+@{
+    ViewData["Title"] = "المخزون";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <style>
+        body {
+            background: #0f1724;
+            color: #e6eef6;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .search-box {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            width: 300px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            color: #06b6d4;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .btn-details {
+            background: rgba(6, 182, 212, 0.2);
+            color: #06b6d4;
+            padding: 5px 10px;
+            font-size: 14px;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+
+        .low-stock {
+            color: #ef4444;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>المخزون</h1>
+
+        <div class="header-actions">
+            <input type="text" id="searchBox" class="search-box" placeholder="بحث في المخزون...">
+        </div>
+
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>الصنف</th>
+                    <th>المخزن</th>
+                    <th>الكمية الحالية</th>
+                    <th>الكمية المطلوبة</th>
+                    <th>آخر تحديث</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@(item.Item?.Name ?? "-")</td>
+                            <td>@(item.Store?.Name ?? "-")</td>
+                            <td class="@(item.CurrentQuantity <= (item.Item?.MinimumQuantity ?? 0) ? "low-stock" : "")">
+                                @item.CurrentQuantity
+                            </td>
+                            <td>@item.OrderedQuantity</td>
+                            <td>@item.LastUpdated.ToString("yyyy/MM/dd")</td>
+                            <td>
+                                <a href="@Url.Action("Details", new { storeId = item.StoreId, itemId = item.ItemId })"
+                                    class="btn-details">تفاصيل</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" style="text-align:center; padding: 30px; color: #94a3b8;">
+                            لا توجد أصناف في المخزون حالياً
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.getElementById('searchBox').addEventListener('keyup', function () {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#dataTable tbody tr');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+
+</html>

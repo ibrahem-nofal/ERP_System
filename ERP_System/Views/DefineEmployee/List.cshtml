@@ -1,0 +1,227 @@
+@model IEnumerable<ERP_System.Models.Employee>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>قائمة الموظفين</title>
+    <style>
+        body {
+            background: #0f1724;
+            color: #e6eef6;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            margin: 0;
+            padding: 30px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            width: 300px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            color: #021024;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-edit {
+            background: #10b981;
+            color: #fff;
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: #fff;
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        .btn-details {
+            background: #3b82f6;
+            color: #fff;
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            background: rgba(255,255,255,0.04);
+            border-radius: 12px;
+            overflow: hidden;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: rgba(255,255,255,0.08);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        th {
+            font-weight: bold;
+            color: #06b6d4;
+        }
+
+        tbody tr {
+            transition: background 0.2s;
+        }
+
+        tbody tr:hover {
+            background: rgba(255,255,255,0.06);
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-start;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+        }
+
+        .employee-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .delete-form {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>قائمة الموظفين</h1>
+
+        <div class="header-actions">
+            <input type="text" id="searchBox" class="search-box" placeholder="بحث عن موظف...">
+            <a href="@Url.Action("Index")" class="btn btn-primary">+ إضافة موظف جديد</a>
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            <table id="employeeTable">
+                <thead>
+                    <tr>
+                        <th>الصورة</th>
+                        <th>الاسم</th>
+                        <th>نوع الوظيفة</th>
+                        <th>النوع</th>
+                        <th>العنوان</th>
+                        <th>رقم الهوية</th>
+                        <th>الحالة</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var emp in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (emp.Image != null && emp.Image.EmpImageData != null)
+                                {
+                                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(emp.Image.EmpImageData)" 
+                                         alt="@emp.Name" class="employee-image">
+                                }
+                                else
+                                {
+                                    <div class="employee-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+                                }
+                            </td>
+                            <td>@emp.Name</td>
+                            <td>@emp.RoleType</td>
+                            <td>@emp.Gender</td>
+                            <td>@emp.Address</td>
+                            <td>@emp.IdNumber</td>
+                            <td>@emp.State</td>
+                            <td>
+                                <div class="actions">
+                                    <a href="@Url.Action("Details", new { id = emp.Id })" class="btn btn-details">عرض</a>
+                                    <a href="@Url.Action("Edit", new { id = emp.Id })" class="btn btn-edit">تعديل</a>
+                                    <form asp-action="Delete" asp-route-id="@emp.Id" method="post" class="delete-form" 
+                                          onsubmit="return confirm('هل أنت متأكد من حذف هذا الموظف؟');">
+                                        <button type="submit" class="btn btn-delete">حذف</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="no-data">
+                <p>لا توجد بيانات موظفين حالياً</p>
+                <a href="@Url.Action("Index")" class="btn btn-primary">إضافة أول موظف</a>
+            </div>
+        }
+    </div>
+
+    <script>
+        // Search functionality
+        document.getElementById('searchBox').addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#employeeTable tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>

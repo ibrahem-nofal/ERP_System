@@ -1,0 +1,125 @@
+﻿@using ERP_System.ViewModels
+@model AddCustVm
+
+@{
+    ViewData["Title"] = "إضافة عميل";
+}
+
+<div class="container-fluid fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-primary">
+                <i class="bi bi-person-plus me-2"></i> إضافة عميل جديد
+            </h2>
+            <p class="text-muted">تسجيل بيانات عميل جديد في النظام</p>
+        </div>
+        <a href="@Url.Action("Index", "Dashboard")" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-right me-2"></i> عودة
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+            <form asp-action="Index" method="post">
+                <div class="row g-4">
+                    <!-- Personal Info -->
+                    <div class="col-md-12">
+                        <h5 class="fw-bold mb-3 text-secondary border-bottom pb-2">البيانات الشخصية</h5>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Name" class="form-label fw-bold">اسم العميل <span
+                                class="text-danger">*</span></label>
+                        <input asp-for="Name" class="form-control" placeholder="أدخل اسم العميل" required>
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Gender" class="form-label fw-bold">النوع</label>
+                        <select asp-for="Gender" class="form-select" required>
+                            <option value="0">ذكر</option>
+                            <option value="1">أنثى</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label asp-for="Address" class="form-label fw-bold">العنوان</label>
+                        <input asp-for="Address" class="form-control" placeholder="أدخل العنوان بالتفصيل">
+                    </div>
+
+                    <!-- Dates & Details -->
+                    <div class="col-md-12 mt-4">
+                        <h5 class="fw-bold mb-3 text-secondary border-bottom pb-2">التواريخ والتفاصيل</h5>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="StartDate" class="form-label fw-bold">تاريخ البدء</label>
+                        <input asp-for="StartDate" type="date" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="BirthDate" class="form-label fw-bold">تاريخ الميلاد</label>
+                        <input asp-for="BirthDate" type="date" class="form-control">
+                    </div>
+
+                    <div class="col-md-12">
+                        <label asp-for="OtherDetails" class="form-label fw-bold">تفاصيل إضافية</label>
+                        <textarea asp-for="OtherDetails" class="form-control" rows="3"
+                            placeholder="أي ملاحظات إضافية..."></textarea>
+                    </div>
+
+                    <!-- Contact Info -->
+                    <div class="col-md-12 mt-4">
+                        <h5 class="fw-bold mb-3 text-secondary border-bottom pb-2">بيانات الاتصال</h5>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label fw-bold">أرقام الهاتف</label>
+                        <div id="phonesContainer">
+                            <div class="input-group mb-2">
+                                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                <input type="text" name="Phones[0]" class="form-control" placeholder="رقم الهاتف"
+                                    maxlength="20" />
+                                <button type="button" class="btn btn-success add-phone"><i
+                                        class="bi bi-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-4 text-end">
+                        <button type="submit" class="btn btn-primary px-5 btn-lg">
+                            <i class="bi bi-save me-2"></i> حفظ البيانات
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let phoneIndex = 1;
+
+        document.addEventListener("click", function (e) {
+            // Add Phone
+            if (e.target.closest(".add-phone")) {
+                let container = document.getElementById("phonesContainer");
+                let row = document.createElement("div");
+                row.className = "input-group mb-2 fade-in";
+                row.innerHTML = `
+                        <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                        <input type="text" name="Phones[${phoneIndex}]" class="form-control" placeholder="رقم الهاتف" maxlength="20" />
+                        <button type="button" class="btn btn-outline-danger remove-phone"><i class="bi bi-trash"></i></button>
+                    `;
+                container.appendChild(row);
+                phoneIndex++;
+            }
+
+            // Remove Phone
+            if (e.target.closest(".remove-phone")) {
+                e.target.closest(".input-group").remove();
+            }
+        });
+    </script>
+}

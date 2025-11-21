@@ -4,22 +4,27 @@ namespace ERP_System.Models
 {
     public class Supplier
     {
+        [Key]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "اسم المورد مطلوب")]
+        [MaxLength(200)]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "رقم الهاتف مطلوب")]
-        public string Phone { get; set; }
+        [MaxLength(200)]
+        public string OwnerName { get; set; }
 
-        [Required(ErrorMessage = "البريد الإلكتروني مطلوب")]
-        [EmailAddress(ErrorMessage = "البريد الإلكتروني غير صحيح")]
-        public string Email { get; set; }
+        [MaxLength(50)]
+        public string OwnerPhone { get; set; }
 
-        public string? Address { get; set; }
+        [MaxLength(200)]
+        public string ManagerName { get; set; }
 
-        // ✅ اجعل Navigation Properties nullable أو = null!
-        public ICollection<Payment>? Payments { get; set; }
-        public ICollection<PurchaseInvoice>? PurchaseInvoices { get; set; }
+        [MaxLength(50)]
+        public string ManagerPhone { get; set; }
+
+        [MaxLength(250)]
+        public string Address { get; set; }
+
+        public ICollection<SupplierPhone> Phones { get; set; }
     }
 }

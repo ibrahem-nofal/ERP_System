@@ -1,0 +1,319 @@
+@model ERP_System.ViewModels.JournalEntryVm
+
+@{
+    ViewData["Title"] = "إضافة قيد يومية";
+    var accounts = ViewBag.Accounts as List<ERP_System.Models.ChartOfAccount>;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <style>
+        body {
+            background: #0f1724;
+            color: #e6eef6;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-card {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #94a3b8;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            color: #06b6d4;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            color: #021024;
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .summary-row {
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: bold;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>إضافة قيد يومية</h1>
+
+        <div class="form-card">
+            <div class="row" style="display: flex; gap: 20px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>تاريخ القيد</label>
+                    <input type="date" id="entryDate" value="@DateTime.Now.ToString("yyyy-MM-dd")">
+                </div>
+                <div class="form-group" style="flex: 2;">
+                    <label>وصف القيد</label>
+                    <input type="text" id="entryDesc" placeholder="شرح القيد...">
+                </div>
+            </div>
+
+            <table id="detailsTable">
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">الحساب</th>
+                        <th style="width: 15%;">مدين</th>
+                        <th style="width: 15%;">دائن</th>
+                        <th style="width: 30%;">ملاحظات</th>
+                        <th style="width: 10%;">حذف</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Rows will be added here -->
+                </tbody>
+                <tfoot>
+                    <tr class="summary-row">
+                        <td>الإجمالي</td>
+                        <td id="totalDebit">0.00</td>
+                        <td id="totalCredit">0.00</td>
+                        <td colspan="2" id="balanceCheck" style="color: #10b981;">متزن</td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div style="margin-top: 15px;">
+                <button type="button" class="btn btn-secondary" onclick="addRow()">+ إضافة سطر</button>
+            </div>
+
+            <div style="margin-top: 30px; text-align: left; display: flex; justify-content: space-between;">
+                <a href="@Url.Action("List")" class="btn btn-secondary">إلغاء</a>
+                <button type="button" class="btn btn-primary" onclick="saveEntry()">حفظ القيد</button>
+            </div>
+            <div id="globalError" class="error-message" style="text-align: center; margin-top: 10px;"></div>
+        </div>
+    </div>
+
+    <script>
+        const accounts = @Html.Raw(Json.Serialize(accounts?.Select(a => new { id = a.Id, name = a.Name + " (" + a.Code + ")" })));
+
+        function addRow() {
+            const tbody = document.getElementById('tableBody');
+            const tr = document.createElement('tr');
+
+            let options = '<option value="">اختر الحساب...</option>';
+            accounts.forEach(acc => {
+                options += `<option value="${acc.id}">${acc.name}</option>`;
+            });
+
+            tr.innerHTML = `
+                <td>
+                    <select class="account-select">${options}</select>
+                </td>
+                <td><input type="number" class="debit-input" value="0" min="0" step="0.01" onchange="calcTotals()"></td>
+                <td><input type="number" class="credit-input" value="0" min="0" step="0.01" onchange="calcTotals()"></td>
+                <td><input type="text" class="note-input" placeholder="ملاحظة..."></td>
+                <td><button type="button" class="btn btn-danger" onclick="removeRow(this)">x</button></td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        function removeRow(btn) {
+            btn.closest('tr').remove();
+            calcTotals();
+        }
+
+        function calcTotals() {
+            let totalDebit = 0;
+            let totalCredit = 0;
+
+            document.querySelectorAll('.debit-input').forEach(inp => totalDebit += parseFloat(inp.value) || 0);
+            document.querySelectorAll('.credit-input').forEach(inp => totalCredit += parseFloat(inp.value) || 0);
+
+            document.getElementById('totalDebit').innerText = totalDebit.toFixed(2);
+            document.getElementById('totalCredit').innerText = totalCredit.toFixed(2);
+
+            const balanceCheck = document.getElementById('balanceCheck');
+            if (Math.abs(totalDebit - totalCredit) < 0.01 && totalDebit > 0) {
+                balanceCheck.innerText = "متزن";
+                balanceCheck.style.color = "#10b981";
+            } else {
+                balanceCheck.innerText = "غير متزن (" + (totalDebit - totalCredit).toFixed(2) + ")";
+                balanceCheck.style.color = "#ef4444";
+            }
+        }
+
+        async function saveEntry() {
+            const date = document.getElementById('entryDate').value;
+            const desc = document.getElementById('entryDesc').value;
+            const rows = document.querySelectorAll('#tableBody tr');
+
+            if (!desc) {
+                alert('يرجى إدخال وصف القيد');
+                return;
+            }
+
+            if (rows.length === 0) {
+                alert('يرجى إضافة سطور للقيد');
+                return;
+            }
+
+            const details = [];
+            let hasError = false;
+
+            rows.forEach(row => {
+                const accountId = row.querySelector('.account-select').value;
+                const debit = parseFloat(row.querySelector('.debit-input').value) || 0;
+                const credit = parseFloat(row.querySelector('.credit-input').value) || 0;
+                const note = row.querySelector('.note-input').value;
+
+                if (!accountId) {
+                    hasError = true;
+                    row.querySelector('.account-select').style.borderColor = 'red';
+                }
+
+                if (debit === 0 && credit === 0) {
+                    hasError = true;
+                    row.querySelector('.debit-input').style.borderColor = 'red';
+                    row.querySelector('.credit-input').style.borderColor = 'red';
+                }
+
+                details.push({ accountId: parseInt(accountId), debit, credit, note });
+            });
+
+            if (hasError) {
+                alert('يرجى تعبئة جميع الحقول المطلوبة بشكل صحيح');
+                return;
+            }
+
+            const totalDebit = details.reduce((sum, d) => sum + d.debit, 0);
+            const totalCredit = details.reduce((sum, d) => sum + d.credit, 0);
+
+            if (Math.abs(totalDebit - totalCredit) > 0.01) {
+                alert('القيد غير متزن. يرجى التأكد من تساوي المدين والدائن.');
+                return;
+            }
+
+            const data = {
+                description: desc,
+                date: date,
+                details: details
+            };
+
+            try {
+                const response = await fetch('@Url.Action("Index")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    window.location.href = '@Url.Action("List")';
+                } else {
+                    const errorText = await response.text();
+                    document.getElementById('globalError').innerText = "حدث خطأ أثناء الحفظ: " + errorText;
+                    document.getElementById('globalError').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('globalError').innerText = "حدث خطأ في الاتصال";
+                document.getElementById('globalError').style.display = 'block';
+            }
+        }
+
+        // Add initial rows
+        addRow();
+        addRow();
+    </script>
+</body>
+
+</html>

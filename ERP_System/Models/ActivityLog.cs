@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERP_System.Models
 {
@@ -7,15 +8,24 @@ namespace ERP_System.Models
         [Key]
         public int Id { get; set; }
 
-        public int? UserId { get; set; }
-        public string Action { get; set; }
-        public string EntityName { get; set; }
-        public int EntityId { get; set; }
+        [MaxLength(35)]
+        public string Username { get; set; }
 
-        [Required]
-        public DateTime Timestamp { get; set; } = DateTime.Now;
+        public DateTime? ActDate { get; set; }
+        public TimeSpan? ActTime { get; set; }
 
-        // Navigation
-        public User User { get; set; }
+        [MaxLength(255)]
+        public string FormName { get; set; }
+
+        [MaxLength(255)]
+        public string OpName { get; set; }
+
+        [MaxLength(255)]
+        public string CmpName { get; set; }
+
+        public string ActivityData { get; set; }
+
+        [ForeignKey("Username")]
+        public Login Login { get; set; }
     }
 }

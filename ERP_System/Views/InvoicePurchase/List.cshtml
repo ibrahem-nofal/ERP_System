@@ -1,0 +1,233 @@
+@model IEnumerable<ERP_System.Models.InvoicePurchaseHeader>
+
+@{
+    ViewData["Title"] = "فواتير الشراء";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <style>
+        body {
+            background: #0f1724;
+            color: #e6eef6;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .search-box {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            width: 300px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            color: #021024;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            color: #06b6d4;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-details {
+            background: rgba(6, 182, 212, 0.2);
+            color: #06b6d4;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        .btn-edit {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge-paid {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .badge-unpaid {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .badge-partial {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>فواتير الشراء</h1>
+
+        <div class="header-actions">
+            <input type="text" id="searchBox" class="search-box" placeholder="بحث في الفواتير...">
+            <a href="@Url.Action("Index")" class="btn btn-primary">+ فاتورة شراء جديدة</a>
+        </div>
+
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>رقم الفاتورة</th>
+                    <th>التاريخ</th>
+                    <th>المورد</th>
+                    <th>المبلغ الإجمالي</th>
+                    <th>المدفوع</th>
+                    <th>المتبقي</th>
+                    <th>الحالة</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>#@item.Id</td>
+                            <td>@item.DateCreated.ToString("yyyy/MM/dd")</td>
+                            <td>@(item.Supplier?.Name ?? "-")</td>
+                            <td>@item.NetAmount.ToString("N2")</td>
+                            <td>@item.Paid.ToString("N2")</td>
+                            <td>@item.Remain.ToString("N2")</td>
+                            <td>
+                                @if (item.PayStatus == "Paid")
+                                {
+                                    <span class="badge badge-paid">مدفوع</span>
+                                }
+                                else if (item.PayStatus == "Unpaid")
+                                {
+                                    <span class="badge badge-unpaid">غير مدفوع</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-partial">جزئي</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="actions">
+                                    <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-details">عرض</a>
+                                    <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-edit">تعديل</a>
+                                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;"
+                                        onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
+                                        <button type="submit" class="btn btn-delete">حذف</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" style="text-align:center; padding: 30px; color: #94a3b8;">
+                            لا توجد فواتير شراء حالياً
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.getElementById('searchBox').addEventListener('keyup', function () {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#dataTable tbody tr');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+
+</html>

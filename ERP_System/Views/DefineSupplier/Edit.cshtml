@@ -1,0 +1,148 @@
+@model ERP_System.ViewModels.AddSuppVm
+
+@{
+    ViewData["Title"] = "تعديل مورد";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <style>
+        body {
+            background: #0f1724;
+            color: #e6eef6;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-card {
+            background: rgba(255,255,255,0.02);
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #94a3b8;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            color: #021024;
+            padding: 12px 24px;
+            border-radius: 6px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>تعديل بيانات المورد</h1>
+
+        <div class="form-card">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" name="id" value="@ViewBag.Id" />
+                
+                <div class="form-group">
+                    <label>اسم المورد</label>
+                    <input asp-for="Name" required />
+                </div>
+
+                <div class="form-group">
+                    <label>اسم المدير</label>
+                    <input asp-for="ManagerName" />
+                </div>
+
+                <div class="form-group">
+                    <label>رقم هاتف المدير</label>
+                    <input asp-for="ManagerPhone" />
+                </div>
+
+                <div class="form-group">
+                    <label>اسم المالك</label>
+                    <input asp-for="OwnerName" />
+                </div>
+
+                <div class="form-group">
+                    <label>رقم هاتف المالك</label>
+                    <input asp-for="OwnerPhone" />
+                </div>
+
+                <div class="form-group">
+                    <label>العنوان</label>
+                    <textarea asp-for="Address" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>أرقام الهواتف الإضافية</label>
+                    <div id="phonesContainer">
+                        @if (Model.Phones != null)
+                        {
+                            for (int i = 0; i < Model.Phones.Count; i++)
+                            {
+                                <input name="Phones" value="@Model.Phones[i]" style="margin-bottom: 10px;" />
+                            }
+                        }
+                        <input name="Phones" placeholder="رقم جديد..." style="margin-bottom: 10px;" />
+                    </div>
+                    <button type="button" onclick="addPhoneField()" style="background: transparent; border: 1px solid #06b6d4; color: #06b6d4; padding: 5px 10px; border-radius: 4px; cursor: pointer;">+ إضافة رقم آخر</button>
+                </div>
+
+                <button type="submit" class="btn-primary">حفظ التعديلات</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function addPhoneField() {
+            const container = document.getElementById('phonesContainer');
+            const input = document.createElement('input');
+            input.name = 'Phones';
+            input.placeholder = 'رقم جديد...';
+            input.style.marginBottom = '10px';
+            container.appendChild(input);
+        }
+    </script>
+</body>
+</html>

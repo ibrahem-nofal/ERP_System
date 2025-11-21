@@ -1,0 +1,250 @@
+@{
+    ViewData["Title"] = "لوحة التحكم";
+    var stats = ViewBag.Stats;
+}
+
+<link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
+
+<div class="dashboard-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">لوحة التحكم</h1>
+        <p class="page-subtitle">مرحباً بك في نظام ERP - نظرة عامة على أداء النظام</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <!-- Total Sales -->
+        <div class="stat-card sales">
+            <div class="icon">
+                <i class="bi bi-cash-stack"></i>
+            </div>
+            <div class="value">@stats.TotalSales.ToString("N0") ر.س</div>
+            <div class="label">إجمالي المبيعات</div>
+            <div class="change positive">
+                <i class="bi bi-arrow-up"></i> 12.5%
+            </div>
+        </div>
+
+        <!-- Total Purchases -->
+        <div class="stat-card purchases">
+            <div class="icon">
+                <i class="bi bi-cart-check"></i>
+            </div>
+            <div class="value">@stats.TotalPurchases.ToString("N0") ر.س</div>
+            <div class="label">إجمالي المشتريات</div>
+            <div class="change positive">
+                <i class="bi bi-arrow-up"></i> 8.2%
+            </div>
+        </div>
+
+        <!-- Total Customers -->
+        <div class="stat-card customers">
+            <div class="icon">
+                <i class="bi bi-people"></i>
+            </div>
+            <div class="value">@stats.TotalCustomers</div>
+            <div class="label">عدد العملاء</div>
+            <div class="change positive">
+                <i class="bi bi-arrow-up"></i> 5.4%
+            </div>
+        </div>
+
+        <!-- Total Products -->
+        <div class="stat-card products">
+            <div class="icon">
+                <i class="bi bi-box-seam"></i>
+            </div>
+            <div class="value">@stats.TotalProducts</div>
+            <div class="label">عدد المنتجات</div>
+            <div class="change negative">
+                <i class="bi bi-arrow-down"></i> 2.1%
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-section">
+        <!-- Products Distribution Chart -->
+        <div class="chart-card">
+            <h6>توزيع المنتجات حسب الفئة</h6>
+            <div class="chart-container">
+                <canvas id="productsChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Sales & Purchases Chart -->
+        <div class="chart-card">
+            <h6>المبيعات والمشتريات الشهرية</h6>
+            <div class="chart-container">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="activity-card">
+        <h6 class="mb-3">آخر التحديثات</h6>
+
+        @if (ViewBag.RecentActivities != null && ViewBag.RecentActivities.Count > 0)
+        {
+            @foreach (var activity in ViewBag.RecentActivities)
+            {
+                <div class="activity-item">
+                    <div class="activity-icon success">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">@activity.FormName - @activity.OpName</div>
+                        <div class="activity-time">
+                            @if (activity.ActDate.HasValue)
+                            {
+                                @activity.ActDate.Value.ToString("dd/MM/yyyy")
+                            }
+                            @if (activity.ActTime.HasValue)
+                            {
+                                @(" - ")
+
+                                @activity.ActTime.Value.ToString(@"hh\:mm")
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="text-center text-muted py-4">
+                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                <p>لا توجد أنشطة حديثة</p>
+            </div>
+        }
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <a href="@Url.Action("Index", "DefineItem")" class="quick-action-btn">
+            <i class="bi bi-plus-circle"></i>
+            <span>إضافة منتج جديد</span>
+        </a>
+        <a href="@Url.Action("Index", "DefineCustomer")" class="quick-action-btn">
+            <i class="bi bi-person-plus"></i>
+            <span>إضافة عميل جديد</span>
+        </a>
+        <a href="#" class="quick-action-btn">
+            <i class="bi bi-receipt"></i>
+            <span>فاتورة مبيعات جديدة</span>
+        </a>
+        <a href="#" class="quick-action-btn">
+            <i class="bi bi-cart-plus"></i>
+            <span>فاتورة شراء جديدة</span>
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <script>
+        // Products Distribution Pie Chart
+        const productsCtx = document.getElementById('productsChart').getContext('2d');
+        new Chart(productsCtx, {
+            type: 'pie',
+            data: {
+                labels: ['إلكترونيات', 'ملابس', 'أغذية', 'أدوات منزلية', 'أخرى'],
+                datasets: [{
+                    data: [30, 25, 20, 15, 10],
+                    backgroundColor: [
+                        '#4A90E2',
+                        '#10B981',
+                        '#F59E0B',
+                        '#EF4444',
+                        '#8B5CF6'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        rtl: true,
+                        labels: {
+                            font: {
+                                family: 'Cairo',
+                                size: 12
+                            },
+                            padding: 15,
+                            usePointStyle: true
+                        }
+                    }
+                }
+            }
+        });
+
+        // Sales & Purchases Line Chart
+        const salesCtx = document.getElementById('salesChart').getContext('2d');
+        new Chart(salesCtx, {
+            type: 'line',
+            data: {
+                labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
+                datasets: [
+                    {
+                        label: 'المبيعات',
+                        data: [65000, 59000, 80000, 81000, 56000, 85000],
+                        borderColor: '#10B981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'المشتريات',
+                        data: [45000, 49000, 60000, 51000, 46000, 55000],
+                        borderColor: '#4A90E2',
+                        backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        rtl: true,
+                        labels: {
+                            font: {
+                                family: 'Cairo',
+                                size: 12
+                            },
+                            padding: 15,
+                            usePointStyle: true
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            font: {
+                                family: 'Cairo'
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                family: 'Cairo'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}

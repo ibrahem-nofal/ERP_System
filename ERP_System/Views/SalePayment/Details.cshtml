@@ -1,0 +1,102 @@
+@model ERP_System.Models.SalePayment
+
+@{
+    ViewData["Title"] = "تفاصيل سند القبض";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <style>
+        body {
+            background: #0f1724;
+            color: #e6eef6;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .details-card {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .detail-label {
+            color: #94a3b8;
+            font-weight: bold;
+        }
+
+        .detail-value {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-top: 20px;
+            color: #94a3b8;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>تفاصيل سند القبض #@Model.Id</h1>
+
+        <div class="details-card">
+            <div class="detail-row">
+                <span class="detail-label">تاريخ السند</span>
+                <span class="detail-value">@Model.PaymentDate.ToString("yyyy/MM/dd")</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">العميل</span>
+                <span class="detail-value">@(Model.InvoiceSale?.Customer?.Name ?? "-")</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">رقم الفاتورة</span>
+                <span class="detail-value">#@Model.InvSaleId</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">المبلغ المدفوع</span>
+                <span class="detail-value"
+                    style="color: #10b981; font-size: 1.2em;">@Model.AmountPaid.ToString("N2")</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">طريقة الدفع</span>
+                <span class="detail-value">@Model.PaymentMethod</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">ملاحظات</span>
+                <span class="detail-value">@Model.Remarks</span>
+            </div>
+        </div>
+
+        <a href="@Url.Action("List")" class="btn-back">← عودة للقائمة</a>
+    </div>
+</body>
+
+</html>

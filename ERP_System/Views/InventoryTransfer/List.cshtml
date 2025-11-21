@@ -1,0 +1,111 @@
+@{
+    ViewData["Title"] = "التحويلات المخزنية";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <style>
+        body {
+            background: #0f1724;
+            color: #e6eef6;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            color: #021024;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            color: #06b6d4;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>التحويلات المخزنية</h1>
+
+        <div class="header-actions">
+            <div style="color: #94a3b8;">عرض سجل التحويلات بين المخازن</div>
+            <a href="@Url.Action("Index")" class="btn btn-primary">+ تحويل جديد</a>
+        </div>
+
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>رقم العملية</th>
+                    <th>التاريخ</th>
+                    <th>من مخزن</th>
+                    <th>إلى مخزن</th>
+                    <th>الصنف</th>
+                    <th>الكمية</th>
+                    <th>بواسطة</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="7" style="text-align:center; padding: 30px; color: #94a3b8;">
+                        لا توجد عمليات تحويل حالياً
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

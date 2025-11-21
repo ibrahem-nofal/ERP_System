@@ -1,0 +1,123 @@
+﻿@using ERP_System.ViewModels
+@model AddSuppVm
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>إضافة بيانات الشركة</title>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background: #f5f7fa;
+            padding: 40px;
+            direction: rtl;
+        }
+
+        form {
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            max-width: 700px;
+            margin: auto;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: 600;
+            color: #222;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        button[type="submit"] {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+
+            button[type="submit"]:hover {
+                background: #0056b3;
+            }
+    </style>
+</head>
+<body>
+
+    <form asp-action="Index" method="post">
+        <h2>إضافة بيانات الشركة / الفرع</h2>
+
+        <label for="name">اسم الشركة</label>
+        <input type="text" asp-for="Name" maxlength="200" required />
+
+        <label for="ownerName">اسم المالك</label>
+        <input type="text" asp-for="OwnerName" maxlength="200" />
+
+        <label for="ownerPhone">هاتف المالك</label>
+        <input type="text" asp-for="OwnerPhone" maxlength="50" />
+
+        <label for="managerName">اسم المدير</label>
+        <input type="text" asp-for="ManagerName" maxlength="200" />
+
+        <label for="managerPhone">هاتف المدير</label>
+        <input type="text" asp-for="ManagerPhone" maxlength="50" />
+
+        <label for="address">العنوان</label>
+        <input type="text" asp-for="Address" maxlength="250" />
+
+        <div id="phonesContainer">
+            <div class="phone-row">
+                <input type="text" name="Phones[0]" class="phone-input" placeholder="رقم الهاتف" maxlength="20" />
+                <button type="button" class="add-phone">+</button>
+            </div>
+        </div>
+
+        <button type="submit">إرسال البيانات</button>
+    </form>
+    <script>
+        let phoneIndex = 1;
+
+        document.addEventListener("click", function (e) {
+            if (e.target.classList.contains("add-phone")) {
+
+                let container = document.getElementById("phonesContainer");
+
+                let row = document.createElement("div");
+                row.classList.add("phone-row");
+
+                row.innerHTML = `
+                    <input type="text" name="Phones[${phoneIndex}]" class="phone-input" placeholder="رقم الهاتف" maxlength="20" />
+                    <button type="button" class="remove-phone">-</button>
+                `;
+
+                container.appendChild(row);
+                phoneIndex++;
+            }
+
+            if (e.target.classList.contains("remove-phone")) {
+                e.target.parentElement.remove();
+            }
+        });
+    </script>
+</body>
+</html>

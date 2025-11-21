@@ -6,15 +6,21 @@ namespace ERP_System.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required, MaxLength(150)]
+
+        [MaxLength(150)]
         public string Name { get; set; }
-        [MaxLength(50)]
-        public string Phone { get; set; }
-        [MaxLength(100)]
-        public string Email { get; set; }
+
+        [MaxLength(10)]
+        public string Gender { get; set; }
+
+        [MaxLength(250)]
         public string Address { get; set; }
 
-        public ICollection<SalesInvoice> SalesInvoices { get; set; }
-        public ICollection<Receipt> Receipts { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? BirthDate { get; set; }
+
+        public string OtherDetails { get; set; }
+
+        public ICollection<CustomerPhone> Phones { get; set; }
     }
 }

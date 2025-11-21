@@ -1,0 +1,78 @@
+@model IEnumerable<ERP_System.Models.ActivityLog>
+
+@{
+    ViewData["Title"] = "سجل العمليات";
+}
+
+<div class="container-fluid fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-primary">
+                <i class="bi bi-clock-history me-2"></i> سجل العمليات
+            </h2>
+            <p class="text-muted">تتبع نشاط المستخدمين والعمليات في النظام</p>
+        </div>
+        <div>
+            <button class="btn btn-outline-danger">
+                <i class="bi bi-trash"></i> مسح السجل
+            </button>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="py-3 ps-4">العملية</th>
+                                <th class="py-3">التفاصيل</th>
+                                <th class="py-3">المستخدم</th>
+                                <th class="py-3">التاريخ</th>
+                                <th class="py-3">الوقت</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4">
+                                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill">
+                                            @item.OpName
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted small">@item.ActivityData</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center me-2"
+                                                style="width: 32px; height: 32px;">
+                                                <i class="bi bi-person text-secondary"></i>
+                                            </div>
+                                            <span>@item.Username</span>
+                                        </div>
+                                    </td>
+                                    <td>@(item.ActDate?.ToString("yyyy/MM/dd") ?? "-")</td>
+                                    <td>@(item.ActTime?.ToString() ?? "-")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                        style="width: 80px; height: 80px;">
+                        <i class="bi bi-clock-history text-muted fs-1"></i>
+                    </div>
+                    <h5 class="text-muted">لا توجد عمليات مسجلة حالياً</h5>
+                </div>
+            }
+        </div>
+    </div>
+</div>

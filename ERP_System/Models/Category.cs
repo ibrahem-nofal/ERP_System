@@ -6,11 +6,12 @@ namespace ERP_System.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required, MaxLength(100)]
+
+        [MaxLength(70)]
         public string Name { get; set; }
-        public string? Description { get; set; }
+        public string Detail { get; set; }
 
+        public ICollection<ItemCategory> ItemCategories { get; set; }
 
-        public ICollection<Product> Products { get; set; }
     }
 }

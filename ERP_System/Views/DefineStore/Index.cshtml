@@ -1,0 +1,86 @@
+﻿@using ERP_System.ViewModels
+@model AddStoreVm
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>إضافة بيانات</title>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background: #f5f7fa;
+            padding: 40px;
+            direction: rtl;
+        }
+
+        form {
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: auto;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: 600;
+            color: #222;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        button[type="submit"] {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+
+            button[type="submit"]:hover {
+                background: #0056b3;
+            }
+    </style>
+</head>
+<body>
+
+    <form asp-action="Index" method="post">
+        <h2>إضافة بيانات العميل / المورد</h2>
+
+        <label for="name">الاسم</label>
+        <input type="text" asp-for="Name" maxlength="150" required />
+
+        <label for="address">العنوان</label>
+        <input type="text" asp-for="Address" maxlength="200" />
+
+        <label for="phone">رقم الهاتف</label>
+        <input type="text" asp-for="Phone" maxlength="50" />
+
+        <label for="otherDetails">تفاصيل إضافية</label>
+        <textarea asp-for="OtherDetails" rows="3"></textarea>
+
+        <button type="submit">إرسال البيانات</button>
+    </form>
+
+</body>
+</html>

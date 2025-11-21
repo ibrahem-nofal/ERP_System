@@ -1,147 +1,0 @@
-﻿@model ERP_System.Models.StockTransfer
-
-@{
-    ViewData["Title"] = "إضافة تحويل مخزني جديد";
-}
-
-<div class="container-fluid px-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h3 class="fw-bold mb-1 text-primary">
-                <i class="bi bi-arrow-left-right"></i> إضافة تحويل مخزني
-            </h3>
-            <p class="text-muted">قم بتحويل المنتجات من مخزن إلى آخر</p>
-        </div>
-        <a asp-controller="Warehouses" asp-action="Index" class="btn btn-outline-primary">
-            <i class="bi bi-arrow-right-circle"></i> رجوع للمخازن
-        </a>
-    </div>
-
-    <div class="card shadow-sm rounded-4 p-4 bg-white">
-        <form asp-action="Create" method="post" id="transferForm">
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">من مخزن</label>
-                    <select asp-for="FromWarehouseId" class="form-select" required>
-                        <option value="">-- اختر المخزن --</option>
-                        @foreach (var w in ViewBag.Warehouses)
-                        {
-                            <option value="@w.Id">@w.Name</option>
-                        }
-                    </select>
-                </div>
-
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">إلى مخزن</label>
-                    <select asp-for="ToWarehouseId" class="form-select" required>
-                        <option value="">-- اختر المخزن --</option>
-                        @foreach (var w in ViewBag.Warehouses)
-                        {
-                            <option value="@w.Id">@w.Name</option>
-                        }
-                    </select>
-                </div>
-
-                <div class="col-12">
-                    <label class="form-label fw-semibold">الملاحظات</label>
-                    <textarea asp-for="Notes" class="form-control" rows="2"></textarea>
-                </div>
-            </div>
-
-            <hr class="my-4" />
-
-            <h5 class="fw-bold mb-3">تفاصيل المنتجات</h5>
-            <table class="table table-bordered text-center align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>المنتج</th>
-                        <th>الكمية</th>
-                        <th>إجراء</th>
-                    </tr>
-                </thead>
-                <tbody id="itemsTable">
-                    <tr>
-                        <td>
-                            <select name="productIds" class="form-select" required>
-                                <option value="">-- اختر المنتج --</option>
-                                @foreach (var p in ViewBag.Products)
-                                {
-                                    <option value="@p.Id">@p.Name</option>
-                                }
-                            </select>
-                        </td>
-                        <td><input type="number" name="quantities" class="form-control" min="1" required /></td>
-                        <td><button type="button" class="btn btn-outline-danger removeRow"><i class="bi bi-trash"></i></button></td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <button type="button" id="addRow" class="btn btn-outline-primary mb-3">
-                <i class="bi bi-plus-lg"></i> إضافة منتج آخر
-            </button>
-
-            <div class="text-end">
-                <button type="submit" class="btn btn-success px-5">
-                    <i class="bi bi-check-circle"></i> تنفيذ التحويل
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-@section Scripts {
-    <script>
-        // ✅ إضافة صف جديد
-        document.getElementById("addRow").addEventListener("click", function () {
-            var row = document.querySelector("#itemsTable tr").cloneNode(true);
-            row.querySelectorAll("input, select").forEach(e => e.value = "");
-            document.querySelector("#itemsTable").appendChild(row);
-        });
-
-        // ✅ حذف صف
-        document.addEventListener("click", function (e) {
-            if (e.target.closest(".removeRow")) {
-                e.target.closest("tr").remove();
-            }
-        });
-
-        // ✅ تحديث قائمة المنتجات + فلترة "إلى مخزن"
-        document.querySelector("select[name='FromWarehouseId']").addEventListener("change", function () {
-            const fromWarehouseId = this.value;
-            const toWarehouseSelect = document.querySelector("select[name='ToWarehouseId']");
-            const productSelects = document.querySelectorAll("select[name='productIds']");
-
-            // 🔹 تفريغ اختيار "إلى مخزن" عند التغيير
-            toWarehouseSelect.value = "";
-
-            // 🔹 إعادة تفعيل كل الخيارات أولًا
-            toWarehouseSelect.querySelectorAll("option").forEach(opt => opt.disabled = false);
-
-            // 🔹 تعطيل نفس المخزن المختار
-            if (fromWarehouseId) {
-                const sameOption = toWarehouseSelect.querySelector(`option[value='${fromWarehouseId}']`);
-                if (sameOption) sameOption.disabled = true;
-            }
-
-            // 🔹 تحميل المنتجات من المخزن المختار
-            productSelects.forEach(select => {
-                select.innerHTML = "<option value=''>جاري التحميل...</option>";
-            });
-
-            if (!fromWarehouseId) return;
-
-            fetch(`/StockTransfers/GetProductsByWarehouse?warehouseId=${fromWarehouseId}`)
-                .then(res => res.json())
-                .then(data => {
-                    productSelects.forEach(select => {
-                        select.innerHTML = "<option value=''>-- اختر المنتج --</option>";
-                        data.forEach(p => {
-                            select.innerHTML += `<option value="${p.id}">${p.name} (المتوفر: ${p.quantity})</option>`;
-                        });
-                    });
-                })
-                .catch(err => {
-                    console.error("❌ خطأ أثناء تحميل المنتجات:", err);
-                });
-        });
-    </script>
-}

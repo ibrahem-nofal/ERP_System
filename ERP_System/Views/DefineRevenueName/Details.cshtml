@@ -1,0 +1,85 @@
+@model ERP_System.Models.RevenueName
+
+@{
+    ViewData["Title"] = "تفاصيل مسمى الإيراد";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <style>
+        body {
+            background: #0f1724;
+            color: #e6eef6;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .details-card {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .detail-label {
+            color: #94a3b8;
+            font-weight: bold;
+        }
+
+        .detail-value {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-top: 20px;
+            color: #94a3b8;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>تفاصيل مسمى الإيراد: @Model.Name</h1>
+
+        <div class="details-card">
+            <div class="detail-row">
+                <span class="detail-label">الاسم</span>
+                <span class="detail-value">@Model.Name</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">الوصف</span>
+                <span class="detail-value">@Model.Description</span>
+            </div>
+        </div>
+
+        <a href="@Url.Action("List")" class="btn-back">← عودة للقائمة</a>
+    </div>
+</body>
+
+</html>

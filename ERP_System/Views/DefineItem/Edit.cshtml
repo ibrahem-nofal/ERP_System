@@ -1,0 +1,323 @@
+@using ERP_System.ViewModels
+@model AddItemVm
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تعديل صنف</title>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background: #0f1724;
+            color: #e6eef6;
+            padding: 30px;
+            direction: rtl;
+        }
+
+        form {
+            background: rgba(255, 255, 255, 0.04);
+            padding: 25px;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: auto;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            margin-top: 5px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+        }
+
+        .codes-container,
+        .categories-container {
+            margin-top: 5px;
+        }
+
+        .codes-container input,
+        .categories-container select {
+            width: calc(100% - 40px);
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        .add-btn {
+            width: 30px;
+            height: 30px;
+            margin-left: 5px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .add-btn:hover {
+            background: #0056b3;
+        }
+
+        .remove-btn {
+            width: 30px;
+            height: 30px;
+            margin-left: 5px;
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button[type="submit"] {
+            margin-top: 20px;
+            width: 100%;
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            color: #021024;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button[type="submit"]:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e6eef6;
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            display: inline-block;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <form asp-action="Edit" asp-route-id="@ViewBag.ItemId" method="post" enctype="multipart/form-data">
+        <h2>تعديل صنف</h2>
+
+        <label for="name">اسم الصنف</label>
+        <input type="text" asp-for="Name" maxlength="250" required>
+
+        <label>أكواد الصنف</label>
+        <div id="codesContainer">
+            @if (Model.Codes != null && Model.Codes.Any())
+            {
+                @for (int i = 0; i < Model.Codes.Count; i++)
+                {
+                    <div class="code-row">
+                        <input type="text" name="Codes[@i]" value="@Model.Codes[i]" placeholder="أدخل كود الصنف"
+                            maxlength="200" />
+                        @if (i == 0)
+                        {
+                            <button type="button" class="add-code add-btn">+</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="remove-btn">-</button>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="code-row">
+                    <input type="text" name="Codes[0]" placeholder="أدخل كود الصنف" maxlength="200" />
+                    <button type="button" class="add-code add-btn">+</button>
+                </div>
+            }
+        </div>
+
+
+        <label>خيارات التفعيل</label>
+        <div class="checkbox-group">
+            <label><input type="checkbox" asp-for="IsActiveBuy"> شراء مفعل</label>
+            <label><input type="checkbox" asp-for="IsActiveSale"> بيع مفعل</label>
+        </div>
+
+        <label for="companyMade">الشركة المصنعة</label>
+        <select asp-for="CompanyMade">
+            <option value="">-- اختر --</option>
+            @foreach (var c in ViewBag.companies)
+            {
+                <option value="@c.Id">
+                    @c.Name
+                </option>
+            }
+
+        </select>
+
+        <label for="defaultStore">المخزن الافتراضي</label>
+        <select asp-for="DefaultStore">
+            <option value="">-- اختر --</option>
+            @foreach (var c in ViewBag.stores)
+            {
+                <option value="@c.Id">
+                    @c.Name
+                </option>
+            }
+
+        </select>
+
+        <label>التصنيفات</label>
+        <div id="categoriesContainer">
+            @if (Model.CategoryIds != null && Model.CategoryIds.Any())
+            {
+                @for (int i = 0; i < Model.CategoryIds.Count; i++)
+                {
+                    <div class="category-row">
+                        <select name="CategoryIds[@i]">
+                            @foreach (var c in ViewBag.categories)
+                            {
+                                <option value="@c.Id" selected="@(c.Id == Model.CategoryIds[i])">@c.Name</option>
+                            }
+                        </select>
+                        @if (i == 0)
+                        {
+                            <button type="button" class="add-category add-btn">+</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="remove-btn">-</button>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="category-row">
+                    <select name="CategoryIds[0]">
+                        @foreach (var c in ViewBag.categories)
+                        {
+                            <option value="@c.Id">@c.Name</option>
+                        }
+                    </select>
+
+                    <button type="button" class="add-category add-btn">+</button>
+                </div>
+            }
+        </div>
+
+
+
+        <label for="unitNumber">الوحدة</label>
+        <select asp-for="UnitNumber">
+            <option value="">-- اختر --</option>
+            @foreach (var c in ViewBag.units)
+            {
+                <option value="@c.Id">
+                    @c.Name
+                </option>
+            }
+
+        </select>
+
+        <label for="minimumQuantity">الحد الأدنى للكمية</label>
+        <input type="number" asp-for="MinimumQuantity">
+
+        <label for="minQuantitySale">الحد الأدنى للبيع</label>
+        <input type="number" asp-for="MinQuantitySale">
+
+        <label>القيود</label>
+        <div class="checkbox-group">
+            <label><input type="checkbox" asp-for="PreventFraction"> منع الكسور</label>
+            <label><input type="checkbox" asp-for="PreventDiscount"> منع الخصم</label>
+        </div>
+
+        <label for="buyPrice">سعر الشراء</label>
+        <input type="number" asp-for="BuyPrice" step="0.01">
+
+        <label for="salePrice">سعر البيع</label>
+        <input type="number" asp-for="SalePrice" step="0.01">
+
+        <label for="image">صورة الصنف (اختياري - اتركه فارغاً للاحتفاظ بالصورة الحالية)</label>
+        <input type="file" asp-for="Image" accept="image/*">
+
+        <button type="submit">حفظ التعديلات</button>
+        <a href="@Url.Action("List")" class="btn-secondary">إلغاء</a>
+    </form>
+    <script>
+        let codeIndex = @(Model.Codes?.Count ?? 1);
+        let categoryIndex = @(Model.CategoryIds?.Count ?? 1);
+
+        document.addEventListener("click", function (e) {
+
+            if (e.target.classList.contains("add-code")) {
+                let container = document.getElementById("codesContainer");
+
+                let row = document.createElement("div");
+                row.classList.add("code-row");
+
+                row.innerHTML = `
+                    <input type="text" name="Codes[${codeIndex}]" placeholder="أدخل كود الصنف" maxlength="200" />
+                    <button type="button" class="remove-btn">-</button>
+                `;
+
+                container.appendChild(row);
+                codeIndex++;
+            }
+
+            if (e.target.classList.contains("add-category")) {
+                let container = document.getElementById("categoriesContainer");
+
+                let row = document.createElement("div");
+                row.classList.add("category-row");
+
+                row.innerHTML = `
+                    <select name="CategoryIds[${categoryIndex}]">
+                        ${Array.from(document.querySelectorAll("#categoriesContainer select option"))
+                        .map(o => `<option value="${o.value}">${o.text}</option>`).join("")}
+                    </select>
+                    <button type="button" class="remove-btn">-</button>
+                `;
+
+                container.appendChild(row);
+                categoryIndex++;
+            }
+
+            // حذف صف
+            if (e.target.classList.contains("remove-btn")) {
+                e.target.parentElement.remove();
+            }
+        });
+    </script>
+
+</body>
+
+</html>

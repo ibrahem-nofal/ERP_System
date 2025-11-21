@@ -1,0 +1,268 @@
+@model IEnumerable<ERP_System.Models.Item>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>قائمة الأصناف</title>
+    <style>
+        body {
+            background: #0f1724;
+            color: #e6eef6;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            margin: 0;
+            padding: 30px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            width: 300px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            color: #021024;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-edit {
+            background: #10b981;
+            color: #fff;
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: #fff;
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        .btn-details {
+            background: #3b82f6;
+            color: #fff;
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            background: rgba(255,255,255,0.04);
+            border-radius: 12px;
+            overflow: hidden;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: rgba(255,255,255,0.08);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        th {
+            font-weight: bold;
+            color: #06b6d4;
+        }
+
+        tbody tr {
+            transition: background 0.2s;
+        }
+
+        tbody tr:hover {
+            background: rgba(255,255,255,0.06);
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-start;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+        }
+
+        .item-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .delete-form {
+            display: inline;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge-success {
+            background: #10b981;
+            color: #fff;
+        }
+
+        .badge-danger {
+            background: #ef4444;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>قائمة الأصناف</h1>
+
+        <div class="header-actions">
+            <input type="text" id="searchBox" class="search-box" placeholder="بحث عن صنف...">
+            <a href="@Url.Action("Index")" class="btn btn-primary">+ إضافة صنف جديد</a>
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            <table id="itemTable">
+                <thead>
+                    <tr>
+                        <th>الصورة</th>
+                        <th>اسم الصنف</th>
+                        <th>الشركة المصنعة</th>
+                        <th>المخزن</th>
+                        <th>الوحدة</th>
+                        <th>سعر الشراء</th>
+                        <th>سعر البيع</th>
+                        <th>شراء مفعل</th>
+                        <th>بيع مفعل</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (item.Images != null && item.Images.Any())
+                                {
+                                    var firstImage = item.Images.First();
+                                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(firstImage.ItemImageData)" 
+                                         alt="@item.Name" class="item-image">
+                                }
+                                else
+                                {
+                                    <div class="item-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+                                }
+                            </td>
+                            <td>@item.Name</td>
+                            <td>@(item.Company?.Name ?? "غير محدد")</td>
+                            <td>@(item.Store?.Name ?? "غير محدد")</td>
+                            <td>@(item.Unit?.Name ?? "غير محدد")</td>
+                            <td>@(item.BuyPrice?.ToString("N2") ?? "-")</td>
+                            <td>@(item.SalePrice?.ToString("N2") ?? "-")</td>
+                            <td>
+                                @if (item.IsActiveBuy == true)
+                                {
+                                    <span class="badge badge-success">مفعل</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-danger">غير مفعل</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.IsActiveSale == true)
+                                {
+                                    <span class="badge badge-success">مفعل</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-danger">غير مفعل</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="actions">
+                                    <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-details">عرض</a>
+                                    <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-edit">تعديل</a>
+                                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="delete-form" 
+                                          onsubmit="return confirm('هل أنت متأكد من حذف هذا الصنف؟');">
+                                        <button type="submit" class="btn btn-delete">حذف</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="no-data">
+                <p>لا توجد أصناف حالياً</p>
+                <a href="@Url.Action("Index")" class="btn btn-primary">إضافة أول صنف</a>
+            </div>
+        }
+    </div>
+
+    <script>
+        // Search functionality
+        document.getElementById('searchBox').addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#itemTable tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>

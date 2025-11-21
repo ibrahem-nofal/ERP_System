@@ -1,0 +1,103 @@
+@{
+    ViewData["Title"] = "إعدادات النظام";
+}
+
+<div class="container-fluid fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-primary">
+                <i class="bi bi-gear me-2"></i> إعدادات النظام
+            </h2>
+            <p class="text-muted">تخصيص إعدادات التطبيق</p>
+        </div>
+        <button class="btn btn-primary">
+            <i class="bi bi-save me-2"></i> حفظ التغييرات
+        </button>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush rounded-3">
+                        <a href="#" class="list-group-item list-group-item-action active border-0 p-3">
+                            <i class="bi bi-sliders me-2"></i> عام
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action border-0 p-3">
+                            <i class="bi bi-bell me-2"></i> الإشعارات
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action border-0 p-3">
+                            <i class="bi bi-shield-lock me-2"></i> الأمان
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action border-0 p-3">
+                            <i class="bi bi-people me-2"></i> المستخدمين
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action border-0 p-3">
+                            <i class="bi bi-database me-2"></i> النسخ الاحتياطي
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4">الإعدادات العامة</h5>
+
+                    <form>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">اسم الشركة</label>
+                            <input type="text" class="form-control" value="شركتي للتجارة">
+                            <div class="form-text">الاسم الذي سيظهر في الفواتير والتقارير.</div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">اللغة الافتراضية</label>
+                                <select class="form-select">
+                                    <option value="ar" selected>العربية</option>
+                                    <option value="en">English</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">العملة</label>
+                                <select class="form-select">
+                                    <option value="EGP" selected>جنيه مصري (EGP)</option>
+                                    <option value="USD">دولار أمريكي (USD)</option>
+                                    <option value="SAR">ريال سعودي (SAR)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">شعار الشركة</label>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-light rounded-circle d-flex align-items-center justify-content-center"
+                                    style="width: 64px; height: 64px;">
+                                    <i class="bi bi-image text-muted fs-4"></i>
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm">تغيير الشعار</button>
+                                    <button type="button"
+                                        class="btn btn-link text-danger btn-sm text-decoration-none">حذف</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="mb-3 form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="darkMode">
+                            <label class="form-check-label" for="darkMode">تفعيل الوضع الليلي</label>
+                        </div>
+
+                        <div class="mb-3 form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="autoBackup" checked>
+                            <label class="form-check-label" for="autoBackup">نسخ احتياطي تلقائي يومي</label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

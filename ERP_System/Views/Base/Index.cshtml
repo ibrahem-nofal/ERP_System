@@ -1,0 +1,371 @@
+﻿<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>صفحة كروت</title>
+    <style>
+        :root {
+            --bg: #0f1724;
+            --card: #0b1220;
+            --muted: #9aa4b2;
+            --accent: #06b6d4;
+            --glass: rgba(255,255,255,0.04);
+            --radius: 12px;
+            color-scheme: dark;
+            font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Helvetica Neue', Arial;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            background: linear-gradient(180deg,#071027 0%, var(--bg) 100%);
+            color: #e6eef6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto
+        }
+
+        header {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: linear-gradient(135deg,var(--accent),#7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700
+        }
+
+        h1 {
+            font-size: 20px;
+            margin: 0
+        }
+
+        p.lead {
+            color: var(--muted);
+            margin: 0;
+            font-size: 14px
+        }
+
+        /* controls */
+        .controls {
+            display: flex;
+            gap: 8px;
+            align-items: center
+        }
+
+        .search {
+            background: var(--glass);
+            border: 1px solid rgba(255,255,255,0.03);
+            padding: 8px 12px;
+            border-radius: 999px;
+            min-width: 220px
+        }
+
+        .btn {
+            background: linear-gradient(90deg,var(--accent),#7c3aed);
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: none;
+            color: #021024;
+            cursor: pointer;
+            font-weight: 600
+        }
+
+        /* grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill,minmax(240px,1fr));
+            gap: 18px
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            border: 1px solid rgba(255,255,255,0.04);
+            padding: 16px;
+            border-radius: var(--radius);
+            backdrop-filter: blur(6px);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: transform .18s ease, box-shadow .18s ease;
+        }
+
+            .card:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 8px 30px rgba(2,6,23,0.6)
+            }
+
+        .thumb {
+            height: 140px;
+            border-radius: 10px;
+            overflow: hidden;
+            display: block
+        }
+
+            .thumb img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block
+            }
+
+        .title {
+            font-weight: 700;
+            font-size: 16px
+        }
+
+        .desc {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.45
+        }
+
+        .meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px
+        }
+
+        .tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap
+        }
+
+        .tag {
+            background: rgba(255,255,255,0.03);
+            padding: 6px 8px;
+            border-radius: 999px;
+            font-size: 12px;
+            color: var(--muted)
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px
+        }
+
+        .outline {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 8px 10px;
+            border-radius: 8px;
+            color: var(--muted);
+            cursor: pointer
+        }
+
+        /* empty state */
+        .empty {
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            color: var(--muted);
+            background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent)
+        }
+
+        /* responsive tweaks */
+        
+
+        .search {
+            width: 100%;
+            min-width: unset
+        }
+
+        header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <main>
+            <div id="grid" class="grid">
+                <!-- كارت نموذجي -->
+                <article class="card" data-title="">
+                    <a class="thumb" href="#">
+                        <img src="" alt="صورة">
+                    </a>
+                    <div>
+                        <div class="title">التصنيفات</div>
+                        <div class="desc">.....</div>
+                    </div>
+                    <div class="meta">
+                        <div class="actions">
+                            <a asp-action="Index" asp-controller="DefineCategory"><button class="outline">اضافة</button></a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card" data-title="">
+                    <a class="thumb" href="#">
+                        <img src="" alt="صورة">
+                    </a>
+                    <div>
+                        <div class="title">الموظفيين</div>
+                        <div class="desc">.....</div>
+                    </div>
+                    <div class="meta">
+                        <div class="actions">
+                            <a asp-action="Index" asp-controller="DefineEmployee"><button class="outline">اضافة</button></a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card" data-title="">
+                    <a class="thumb" href="#">
+                        <img src="" alt="صورة">
+                    </a>
+                    <div>
+                        <div class="title">الوحدات</div>
+                        <div class="desc">.....</div>
+                    </div>
+                    <div class="meta">
+                        <div class="actions">
+                            <a asp-action="Index" asp-controller="DefineUnit"><button class="outline">اضافة</button></a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card" data-title="">
+                    <a class="thumb" href="#">
+                        <img src="" alt="صورة">
+                    </a>
+                    <div>
+                        <div class="title">شركات المنشأ</div>
+                        <div class="desc">.....</div>
+                    </div>
+                    <div class="meta">
+                        <div class="actions">
+                            <a asp-action="Index" asp-controller="DefineCompany"><button class="outline">اضافة</button></a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card" data-title="">
+                    <a class="thumb" href="#">
+                        <img src="" alt="صورة">
+                    </a>
+                    <div>
+                        <div class="title">المخازن</div>
+                        <div class="desc">.....</div>
+                    </div>
+                    <div class="meta">
+                        <div class="actions">
+                            <a asp-action="Index" asp-controller="DefineStore"><button class="outline">اضافة</button></a>
+                        </div>
+                    </div>
+                </article>
+
+
+                <article class="card" data-title="">
+                    <a class="thumb" href="#">
+                        <img src="" alt="صورة">
+                    </a>
+                    <div>
+                        <div class="title">الموردين</div>
+                        <div class="desc">.....</div>
+                    </div>
+                    <div class="meta">
+                        <div class="actions">
+                            <a asp-action="Index" asp-controller="DefineSupplier"><button class="outline">اضافة</button></a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card" data-title="">
+                    <a class="thumb" href="#">
+                        <img src="" alt="صورة">
+                    </a>
+                    <div>
+                        <div class="title">الاصناف</div>
+                        <div class="desc">.....</div>
+                    </div>
+                    <div class="meta">
+                        <div class="actions">
+                            <a asp-action="Index" asp-controller="DefineItem"><button class="outline">اضافة</button></a>
+                        </div>
+                    </div>
+                </article>
+
+
+                <article class="card" data-title="">
+                    <a class="thumb" href="#">
+                        <img src="" alt="صورة">
+                    </a>
+                    <div>
+                        <div class="title">العملاء</div>
+                        <div class="desc">.....</div>
+                    </div>
+                    <div class="meta">
+                        <div class="actions">
+                            <a asp-action="Index" asp-controller="DefineCustomer"><button class="outline">اضافة</button></a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card" data-title="">
+                    <a class="thumb" href="#">
+                        <img src="" alt="صورة">
+                    </a>
+                    <div>
+                        <div class="title">اسماء المصروفات</div>
+                        <div class="desc">.....</div>
+                    </div>
+                    <div class="meta">
+                        <div class="actions">
+                            <a asp-action="Index" asp-controller="DefineExpenseName"><button class="outline">اضافة</button></a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card" data-title="">
+                    <a class="thumb" href="#">
+                        <img src="" alt="صورة">
+                    </a>
+                    <div>
+                        <div class="title">اسماء الايرادات</div>
+                        <div class="desc">.....</div>
+                    </div>
+                    <div class="meta">
+                        <div class="actions">
+                            <a asp-action="Index" asp-controller="DefineRevenueName"><button class="outline">اضافة</button></a>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </main>
+    </div>
+</body>
+</html>
+

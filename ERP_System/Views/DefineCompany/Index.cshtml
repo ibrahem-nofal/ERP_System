@@ -1,0 +1,150 @@
+﻿@using ERP_System.ViewModels
+@model AddCompVm
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>إضافة بيانات الشركة</title>
+
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background: #f4f6f8;
+            padding: 40px;
+        }
+
+        form {
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            max-width: 700px;
+            margin: auto;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+
+        .phones div {
+            margin-bottom: 5px;
+        }
+
+        .add-btn, .remove-btn {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .remove-btn {
+            background: #dc3545;
+        }
+
+        .add-btn:hover {
+            background: #0056b3;
+        }
+
+        .remove-btn:hover {
+            background: #b02a37;
+        }
+
+        button[type="submit"] {
+            background: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 15px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+
+            button[type="submit"]:hover {
+                background: #218838;
+            }
+    </style>
+</head>
+<body>
+
+    <form asp-action="Index" method="post">
+        <h2>إضافة بيانات الشركة</h2>
+
+        <label>الكود</label>
+        <input type="text" asp-for="Code" maxlength="50" />
+
+        <label>الاسم</label>
+        <input type="text" asp-for="Name" maxlength="150" required />
+
+        <label>العنوان</label>
+        <input type="text" asp-for="Address" maxlength="200" />
+
+        <label>تاريخ الإنشاء</label>
+        <input type="date" asp-for="DateCreated" />
+
+        <label>تفاصيل إضافية</label>
+        <textarea asp-for="OtherDetails" rows="3"></textarea>
+
+        <label>أرقام الهواتف</label>
+
+
+        <div id="phonesContainer">
+            <div class="phone-row">
+                <input type="text" name="Phones[0]" class="phone-input" placeholder="رقم الهاتف" maxlength="20" />
+                <button type="button" class="add-phone">+</button>
+            </div>
+        </div>
+
+        <button type="submit">إرسال البيانات</button>
+    </form>
+
+    <script>
+        let phoneIndex = 1;
+
+        document.addEventListener("click", function (e) {
+            if (e.target.classList.contains("add-phone")) {
+
+                let container = document.getElementById("phonesContainer");
+
+                let row = document.createElement("div");
+                row.classList.add("phone-row");
+
+                row.innerHTML = `
+                    <input type="text" name="Phones[${phoneIndex}]" class="phone-input" placeholder="رقم الهاتف" maxlength="20" />
+                    <button type="button" class="remove-phone">-</button>
+                `;
+
+                container.appendChild(row);
+                phoneIndex++;
+            }
+
+            if (e.target.classList.contains("remove-phone")) {
+                e.target.parentElement.remove();
+            }
+        });
+    </script>
+
+</body>
+</html>
