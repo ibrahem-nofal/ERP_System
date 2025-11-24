@@ -7,7 +7,9 @@
     /* Primary Colors */
     --primary-blue: #4A90E2;
     --dark-sidebar: #1E293B;
+    /* Dark Sidebar */
     --dark-sidebar-hover: #2D3B52;
+    /* Dark Hover */
 
     /* Status Colors */
     --success-green: #10B981;
@@ -19,6 +21,7 @@
     --light-bg: #F8FAFC;
     --card-bg: #FFFFFF;
     --sidebar-bg: #1E293B;
+    /* Dark Sidebar Background */
 
     /* Text Colors */
     --text-primary: #1E293B;
@@ -68,6 +71,7 @@ body {
     width: 280px;
     background: var(--sidebar-bg);
     color: white;
+    /* White text for dark sidebar */
     position: fixed;
     right: 0;
     top: 0;
@@ -135,6 +139,7 @@ body {
     font-size: 1.1rem;
     width: 24px;
     text-align: center;
+    color: inherit;
 }
 
 .sidebar .nav-link:hover {

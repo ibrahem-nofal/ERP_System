@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ERP_System.Models;
@@ -6,6 +7,7 @@ using ERP_System.ViewModels;
 
 namespace ERP_System.Controllers
 {
+    [Authorize]
     public class JournalEntryController : Controller
     {
         private readonly AppDbContext _context;

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ERP_System.Models;
@@ -7,6 +8,7 @@ using System.Collections;
 
 namespace ERP_System.Controllers
 {
+    [Authorize]
     public class DefineEmployeeController : Controller
     {
         private readonly AppDbContext _context;

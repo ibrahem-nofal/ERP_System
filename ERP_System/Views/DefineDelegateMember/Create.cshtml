@@ -1,0 +1,194 @@
+@model ERP_System.Models.DelegateMember
+
+@{
+    ViewData["Title"] = "إضافة مندوب جديد";
+}
+
+<div class="container-fluid px-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4 animate__animated animate__fadeInDown">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-action="Index" class="text-decoration-none">
+                    <i class="bi bi-house-door me-1"></i>المندوبين
+                </a>
+            </li>
+            <li class="breadcrumb-item active">إضافة مندوب جديد</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Main Card -->
+            <div class="card shadow-lg border-0 animate__animated animate__fadeInUp">
+                <div class="card-header bg-gradient-primary text-white py-4">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-circle bg-white text-primary me-3">
+                            <i class="bi bi-person-plus-fill"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-0 fw-bold">إضافة مندوب جديد</h4>
+                            <small class="opacity-75">قم باختيار موظف لإضافته كمندوب</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body p-4">
+                    <form asp-action="Create" id="createForm">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        <!-- Info Alert -->
+                        <div class="alert alert-info border-0 shadow-sm mb-4">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-info-circle-fill fs-4 me-3"></i>
+                                <div>
+                                    <strong>ملاحظة:</strong> سيتم عرض الموظفين الذين لم يتم إضافتهم كمندوبين فقط.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Employee Selection -->
+                        <div class="form-group mb-4">
+                            <label asp-for="EmpId" class="form-label fw-bold mb-3">
+                                <i class="bi bi-person-badge text-primary me-2"></i>
+                                اختر الموظف
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="position-relative">
+                                <select asp-for="EmpId" class="form-select form-select-lg shadow-sm" asp-items="ViewBag.Employees" required>
+                                    <option value="">-- اختر الموظف --</option>
+                                </select>
+                                <span asp-validation-for="EmpId" class="text-danger small mt-1 d-block"></span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-3 justify-content-end mt-5 pt-4 border-top">
+                            <a asp-action="Index" class="btn btn-lg btn-outline-secondary px-4">
+                                <i class="bi bi-x-circle me-2"></i>
+                                إلغاء
+                            </a>
+                            <button type="submit" class="btn btn-lg btn-primary px-5 shadow hover-lift">
+                                <i class="bi bi-check-circle me-2"></i>
+                                حفظ المندوب
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Help Card -->
+            <div class="card border-0 bg-light mt-4 animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-question-circle text-primary me-2"></i>
+                        كيفية الاستخدام
+                    </h6>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            اختر الموظف من القائمة المنسدلة
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            اضغط على "حفظ المندوب" لإضافته
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            يمكنك الإلغاء والعودة للقائمة في أي وقت
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .icon-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+        }
+
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4) !important;
+        }
+
+        .card {
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .form-select {
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:hover {
+            border-color: #667eea;
+        }
+
+        .btn {
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: "←";
+        }
+    </style>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Form validation feedback
+        document.getElementById('createForm').addEventListener('submit', function(e) {
+            const select = document.querySelector('select[name="EmpId"]');
+            if (!select.value) {
+                e.preventDefault();
+                select.classList.add('is-invalid');
+                select.focus();
+            }
+        });
+
+        // Remove invalid class on change
+        document.querySelector('select[name="EmpId"]').addEventListener('change', function() {
+            this.classList.remove('is-invalid');
+        });
+    </script>
+}

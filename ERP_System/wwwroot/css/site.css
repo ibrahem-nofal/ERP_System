@@ -20,42 +20,43 @@
     direction: ltr;
 }
 
-    .sidebar * {
-        direction: rtl;
-    }
+.sidebar * {
+    direction: rtl;
+}
 
-    /* ✅ Scrollbar styling */
-    .sidebar::-webkit-scrollbar {
-        width: 6px;
-    }
+/* ✅ Scrollbar styling */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
 
-    .sidebar::-webkit-scrollbar-thumb {
-        background-color: rgba(255, 255, 255, 0.3);
-        border-radius: 10px;
-    }
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
 
-        .sidebar::-webkit-scrollbar-thumb:hover {
-            background-color: rgba(255, 255, 255, 0.5);
-        }
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
 
-    .sidebar::-webkit-scrollbar-track {
-        background: transparent;
-    }
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
 
 /* ✅ Sidebar header (ERP logo + text) */
 .sidebar-header {
     margin-top: 5px;
 }
 
-    .sidebar-header i {
-        color: #fff;
-        filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
-    }
+.sidebar-header i {
+    color: #fff;
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
+}
 
-    .sidebar-header h5 {
-        font-size: 1.1rem;
-        letter-spacing: 0.5px;
-    }
+.sidebar-header h5 {
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    color: white;
+}
 
 .sidebar .nav-link {
     color: #dfe6ff;
@@ -65,29 +66,30 @@
     padding: 10px 15px;
 }
 
-    .sidebar .nav-link i {
-        margin-left: 8px;
-    }
+.sidebar .nav-link i {
+    margin-left: 8px;
+    color: inherit;
+}
 
-    .sidebar .nav-link:hover {
-        background-color: rgba(255, 255, 255, 0.15);
-        color: white;
-    }
+.sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+}
 
-    .sidebar .nav-link.active {
-        background: linear-gradient(90deg, #0048BA, #007BFF);
-        color: white !important;
-        font-weight: 700;
-        box-shadow: 0 2px 8px rgba(0, 123, 255, 0.4);
-        border-radius: 8px;
-    }
+.sidebar .nav-link.active {
+    background: linear-gradient(90deg, #0048BA, #007BFF);
+    color: white !important;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.4);
+    border-radius: 8px;
+}
 
 .sidebar h6 {
     font-size: 14px;
     color: #aab8ff;
     margin-top: 1.5rem;
     margin-bottom: 0.5rem;
-    border-top: 1px solid rgba(255,255,255,0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
     padding-top: 10px;
 }
 
@@ -100,7 +102,7 @@
 /* Navbar */
 .navbar {
     background-color: #fff;
-    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
     transition: all 0.4s ease;
 }
 
@@ -133,13 +135,13 @@
     transition: color 0.3s ease;
 }
 
-    .menu-toggle:hover {
-        color: #0a58ca;
-    }
+.menu-toggle:hover {
+    color: #0a58ca;
+}
 
-    .menu-toggle:active {
-        color: #003c9e;
-    }
+.menu-toggle:active {
+    color: #003c9e;
+}
 
 /* Profile */
 .profile-info span {
@@ -158,7 +160,38 @@
     transition: all 0.4s ease;
 }
 
-    .main-content.fullwidth {
-        margin-right: 0;
-        width: 100%;
-    }
+.main-content.fullwidth {
+    margin-right: 0;
+    width: 100%;
+}
+
+/* ✅ Fix for white text issue in form controls */
+.form-control,
+.form-select,
+input,
+select,
+textarea {
+    color: #212529 !important;
+    /* Dark text */
+    background-color: #fff !important;
+    /* White background */
+    border: 1px solid #ced4da;
+}
+
+.form-control:focus,
+.form-select:focus {
+    color: #212529 !important;
+    background-color: #fff !important;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Ensure table text is dark */
+.table {
+    color: #212529 !important;
+}
+
+.table th,
+.table td {
+    color: #212529 !important;
+}
