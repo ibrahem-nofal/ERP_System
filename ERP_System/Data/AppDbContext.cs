@@ -18,6 +18,8 @@ namespace ERP_System.Data
         public DbSet<Company> Companies { get; set; }
         public DbSet<CompanyPhone> CompanyPhones { get; set; }
         public DbSet<Store> Stores { get; set; }
+        public DbSet<StorePhone> StorePhones { get; set; }
+        public DbSet<StoreImage> StoreImages { get; set; }
         public DbSet<Unit> Units { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<ItemCode> ItemCodes { get; set; }

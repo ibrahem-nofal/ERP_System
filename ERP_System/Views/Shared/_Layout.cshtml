@@ -123,28 +123,34 @@
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a asp-controller="DefineEmployee" asp-action="Index"
+                    <a asp-controller="DefineEmployee" asp-action="List"
                        class="nav-link @(currentController == "DefineEmployee" ? "active" : "")">
                         <i class="bi bi-people"></i> إدارة المستخدمين
                     </a>
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a asp-controller="DefineItem" asp-action="Index"
+                    <a asp-controller="DefineItem" asp-action="List"
                        class="nav-link @(currentController == "DefineItem" ? "active" : "")">
-                        <i class="bi bi-box-seam"></i> المنتجات والمخازن
+                        <i class="bi bi-box-seam"></i> المنتجات 
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a asp-controller="DefineStore" asp-action="List"
+                       class="nav-link @(currentController == "DefineStore" ? "active" : "")">
+                        <i class="bi bi-box-seam"></i> المخازن
                     </a>
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a asp-controller="DefineCustomer" asp-action="Index"
+                    <a asp-controller="DefineCustomer" asp-action="List"
                        class="nav-link @(currentController == "DefineCustomer" ? "active" : "")">
                         <i class="bi bi-person-badge"></i> العملاء
                     </a>
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a asp-controller="DefineSupplier" asp-action="Index"
+                    <a asp-controller="DefineSupplier" asp-action="List"
                        class="nav-link @(currentController == "DefineSupplier" ? "active" : "")">
                         <i class="bi bi-truck"></i> الموردين
                     </a>

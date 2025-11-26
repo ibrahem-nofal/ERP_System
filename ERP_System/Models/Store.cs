@@ -11,17 +11,49 @@ namespace ERP_System.Models
         [MaxLength(150)]
         public string Name { get; set; }
 
-        [MaxLength(200)]
-        public string Address { get; set; }
+        [MaxLength(250)]
+        public string? Address { get; set; }
 
+        [MaxLength(120)]
+        public string? ManagerName { get; set; }
+
+        // غير مهيأ هنا كـ JSON أو علاقة منفصلة — سنخزن الهواتف في جدول EmpPhone مشابه أو كنص مفصول بفواصل.
+        public ICollection<StorePhone> Phones { get; set; }
+
+        [MaxLength(120)]
+        public string? Email { get; set; }
+
+        public bool IsActive { get; set; } = true;
+
+        [MaxLength(200)]
+        public string? OpeningHours { get; set; }
+
+        public string? Notes { get; set; }
+
+      
+
+        // صور (1..n)
+        public ICollection<StoreImage> Images { get; set; }
+    }
+
+    public class StorePhone
+    {
+        [Key]
+        public int Id { get; set; }
+        public int StoreId { get; set; }
+        [ForeignKey("StoreId")]
+        public Store Store { get; set; }
         [MaxLength(50)]
         public string Phone { get; set; }
+    }
 
-        public string OtherDetails { get; set; }
-
-        public int? StoreManager { get; set; }
-
-        [ForeignKey("StoreManager")]
-        public Employee Manager { get; set; }
+    public class StoreImage
+    {
+        [Key]
+        public int Id { get; set; }
+        public int StoreId { get; set; }
+        [ForeignKey("StoreId")]
+        public Store Store { get; set; }
+        public byte[] ImageData { get; set; }
     }
 }

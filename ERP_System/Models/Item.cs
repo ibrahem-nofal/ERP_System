@@ -13,6 +13,9 @@ namespace ERP_System.Models
 
         public bool? IsActiveBuy { get; set; }
         public bool? IsActiveSale { get; set; }
+        // وصف الصنف (اختياري)
+        [MaxLength(2000)]
+        public string? Description { get; set; }
 
         public int? CompanyMade { get; set; }
         [ForeignKey("CompanyMade")]

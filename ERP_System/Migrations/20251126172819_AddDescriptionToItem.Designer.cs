@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERP_System.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251123213716_UpdateDelegateMember")]
-    partial class UpdateDelegateMember
+    [Migration("20251126172819_AddDescriptionToItem")]
+    partial class AddDescriptionToItem
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -743,6 +743,10 @@ namespace ERP_System.Migrations
 
                     b.Property<int?>("DefaultStore")
                         .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<bool?>("IsActiveBuy")
                         .HasColumnType("bit");

@@ -1,323 +1,358 @@
 @using ERP_System.ViewModels
 @model AddItemVm
-<!DOCTYPE html>
-<html lang="ar">
 
+<!doctype html>
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>تعديل صنف</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>تعديل منتج</title>
+
     <style>
+        :root {
+            --bg: #0f1724;
+            --panel: rgba(255,255,255,0.07);
+            --panel-light: rgba(255,255,255,0.10);
+            --border: rgba(255,255,255,0.20);
+            --text: #e6eef6;
+            --muted: #9ca3af;
+            --gradient: linear-gradient(90deg,#06b6d4,#7c3aed);
+            --radius: 18px;
+        }
+
         body {
-            font-family: "Segoe UI", sans-serif;
-            background: #0f1724;
-            color: #e6eef6;
-            padding: 30px;
+            background: var(--bg);
+            margin: 0;
+            padding: 35px;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            color: var(--text);
             direction: rtl;
         }
 
-        form {
-            background: rgba(255, 255, 255, 0.04);
-            padding: 25px;
-            border-radius: 10px;
-            max-width: 800px;
-            margin: auto;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        h2 {
+        h1 {
             text-align: center;
-            margin-bottom: 20px;
-            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            font-size: 40px;
+            margin-bottom: 30px;
+            background: var(--gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-weight: 700;
+        }
+
+        .form-wrapper {
+            width: 100%;
+            max-width: 1400px;
+            margin: auto;
+            background: var(--panel);
+            padding: 36px;
+            border-radius: var(--radius);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+        }
+
+        .section-title {
+            font-size: 26px;
+            margin: 28px 0 16px;
+            color: #06b6d4;
+            border-bottom: 2px solid rgba(255,255,255,0.04);
+            padding-bottom: 8px;
+            font-weight: 700;
         }
 
         label {
+            font-size: 20px;
+            margin-bottom: 8px;
             display: block;
-            margin-top: 10px;
-            font-weight: 600;
+            font-weight: 700;
         }
 
-        input,
+        input[type="text"],
+        input[type="number"],
         select,
-        textarea {
+        textarea,
+        input[type="file"] {
             width: 100%;
-            padding: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            margin-top: 5px;
-            font-size: 14px;
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
+            background: var(--panel-light);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 18px;
+            color: var(--text);
+            margin-bottom: 12px;
+            outline: none;
+            box-sizing: border-box;
         }
 
-        .checkbox-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 5px;
+        textarea { min-height: 140px; resize: vertical; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 28px; }
+        @@media (max-width: 1000px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            label { font-size: 18px; }
+            input, select, textarea { font-size: 16px; padding: 12px; }
         }
 
-        .codes-container,
-        .categories-container {
-            margin-top: 5px;
+        .switch-box {
+            background: rgba(255,255,255,0.04);
+            padding: 18px;
+            border-radius: 12px;
+            margin-top: 8px;
         }
 
-        .codes-container input,
-        .categories-container select {
-            width: calc(100% - 40px);
-            display: inline-block;
-            margin-bottom: 5px;
-        }
+        .switch-item { font-size: 18px; margin-bottom: 8px; }
 
-        .add-btn {
-            width: 30px;
-            height: 30px;
-            margin-left: 5px;
-            background: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+        /* dynamic lists (codes/categories) */
+        .list-row { display:flex; gap:10px; align-items:center; margin-bottom:10px; }
+        .list-row input, .list-row select { flex: 1; }
+        .btn-small {
+            min-width:44px; height:44px; border-radius:10px; border:0; cursor:pointer; font-weight:700;
         }
+        .btn-add { background: #06b6d4; color: #021024; }
+        .btn-remove { background: #ef4444; color: #fff; }
 
-        .add-btn:hover {
-            background: #0056b3;
+        .image-preview {
+            width:200px; height:200px; border-radius:12px; overflow:hidden; background:linear-gradient(135deg,#334155,#0f1724);
+            display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:14px; border:2px solid rgba(255,255,255,0.03);
         }
+        .image-preview img { width:100%; height:100%; object-fit:cover; }
 
-        .remove-btn {
-            width: 30px;
-            height: 30px;
-            margin-left: 5px;
-            background: #ef4444;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+        .form-actions { margin-top:24px; display:flex; gap:16px; align-items:center; justify-content:flex-end; flex-wrap:wrap; }
+        .btn-save {
+            background: var(--gradient); color: #021024; border: none; padding: 14px 26px; border-radius: 12px; font-size:18px; cursor:pointer; font-weight:800;
         }
+        .btn-cancel { background: transparent; border:1px solid rgba(255,255,255,0.06); color:var(--text); padding:12px 18px; border-radius:10px; text-decoration:none; font-weight:700; }
 
-        button[type="submit"] {
-            margin-top: 20px;
-            width: 100%;
-            background: linear-gradient(90deg, #06b6d4, #7c3aed);
-            color: #021024;
-            padding: 10px;
-            border-radius: 6px;
-            border: none;
-            font-size: 16px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+        .help { color:var(--muted); font-size:14px; margin-top:6px; }
 
-        button[type="submit"]:hover {
-            opacity: 0.9;
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: #e6eef6;
-            text-decoration: none;
-            padding: 10px 18px;
-            border-radius: 6px;
-            display: inline-block;
-            text-align: center;
-            margin-top: 10px;
-        }
     </style>
 </head>
-
 <body>
+    <h1>تعديل المنتج</h1>
 
-    <form asp-action="Edit" asp-route-id="@ViewBag.ItemId" method="post" enctype="multipart/form-data">
-        <h2>تعديل صنف</h2>
+    <div class="form-wrapper">
+        <form asp-action="Edit" asp-route-id="@ViewBag.ItemId" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
 
-        <label for="name">اسم الصنف</label>
-        <input type="text" asp-for="Name" maxlength="250" required>
+            <div class="section-title">البيانات الأساسية</div>
 
-        <label>أكواد الصنف</label>
-        <div id="codesContainer">
-            @if (Model.Codes != null && Model.Codes.Any())
-            {
-                @for (int i = 0; i < Model.Codes.Count; i++)
-                {
-                    <div class="code-row">
-                        <input type="text" name="Codes[@i]" value="@Model.Codes[i]" placeholder="أدخل كود الصنف"
-                            maxlength="200" />
-                        @if (i == 0)
+            <label asp-for="Name">اسم المنتج</label>
+            <input asp-for="Name" type="text" maxlength="250" />
+
+            <label asp-for="Description">وصف المنتج</label>
+            <textarea asp-for="Description" placeholder="أدخل وصفًا واضحًا ومختصرًا"></textarea>
+
+            <div class="grid-2">
+                <div>
+                    <label>أكواد المنتج</label>
+                    <div id="codesContainer">
+                        @if (Model?.Codes != null && Model.Codes.Any())
                         {
-                            <button type="button" class="add-code add-btn">+</button>
-                        }
-                        else
-                        {
-                            <button type="button" class="remove-btn">-</button>
-                        }
-                    </div>
-                }
-            }
-            else
-            {
-                <div class="code-row">
-                    <input type="text" name="Codes[0]" placeholder="أدخل كود الصنف" maxlength="200" />
-                    <button type="button" class="add-code add-btn">+</button>
-                </div>
-            }
-        </div>
-
-
-        <label>خيارات التفعيل</label>
-        <div class="checkbox-group">
-            <label><input type="checkbox" asp-for="IsActiveBuy"> شراء مفعل</label>
-            <label><input type="checkbox" asp-for="IsActiveSale"> بيع مفعل</label>
-        </div>
-
-        <label for="companyMade">الشركة المصنعة</label>
-        <select asp-for="CompanyMade">
-            <option value="">-- اختر --</option>
-            @foreach (var c in ViewBag.companies)
-            {
-                <option value="@c.Id">
-                    @c.Name
-                </option>
-            }
-
-        </select>
-
-        <label for="defaultStore">المخزن الافتراضي</label>
-        <select asp-for="DefaultStore">
-            <option value="">-- اختر --</option>
-            @foreach (var c in ViewBag.stores)
-            {
-                <option value="@c.Id">
-                    @c.Name
-                </option>
-            }
-
-        </select>
-
-        <label>التصنيفات</label>
-        <div id="categoriesContainer">
-            @if (Model.CategoryIds != null && Model.CategoryIds.Any())
-            {
-                @for (int i = 0; i < Model.CategoryIds.Count; i++)
-                {
-                    <div class="category-row">
-                        <select name="CategoryIds[@i]">
-                            @foreach (var c in ViewBag.categories)
+                            @for (int i = 0; i < Model.Codes.Count; i++)
                             {
-                                <option value="@c.Id" selected="@(c.Id == Model.CategoryIds[i])">@c.Name</option>
+                                <div class="list-row">
+                                    <input type="text" name="Codes[@i]" value="@Model.Codes[i]" maxlength="200" />
+                                    @if (i == 0)
+                                    {
+                                        <button type="button" class="btn-small btn-add add-code">+</button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn-small btn-remove remove-code">-</button>
+                                    }
+                                </div>
                             }
-                        </select>
-                        @if (i == 0)
-                        {
-                            <button type="button" class="add-category add-btn">+</button>
                         }
                         else
                         {
-                            <button type="button" class="remove-btn">-</button>
+                            <div class="list-row">
+                                <input type="text" name="Codes[0]" maxlength="200" />
+                                <button type="button" class="btn-small btn-add add-code">+</button>
+                            </div>
                         }
                     </div>
-                }
-            }
-            else
-            {
-                <div class="category-row">
-                    <select name="CategoryIds[0]">
-                        @foreach (var c in ViewBag.categories)
+                    <div class="help">أضف أكثر من كود إن لزم — يستخدم للبحث والربط.</div>
+                </div>
+
+                <div>
+                    <label>التصنيفات</label>
+                    <div id="categoriesContainer">
+                        @if (Model?.CategoryIds != null && Model.CategoryIds.Any())
                         {
-                            <option value="@c.Id">@c.Name</option>
+                            @for (int i = 0; i < Model.CategoryIds.Count; i++)
+                            {
+                                <div class="list-row">
+                                    <select name="CategoryIds[@i]">
+                                        @foreach (var c in ViewBag.categories)
+                                        {
+                                            <option value="@c.Id" @@(c.Id == Model.CategoryIds[i] ? "selected" : "")>@c.Name</option>
+                                        }
+                                    </select>
+                                    @if (i == 0)
+                                    {
+                                        <button type="button" class="btn-small btn-add add-category">+</button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn-small btn-remove remove-category">-</button>
+                                    }
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="list-row">
+                                <select name="CategoryIds[0]">
+                                    @foreach (var c in ViewBag.categories)
+                                    {
+                                        <option value="@c.Id">@c.Name</option>
+                                    }
+                                </select>
+                                <button type="button" class="btn-small btn-add add-category">+</button>
+                            </div>
+                        }
+                    </div>
+                    <div class="help">ربط المنتج بتصنيفات (يمكن اختيار أكثر من تصنيف).</div>
+                </div>
+            </div>
+
+            <div class="section-title">التسعير والمخزون</div>
+
+            <div class="grid-3">
+                <div>
+                    <label asp-for="BuyPrice">سعر الشراء</label>
+                    <input asp-for="BuyPrice" type="number" step="0.01" />
+                </div>
+
+                <div>
+                    <label asp-for="SalePrice">سعر البيع</label>
+                    <input asp-for="SalePrice" type="number" step="0.01" />
+                </div>
+
+                <div>
+                    <label asp-for="UnitNumber">الوحدة</label>
+                    <select asp-for="UnitNumber">
+                        <option value="">-- اختر --</option>
+                        @foreach (var u in ViewBag.units)
+                        {
+                            <option value="@u.Id" @@(Model?.UnitNumber == u.Id ? "selected" : "")>@u.Name</option>
                         }
                     </select>
-
-                    <button type="button" class="add-category add-btn">+</button>
                 </div>
-            }
-        </div>
+            </div>
 
+            <div class="grid-2">
+                <div>
+                    <label asp-for="MinimumQuantity">الحد الأدنى للكمية</label>
+                    <input asp-for="MinimumQuantity" type="number" />
+                </div>
 
+                <div>
+                    <label asp-for="MinQuantitySale">الحد الأدنى للبيع</label>
+                    <input asp-for="MinQuantitySale" type="number" />
+                </div>
+            </div>
 
-        <label for="unitNumber">الوحدة</label>
-        <select asp-for="UnitNumber">
-            <option value="">-- اختر --</option>
-            @foreach (var c in ViewBag.units)
-            {
-                <option value="@c.Id">
-                    @c.Name
-                </option>
-            }
+            <div class="section-title">الإعدادات</div>
 
-        </select>
+            <div class="switch-box">
+                <div class="switch-item"><input type="checkbox" asp-for="IsActiveBuy" /> تفعيل الشراء</div>
+                <div class="switch-item"><input type="checkbox" asp-for="IsActiveSale" /> تفعيل البيع</div>
+                <div class="switch-item"><input type="checkbox" asp-for="PreventFraction" /> منع الكسور</div>
+                <div class="switch-item"><input type="checkbox" asp-for="PreventDiscount" /> منع الخصم</div>
+            </div>
 
-        <label for="minimumQuantity">الحد الأدنى للكمية</label>
-        <input type="number" asp-for="MinimumQuantity">
+            <div class="section-title">الصورة</div>
 
-        <label for="minQuantitySale">الحد الأدنى للبيع</label>
-        <input type="number" asp-for="MinQuantitySale">
+            <div style="display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap;">
+                <div style="flex:1; min-width:260px;">
+                    <label asp-for="Image">صورة المنتج (اختياري)</label>
+                    <input asp-for="Image" type="file" accept="image/*" id="imageInput" />
+                    <div class="help">اترك الحقل فارغاً للاحتفاظ بالصورة الحالية.</div>
+                </div>
 
-        <label>القيود</label>
-        <div class="checkbox-group">
-            <label><input type="checkbox" asp-for="PreventFraction"> منع الكسور</label>
-            <label><input type="checkbox" asp-for="PreventDiscount"> منع الخصم</label>
-        </div>
+                <div style="width:220px;">
+                    <label>معاينة الصورة الحالية</label>
+                    <div class="image-preview" id="imagePreview">
+                        @if (ViewBag.ImageBase64 != null)
+                        {
+                            <img src="data:image/jpeg;base64,@ViewBag.ImageBase64" alt="preview" />
+                        }
+                        else
+                        {
+                            <div class="help">لا توجد صورة حالية</div>
+                        }
+                    </div>
+                </div>
+            </div>
 
-        <label for="buyPrice">سعر الشراء</label>
-        <input type="number" asp-for="BuyPrice" step="0.01">
+            <div class="form-actions">
+                <a href="@Url.Action("List")" class="btn-cancel">إلغاء</a>
+                <button type="submit" class="btn-save">حفظ التعديلات</button>
+            </div>
+        </form>
+    </div>
 
-        <label for="salePrice">سعر البيع</label>
-        <input type="number" asp-for="SalePrice" step="0.01">
-
-        <label for="image">صورة الصنف (اختياري - اتركه فارغاً للاحتفاظ بالصورة الحالية)</label>
-        <input type="file" asp-for="Image" accept="image/*">
-
-        <button type="submit">حفظ التعديلات</button>
-        <a href="@Url.Action("List")" class="btn-secondary">إلغاء</a>
-    </form>
     <script>
-        let codeIndex = @(Model.Codes?.Count ?? 1);
-        let categoryIndex = @(Model.CategoryIds?.Count ?? 1);
+        // الفهارس الأولية
+        let codeIndex = @(Model?.Codes?.Count ?? 1);
+        let categoryIndex = @(Model?.CategoryIds?.Count ?? 1);
+
+        function getCategoryOptionsHtml() {
+            const firstSelect = document.querySelector("#categoriesContainer select");
+            if (!firstSelect) return "";
+            return Array.from(firstSelect.options)
+                .map(o => `<option value="${o.value}">${o.text}</option>`)
+                .join("");
+        }
 
         document.addEventListener("click", function (e) {
-
             if (e.target.classList.contains("add-code")) {
-                let container = document.getElementById("codesContainer");
-
-                let row = document.createElement("div");
-                row.classList.add("code-row");
-
+                const container = document.getElementById("codesContainer");
+                const row = document.createElement("div");
+                row.className = "list-row";
                 row.innerHTML = `
-                    <input type="text" name="Codes[${codeIndex}]" placeholder="أدخل كود الصنف" maxlength="200" />
-                    <button type="button" class="remove-btn">-</button>
+                    <input type="text" name="Codes[${codeIndex}]" maxlength="200" />
+                    <button type="button" class="btn-small btn-remove remove-code">-</button>
                 `;
-
                 container.appendChild(row);
                 codeIndex++;
             }
 
             if (e.target.classList.contains("add-category")) {
-                let container = document.getElementById("categoriesContainer");
-
-                let row = document.createElement("div");
-                row.classList.add("category-row");
-
+                const container = document.getElementById("categoriesContainer");
+                const row = document.createElement("div");
+                row.className = "list-row";
                 row.innerHTML = `
                     <select name="CategoryIds[${categoryIndex}]">
-                        ${Array.from(document.querySelectorAll("#categoriesContainer select option"))
-                        .map(o => `<option value="${o.value}">${o.text}</option>`).join("")}
+                        ${getCategoryOptionsHtml()}
                     </select>
-                    <button type="button" class="remove-btn">-</button>
+                    <button type="button" class="btn-small btn-remove remove-category">-</button>
                 `;
-
                 container.appendChild(row);
                 categoryIndex++;
             }
 
-            // حذف صف
-            if (e.target.classList.contains("remove-btn")) {
-                e.target.parentElement.remove();
+            if (e.target.classList.contains("remove-code") || e.target.classList.contains("remove-category")) {
+                const row = e.target.closest(".list-row");
+                if (row) row.remove();
             }
         });
+
+        // معاينة الصورة قبل الرفع
+        (function () {
+            const input = document.getElementById('imageInput');
+            const preview = document.getElementById('imagePreview');
+            if (!input) return;
+            input.addEventListener('change', function (ev) {
+                const file = ev.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.innerHTML = '<img src="' + e.target.result + '" alt="preview" />';
+                };
+                reader.readAsDataURL(file);
+            });
+        })();
     </script>
-
 </body>
-
 </html>

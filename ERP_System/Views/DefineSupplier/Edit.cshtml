@@ -1,148 +1,331 @@
-@model ERP_System.ViewModels.AddSuppVm
+@using ERP_System.ViewModels
+@model AddSuppVm
 
 @{
     ViewData["Title"] = "تعديل مورد";
 }
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - ERP System</title>
+
     <style>
+        :root {
+            --bg: #0f1724;
+            --panel: rgba(255,255,255,0.06);
+            --panel-light: rgba(255,255,255,0.10);
+            --border: rgba(255,255,255,0.14);
+            --text: #e6eef6;
+            --muted: #9ca3af;
+            --accent-a: #06b6d4;
+            --accent-b: #7c3aed;
+            --radius: 16px;
+            --danger: #ff6b6b;
+        }
+
         body {
-            background: #0f1724;
-            color: #e6eef6;
+            background: var(--bg);
+            color: var(--text);
             font-family: "Segoe UI", Tahoma, sans-serif;
+            margin: 0;
+            padding: 28px;
+            direction: rtl;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        h1 {
+        .page-title {
             text-align: center;
-            margin-bottom: 30px;
-            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            margin-bottom: 18px;
+            font-size: 28px;
+            background: linear-gradient(90deg, var(--accent-a), var(--accent-b));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-weight: 800;
         }
 
-        .form-card {
-            background: rgba(255,255,255,0.02);
-            padding: 30px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.05);
+        .form-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--panel);
+            border-radius: 18px;
+            padding: 28px;
+            box-shadow: 0 12px 40px rgba(2,6,23,0.6);
         }
 
-        .form-group {
-            margin-bottom: 20px;
+        .section-title {
+            font-size: 20px;
+            color: var(--accent-a);
+            margin: 20px 0 10px;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            padding-bottom: 8px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            align-items: start;
+        }
+
+        .full {
+            grid-column: 1 / -1;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
-            color: #94a3b8;
-            font-weight: bold;
+            margin-bottom: 6px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
         }
 
-        input, select, textarea {
+        input[type="text"], input[type="tel"], select, textarea {
             width: 100%;
-            padding: 12px;
-            border-radius: 6px;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.05);
-            color: #fff;
-            font-size: 14px;
-        }
-
-        input:focus, select:focus, textarea:focus {
+            box-sizing: border-box;
+            background: var(--panel-light);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            color: var(--text);
+            font-size: 15px;
             outline: none;
-            border-color: #06b6d4;
-            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+            transition: border-color .12s, box-shadow .12s, transform .06s;
         }
 
-        .btn-primary {
-            background: linear-gradient(90deg, #06b6d4, #7c3aed);
-            color: #021024;
-            padding: 12px 24px;
-            border-radius: 6px;
+            input[type="text"]:focus, input[type="tel"]:focus, select:focus, textarea:focus {
+                border-color: var(--accent-a);
+                box-shadow: 0 6px 18px rgba(6,182,212,0.06);
+                transform: translateY(-1px);
+            }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .phones-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .phone-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+            .phone-row input {
+                flex: 1;
+                padding: 12px;
+                border-radius: 10px;
+            }
+
+        .btn-phone {
+            min-width: 44px;
+            height: 44px;
+            border-radius: 10px;
             border: none;
-            font-weight: bold;
             cursor: pointer;
+            font-size: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .btn-add {
+            background: linear-gradient(90deg,#10b981,#059669);
+        }
+
+        .btn-remove {
+            background: linear-gradient(90deg,#ef4444,#dc2626);
+        }
+
+        .small-muted {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 6px;
+            display: block;
+        }
+
+        .field-error {
+            color: var(--danger);
+            font-size: 13px;
+            margin-top: 6px;
+            display: block;
+        }
+
+        .submit-btn {
             width: 100%;
             margin-top: 20px;
+            padding: 16px;
+            font-size: 18px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(90deg,var(--accent-a),var(--accent-b));
+            color: #021024;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 12px 30px rgba(124,58,237,0.12);
+            transition: transform .12s, box-shadow .12s;
+        }
+
+            .submit-btn:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 18px 40px rgba(124,58,237,0.16);
+            }
+
+        @@media (max-width:900px) {
+            .grid-2
+
+        {
+            grid-template-columns: 1fr;
+        }
+
+        .form-wrapper {
+            padding: 18px;
+        }
+
+        .page-title {
+            font-size: 24px;
+        }
+
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>تعديل بيانات المورد</h1>
+    <h1 class="page-title">تعديل مورد</h1>
 
-        <div class="form-card">
-            <form asp-action="Edit" method="post">
-                <input type="hidden" name="id" value="@ViewBag.Id" />
-                
-                <div class="form-group">
-                    <label>اسم المورد</label>
-                    <input asp-for="Name" required />
+    <div class="form-wrapper">
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+
+            @* إذا عندك Id في ViewBag ارسله مخفيًا *@
+            @if (ViewBag.Id != null)
+            {
+                <input type="hidden" name="Id" value="@ViewBag.Id" />
+            }
+
+            <div class="section-title">بيانات المورد</div>
+
+            <div class="grid-2">
+                <div>
+                    <label asp-for="Name">اسم المورد</label>
+                    <input asp-for="Name" placeholder="اسم المورد " />
+                    <span asp-validation-for="Name" class="field-error"></span>
                 </div>
 
-                <div class="form-group">
-                    <label>اسم المدير</label>
-                    <input asp-for="ManagerName" />
+                <div>
+                    <label asp-for="OwnerName">اسم المالك</label>
+                    <input asp-for="OwnerName" placeholder="اسم المالك" />
+                    <span asp-validation-for="OwnerName" class="field-error"></span>
                 </div>
 
-                <div class="form-group">
-                    <label>رقم هاتف المدير</label>
-                    <input asp-for="ManagerPhone" />
+                <div>
+                    <label asp-for="OwnerPhone">هاتف المالك</label>
+                    <input asp-for="OwnerPhone" type="tel" placeholder="هاتف المالك" />
+                    <span asp-validation-for="OwnerPhone" class="field-error"></span>
                 </div>
 
-                <div class="form-group">
-                    <label>اسم المالك</label>
-                    <input asp-for="OwnerName" />
+                <div>
+                    <label asp-for="ManagerName">اسم المدير</label>
+                    <input asp-for="ManagerName" placeholder="اسم المدير" />
+                    <span asp-validation-for="ManagerName" class="field-error"></span>
                 </div>
 
-                <div class="form-group">
-                    <label>رقم هاتف المالك</label>
-                    <input asp-for="OwnerPhone" />
+                <div>
+                    <label asp-for="ManagerPhone">هاتف المدير</label>
+                    <input asp-for="ManagerPhone" type="tel" placeholder="هاتف المدير" />
+                    <span asp-validation-for="ManagerPhone" class="field-error"></span>
                 </div>
 
-                <div class="form-group">
-                    <label>العنوان</label>
-                    <textarea asp-for="Address" rows="3"></textarea>
+                <div class="full">
+                    <label asp-for="Address">العنوان</label>
+                    <input asp-for="Address" placeholder="العنوان الكامل" />
+                    <span asp-validation-for="Address" class="field-error"></span>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label>أرقام الهواتف الإضافية</label>
-                    <div id="phonesContainer">
-                        @if (Model.Phones != null)
+            <div class="section-title">بيانات الاتصال الإضافية</div>
+
+            <div class="full">
+                <label>أرقام الهاتف الإضافية</label>
+                <div id="phonesContainer" class="phones-container">
+                    @if (Model?.Phones != null && Model.Phones.Any())
+                    {
+                        for (int i = 0; i < Model.Phones.Count; i++)
                         {
-                            for (int i = 0; i < Model.Phones.Count; i++)
-                            {
-                                <input name="Phones" value="@Model.Phones[i]" style="margin-bottom: 10px;" />
-                            }
+                            <div class="phone-row">
+                                <input type="text" name="Phones[@i]" value="@Model.Phones[i]" placeholder="رقم الهاتف" maxlength="20" />
+                                @if (i == 0)
+                                {
+                                    <button type="button" class="btn-phone btn-add add-phone" title="إضافة رقم">+</button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn-phone btn-remove remove-phone" title="حذف">−</button>
+                                }
+                            </div>
                         }
-                        <input name="Phones" placeholder="رقم جديد..." style="margin-bottom: 10px;" />
-                    </div>
-                    <button type="button" onclick="addPhoneField()" style="background: transparent; border: 1px solid #06b6d4; color: #06b6d4; padding: 5px 10px; border-radius: 4px; cursor: pointer;">+ إضافة رقم آخر</button>
+                    }
+                    else
+                    {
+                        <div class="phone-row">
+                            <input type="text" name="Phones[0]" placeholder="رقم الهاتف" maxlength="20" />
+                            <button type="button" class="btn-phone btn-add add-phone" title="إضافة رقم">+</button>
+                        </div>
+                    }
                 </div>
+                <span asp-validation-for="Phones" class="field-error"></span>
+                <span class="small-muted">يمكنك إضافة أرقام احتياطية — اضغط + لإضافة، و− للحذف.</span>
+            </div>
 
-                <button type="submit" class="btn-primary">حفظ التعديلات</button>
-            </form>
-        </div>
+            <div class="full" style="margin-top:8px;">
+                <button type="submit" class="submit-btn">حفظ التعديلات</button>
+            </div>
+        </form>
     </div>
 
-    <script>
-        function addPhoneField() {
-            const container = document.getElementById('phonesContainer');
-            const input = document.createElement('input');
-            input.name = 'Phones';
-            input.placeholder = 'رقم جديد...';
-            input.style.marginBottom = '10px';
-            container.appendChild(input);
-        }
-    </script>
+    @section Scripts {
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js" crossorigin="anonymous"></script>
+
+        <script>
+            (function () {
+                const container = document.getElementById('phonesContainer');
+                // احسب البداية من عدد الحقول الحالية
+                let index = container.querySelectorAll('.phone-row').length;
+                if (!index) index = 1;
+
+                document.addEventListener('click', function (e) {
+                    const addBtn = e.target.closest('.add-phone');
+                    const removeBtn = e.target.closest('.remove-phone');
+
+                    if (addBtn) {
+                        e.preventDefault();
+                        const row = document.createElement('div');
+                        row.className = 'phone-row';
+                        row.innerHTML = `
+                            <input type="text" name="Phones[${index}]" placeholder="رقم الهاتف" maxlength="20" />
+                            <button type="button" class="btn-phone btn-remove remove-phone" title="حذف">−</button>
+                        `;
+                        container.appendChild(row);
+                        index++;
+                    }
+
+                    if (removeBtn) {
+                        e.preventDefault();
+                        const p = removeBtn.closest('.phone-row');
+                        if (p) p.remove();
+                    }
+                });
+            })();
+        </script>
+    }
 </body>
 </html>

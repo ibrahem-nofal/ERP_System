@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using ERP_System.Models;
 using ERP_System.Data;
 using ERP_System.ViewModels;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ERP_System.Controllers
 {
@@ -34,27 +37,33 @@ namespace ERP_System.Controllers
         public IActionResult Index()
         {
             LoadViewBagData();
-            return View();
+            return View(new AddItemVm());
         }
 
         // Create new item (POST)
         [HttpPost]
-        public IActionResult Index(AddItemVm advm)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Index(AddItemVm advm)
         {
-            byte[] imageBytes = null;
+            // ???? ?? ??? ??????? ?????
+            if (!ModelState.IsValid)
+            {
+                LoadViewBagData();
+                return View(advm);
+            }
 
+            byte[]? imageBytes = null;
             if (advm.Image != null)
             {
-                using (var ms = new MemoryStream())
-                {
-                    advm.Image.CopyTo(ms);
-                    imageBytes = ms.ToArray();
-                }
+                using var ms = new MemoryStream();
+                await advm.Image.CopyToAsync(ms);
+                imageBytes = ms.ToArray();
             }
 
             var item = new Item
             {
-                Name = advm.Name,
+                Name = advm.Name?.Trim(),
+                Description = advm.Description?.Trim(),
                 CompanyMade = advm.CompanyMade,
                 DefaultStore = advm.DefaultStore,
                 BuyPrice = advm.BuyPrice,
@@ -68,47 +77,58 @@ namespace ERP_System.Controllers
                 UnitNumber = advm.UnitNumber
             };
 
-            _context.Items.Add(item);
-
-            if (advm.Codes != null)
+            try
             {
-                foreach (var c in advm.Codes)
+                _context.Items.Add(item);
+
+                // ????? ?????? - ????? ????? ??????? ??? ???????
+                if (advm.Codes != null)
                 {
-                    var code = new ItemCode
+                    foreach (var codeValue in advm.Codes.Where(c => !string.IsNullOrWhiteSpace(c)).Select(c => c.Trim()))
+                    {
+                        var code = new ItemCode
+                        {
+                            Item = item,
+                            ItemCodeValue = codeValue
+                        };
+                        _context.ItemCodes.Add(code);
+                    }
+                }
+
+                // ?????????
+                if (advm.CategoryIds != null)
+                {
+                    foreach (var c in advm.CategoryIds.Distinct())
+                    {
+                        var cat = new ItemCategory
+                        {
+                            Item = item,
+                            CategoryId = c,
+                        };
+                        _context.ItemCategories.Add(cat);
+                    }
+                }
+
+                if (imageBytes != null)
+                {
+                    var img = new ItemImage
                     {
                         Item = item,
-                        ItemCodeValue = c
+                        ItemImageData = imageBytes
                     };
-                    _context.ItemCodes.Add(code);
+                    _context.ItemImages.Add(img);
                 }
-            }
 
-            if (advm.CategoryIds != null)
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
             {
-                foreach (var c in advm.CategoryIds.Distinct())
-                {
-                    var cat = new ItemCategory
-                    {
-                        Item = item,
-                        CategoryId = c,
-                    };
-
-                    _context.ItemCategories.Add(cat);
-                }
+                // ????? ???? ??????? ???????
+                ModelState.AddModelError("", "????? ??? ?????. ???? ?? ??? ???????? ????? ??? ????.");
+                LoadViewBagData();
+                return View(advm);
             }
 
-            if (imageBytes != null)
-            {
-                var img = new ItemImage
-                {
-                    Item = item,
-                    ItemImageData = imageBytes
-                };
-
-                _context.ItemImages.Add(img);
-            }
-
-            _context.SaveChanges();
             return RedirectToAction("List");
         }
 
@@ -123,10 +143,7 @@ namespace ERP_System.Controllers
                 .Include(i => i.Images)
                 .FirstOrDefaultAsync(i => i.Id == id);
 
-            if (item == null)
-            {
-                return NotFound();
-            }
+            if (item == null) return NotFound();
 
             return View(item);
         }
@@ -139,10 +156,7 @@ namespace ERP_System.Controllers
                 .Include(i => i.Images)
                 .FirstOrDefaultAsync(i => i.Id == id);
 
-            if (item == null)
-            {
-                return NotFound();
-            }
+            if (item == null) return NotFound();
 
             var categoryIds = await _context.ItemCategories
                 .Where(ic => ic.ItemId == id)
@@ -152,6 +166,7 @@ namespace ERP_System.Controllers
             var viewModel = new AddItemVm
             {
                 Name = item.Name,
+                Description = item.Description,
                 IsActiveBuy = item.IsActiveBuy ?? false,
                 IsActiveSale = item.IsActiveSale ?? false,
                 CompanyMade = item.CompanyMade,
@@ -167,6 +182,12 @@ namespace ERP_System.Controllers
                 CategoryIds = categoryIds
             };
 
+            // ?????? ?????? ?????? ?? ??? View ????? ????? Base64 ?? ViewBag (???????)
+            if (item.Images != null && item.Images.Any() && item.Images.First().ItemImageData != null)
+            {
+                ViewBag.ImageBase64 = Convert.ToBase64String(item.Images.First().ItemImageData);
+            }
+
             LoadViewBagData();
             ViewBag.ItemId = id;
             return View(viewModel);
@@ -174,20 +195,26 @@ namespace ERP_System.Controllers
 
         // Edit item (POST)
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, AddItemVm advm)
         {
+            if (!ModelState.IsValid)
+            {
+                LoadViewBagData();
+                ViewBag.ItemId = id;
+                return View(advm);
+            }
+
             var item = await _context.Items
                 .Include(i => i.Codes)
                 .Include(i => i.Images)
                 .FirstOrDefaultAsync(i => i.Id == id);
 
-            if (item == null)
-            {
-                return NotFound();
-            }
+            if (item == null) return NotFound();
 
-            // Update item properties
-            item.Name = advm.Name;
+            // Update item properties (?? Trim ????? ?????)
+            item.Name = advm.Name?.Trim();
+            item.Description = advm.Description?.Trim();
             item.IsActiveBuy = advm.IsActiveBuy;
             item.IsActiveSale = advm.IsActiveSale;
             item.CompanyMade = advm.CompanyMade;
@@ -200,22 +227,22 @@ namespace ERP_System.Controllers
             item.BuyPrice = advm.BuyPrice;
             item.SalePrice = advm.SalePrice;
 
-            // Update codes
-            _context.ItemCodes.RemoveRange(item.Codes);
+            // Update codes: ??? ?????? ?? ????? ?????? (??? ?????)
+            _context.ItemCodes.RemoveRange(item.Codes ?? Enumerable.Empty<ItemCode>());
             if (advm.Codes != null)
             {
-                foreach (var c in advm.Codes)
+                foreach (var codeValue in advm.Codes.Where(c => !string.IsNullOrWhiteSpace(c)).Select(c => c.Trim()))
                 {
                     var code = new ItemCode
                     {
                         ItemId = item.Id,
-                        ItemCodeValue = c
+                        ItemCodeValue = codeValue
                     };
                     _context.ItemCodes.Add(code);
                 }
             }
 
-            // Update categories
+            // Update categories: ??? ?????? ?? ????? ??????
             var existingCategories = await _context.ItemCategories
                 .Where(ic => ic.ItemId == id)
                 .ToListAsync();
@@ -240,7 +267,7 @@ namespace ERP_System.Controllers
                 byte[] imageBytes;
                 using (var ms = new MemoryStream())
                 {
-                    advm.Image.CopyTo(ms);
+                    await advm.Image.CopyToAsync(ms);
                     imageBytes = ms.ToArray();
                 }
 
@@ -251,22 +278,32 @@ namespace ERP_System.Controllers
                 }
                 else
                 {
-                    var img = new ItemImage
+                    _context.ItemImages.Add(new ItemImage
                     {
                         ItemId = item.Id,
                         ItemImageData = imageBytes
-                    };
-                    _context.ItemImages.Add(img);
+                    });
                 }
             }
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError("", "????? ??? ?????????. ???? ?? ??? ???????? ????? ??? ????.");
+                LoadViewBagData();
+                ViewBag.ItemId = id;
+                return View(advm);
+            }
 
             return RedirectToAction("List");
         }
 
         // Delete item
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             var item = await _context.Items
@@ -274,10 +311,7 @@ namespace ERP_System.Controllers
                 .Include(i => i.Images)
                 .FirstOrDefaultAsync(i => i.Id == id);
 
-            if (item == null)
-            {
-                return NotFound();
-            }
+            if (item == null) return NotFound();
 
             _context.Items.Remove(item);
             await _context.SaveChangesAsync();
@@ -293,7 +327,6 @@ namespace ERP_System.Controllers
                 Id = s.Id,
                 Name = s.Name
             }).ToList();
-
 
             var stores = _context.Stores.Select(s => new StoreVm
             {

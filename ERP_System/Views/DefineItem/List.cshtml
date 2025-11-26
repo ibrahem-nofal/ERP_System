@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>قائمة الأصناف</title>
+    <title>قائمة المنتجات</title>
     <style>
         body {
             background: #0f1724;
@@ -162,11 +162,11 @@
 </head>
 <body>
     <div class="container">
-        <h1>قائمة الأصناف</h1>
+        <h1>قائمة المنتجات</h1>
 
         <div class="header-actions">
-            <input type="text" id="searchBox" class="search-box" placeholder="بحث عن صنف...">
-            <a href="@Url.Action("Index")" class="btn btn-primary">+ إضافة صنف جديد</a>
+            <input type="text" id="searchBox" class="search-box" placeholder="بحث عن منتج...">
+            <a href="@Url.Action("Index")" class="btn btn-primary">+ إضافة منتج جديد</a>
         </div>
 
         @if (Model != null && Model.Any())
@@ -175,7 +175,7 @@
                 <thead>
                     <tr>
                         <th>الصورة</th>
-                        <th>اسم الصنف</th>
+                        <th>اسم المنتج</th>
                         <th>الشركة المصنعة</th>
                         <th>المخزن</th>
                         <th>الوحدة</th>
@@ -233,7 +233,7 @@
                                     <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-details">عرض</a>
                                     <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-edit">تعديل</a>
                                     <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="delete-form" 
-                                          onsubmit="return confirm('هل أنت متأكد من حذف هذا الصنف؟');">
+                                          onsubmit="return confirm('هل أنت متأكد من حذف هذا المنتج؟');">
                                         <button type="submit" class="btn btn-delete">حذف</button>
                                     </form>
                                 </div>
@@ -246,8 +246,8 @@
         else
         {
             <div class="no-data">
-                <p>لا توجد أصناف حالياً</p>
-                <a href="@Url.Action("Index")" class="btn btn-primary">إضافة أول صنف</a>
+                <p>لا توجد منجات حالياً</p>
+                <a href="@Url.Action("Index")" class="btn btn-primary">إضافة أول منتج</a>
             </div>
         }
     </div>

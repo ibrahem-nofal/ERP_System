@@ -6,6 +6,7 @@
 
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <style>
         body {
@@ -34,7 +35,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            background: rgba(255,255,255,0.02);
+            background: rgba(255, 255, 255, 0.02);
             padding: 15px;
             border-radius: 10px;
         }
@@ -57,19 +58,20 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            background: rgba(255,255,255,0.02);
+            background: rgba(255, 255, 255, 0.02);
             border-radius: 10px;
             overflow: hidden;
         }
 
-        th, td {
+        th,
+        td {
             padding: 15px;
             text-align: right;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         th {
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             color: #06b6d4;
         }
 
@@ -95,12 +97,14 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>المخازن</h1>
 
         <div class="header-actions">
-            <input type="text" placeholder="بحث..." style="padding: 10px; border-radius: 6px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff;">
+            <input type="text" placeholder="بحث..."
+                style="padding: 10px; border-radius: 6px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff;">
             <a href="@Url.Action("Index")" class="btn btn-primary">+ مخزن جديد</a>
         </div>
 
@@ -122,12 +126,18 @@
                         <tr>
                             <td>@item.Name</td>
                             <td>@item.Address</td>
-                            <td>@item.Phone</td>
-                            <td>@item.OtherDetails</td>
                             <td>
-                                <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-action btn-details">تفاصيل</a>
+                                @(item.Phones != null && item.Phones.Any()
+                                    ? item.Phones.First().Phone
+                                    : "")
+                            </td>
+                            <td>@item.Notes</td>
+                            <td>
+                                <a href="@Url.Action("Details", new { id = item.Id })"
+                                    class="btn btn-action btn-details">تفاصيل</a>
                                 <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-action btn-edit">تعديل</a>
-                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;" onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
+                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;"
+                                    onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
                                     <button type="submit" class="btn btn-action btn-delete">حذف</button>
                                 </form>
                             </td>
@@ -146,4 +156,5 @@
         </table>
     </div>
 </body>
+
 </html>

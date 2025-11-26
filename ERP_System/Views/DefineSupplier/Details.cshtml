@@ -6,102 +6,246 @@
 
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - @Model?.Name</title>
+
     <style>
+        :root {
+            --bg: #0f1724;
+            --panel: rgba(255,255,255,0.02);
+            --panel-2: rgba(255,255,255,0.04);
+            --muted: #9ca3af;
+            --text: #e6eef6;
+            --accent-a: #06b6d4;
+            --accent-b: #7c3aed;
+            --success: #10b981;
+            --danger: #ef4444;
+            --radius: 12px;
+        }
+
         body {
-            background: #0f1724;
-            color: #e6eef6;
+            background: var(--bg);
+            color: var(--text);
             font-family: "Segoe UI", Tahoma, sans-serif;
+            margin: 0;
+            padding: 28px;
+            direction: rtl;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 20px;
         }
 
         h1 {
             text-align: center;
-            margin-bottom: 30px;
-            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            margin-bottom: 22px;
+            font-size: 30px;
+            background: linear-gradient(90deg, var(--accent-a), var(--accent-b));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
-        .details-card {
-            background: rgba(255, 255, 255, 0.02);
-            padding: 30px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        .details-box {
+            background: var(--panel);
+            border-radius: var(--radius);
+            padding: 22px;
+            border: 1px solid var(--panel-2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.45);
         }
 
         .detail-row {
             display: flex;
             justify-content: space-between;
-            padding: 15px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            align-items: center;
         }
 
-        .detail-label {
-            color: #94a3b8;
-            font-weight: bold;
+            .detail-row:last-child {
+                border-bottom: none;
+            }
+
+        .label {
+            color: var(--muted);
+            font-weight: 700;
+            font-size: 14px;
         }
 
-        .detail-value {
+        .value {
+            color: var(--text);
+            font-weight: 800;
+            font-size: 15px;
+            text-align: left;
+        }
+
+        .badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.03);
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,0.03);
+            cursor: pointer;
+            user-select: all;
+        }
+
+        .badge-muted {
+            color: var(--muted);
+            background: transparent;
+            border: 1px dashed rgba(255,255,255,0.03);
+            padding: 6px 10px;
+            border-radius: 8px;
+        }
+
+        .actions {
+            margin-top: 18px;
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-edit {
+            background: linear-gradient(90deg,var(--accent-a),var(--accent-b));
+            color: #021024;
+        }
+
+        .btn-delete {
+            background: var(--danger);
             color: #fff;
-            font-weight: bold;
         }
 
         .btn-back {
-            display: inline-block;
-            margin-top: 20px;
-            color: #94a3b8;
-            text-decoration: none;
+            background: rgba(255,255,255,0.03);
+            color: var(--muted);
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+
+        @@media (max-width:720px) {
+            .detail-row
+
+        {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 12px 0;
+        }
+
+        .actions {
+            justify-content: flex-end;
+            direction: rtl;
+        }
+
         }
     </style>
 </head>
-
 <body>
     <div class="container">
-        <h1>تفاصيل المورد: @Model.Name</h1>
+        <h1>تفاصيل المورد</h1>
 
-        <div class="details-card">
-            <div class="detail-row">
-                <span class="detail-label">الاسم</span>
-                <span class="detail-value">@Model.Name</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">اسم المدير</span>
-                <span class="detail-value">@Model.ManagerName</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">رقم المدير</span>
-                <span class="detail-value">@Model.ManagerPhone</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">اسم المالك</span>
-                <span class="detail-value">@Model.OwnerName</span>
-            </div>
-            {
-            @foreach (var phone in Model.Phones)
-            {
-                @phone.Phone
+        <div class="details-box">
 
-                <br />
-            }
-            }
-            else
-            {
-            <span>-</span>
-            }
-            </span>
+            <div class="detail-row">
+                <span class="label">الاسم</span>
+                <span class="value">@(!string.IsNullOrWhiteSpace(Model?.Name) ? Model.Name : "-")</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="label">اسم المدير</span>
+                <span class="value">@(!string.IsNullOrWhiteSpace(Model?.ManagerName) ? Model.ManagerName : "-")</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="label">هاتف المدير</span>
+                <span class="value">@(!string.IsNullOrWhiteSpace(Model?.ManagerPhone) ? Model.ManagerPhone : "-")</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="label">اسم المالك</span>
+                <span class="value">@(!string.IsNullOrWhiteSpace(Model?.OwnerName) ? Model.OwnerName : "-")</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="label">هاتف المالك</span>
+                <span class="value">@(!string.IsNullOrWhiteSpace(Model?.OwnerPhone) ? Model.OwnerPhone : "-")</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="label">العنوان</span>
+                <span class="value">@(!string.IsNullOrWhiteSpace(Model?.Address) ? Model.Address : "-")</span>
+            </div>
+
+            <div class="detail-row" style="align-items:flex-start;">
+                <span class="label">أرقام الهواتف الإضافية</span>
+                <div class="badges">
+                    @if (Model?.Phones != null && Model.Phones.Any())
+                    {
+                        foreach (var p in Model.Phones)
+                        {
+                            <span class="badge phone-badge">@p.Phone</span>
+                        }
+                    }
+                    else
+                    {
+                        <span class="badge-muted">لا توجد أرقام</span>
+                    }
+                </div>
+            </div>
+
+        </div>
+
+        <div class="actions">
+            <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-edit">تعديل</a>
+
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post"
+                  onsubmit="return confirm('هل تريد حذف هذا المخزن؟');">
+                <button type="submit" class="btn btn-delete">حذف</button>
+            </form>
+
+            <a href="@Url.Action("List")" class="btn btn-back">رجوع للقائمة</a>
         </div>
     </div>
 
-    <a href="@Url.Action("List")" class="btn-back">← عودة للقائمة</a>
-    </div>
+    <script>
+        // نسخ رقم الهاتف عند الضغط مع تأثير بصري
+        document.querySelectorAll('.phone-badge').forEach(b => {
+            b.addEventListener('click', function () {
+                const text = this.textContent.trim();
+                if (!text) return;
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(() => {
+                        const prev = this.style.background;
+                        this.style.background = 'rgba(16,185,129,0.18)';
+                        setTimeout(() => this.style.background = prev || 'rgba(255,255,255,0.03)', 700);
+                    }).catch(() => { alert('تم نسخ الرقم: ' + text); });
+                } else {
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    try { document.execCommand('copy'); alert('تم نسخ الرقم: ' + text); } catch {}
+                    ta.remove();
+                }
+            });
+        });
+    </script>
 </body>
-
 </html>

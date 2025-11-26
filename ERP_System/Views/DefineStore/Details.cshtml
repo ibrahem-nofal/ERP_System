@@ -8,17 +8,21 @@
 <html lang="ar" dir="rtl">
 
 <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <style>
         body {
             background: #0f1724;
             color: #e6eef6;
             font-family: "Segoe UI", Tahoma, sans-serif;
+            margin: 0;
+            padding: 30px;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 20px;
         }
 
         h1 {
@@ -28,65 +32,150 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            font-size: 34px;
+            font-weight: bold;
         }
 
-        .details-card {
-            background: rgba(255, 255, 255, 0.02);
+        .details-box {
+            background: rgba(255,255,255,0.02);
             padding: 30px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
 
         .detail-row {
             display: flex;
             justify-content: space-between;
-            padding: 15px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 18px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        .detail-label {
+            .detail-row:last-child {
+                border-bottom: none;
+            }
+
+        .label {
             color: #94a3b8;
-            font-weight: bold;
+            font-size: 17px;
+            font-weight: 600;
         }
 
-        .detail-value {
-            color: #fff;
+        .value {
+            font-size: 18px;
             font-weight: bold;
+            color: #e6eef6;
+            text-align: left;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.07);
+            border-radius: 8px;
+            font-size: 14px;
+            margin-left: 5px;
+            display: inline-block;
+        }
+
+        .actions {
+            margin-top: 25px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #021024;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn-edit {
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.3);
+            color: #ef4444 !important;
         }
 
         .btn-back {
-            display: inline-block;
-            margin-top: 20px;
-            color: #94a3b8;
-            text-decoration: none;
+            background: rgba(255,255,255,0.05);
+            color: #94a3b8 !important;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>تفاصيل المخزن: @Model.Name</h1>
+        <h1>تفاصيل المخزن</h1>
 
-        <div class="details-card">
+        <div class="details-box">
+
             <div class="detail-row">
-                <span class="detail-label">الاسم</span>
-                <span class="detail-value">@Model.Name</span>
+                <span class="label">اسم المخزن:</span>
+                <span class="value">@Model.Name</span>
             </div>
+
             <div class="detail-row">
-                <span class="detail-label">العنوان</span>
-                <span class="detail-value">@Model.Address</span>
+                <span class="label">العنوان:</span>
+                <span class="value">@(!string.IsNullOrEmpty(Model.Address) ? Model.Address : "-")</span>
             </div>
+
             <div class="detail-row">
-                <span class="detail-label">الهاتف</span>
-                <span class="detail-value">@Model.Phone</span>
+                <span class="label">أرقام الهاتف:</span>
+                <span class="value">
+                    @if (Model.Phones != null && Model.Phones.Any())
+                    {
+                        foreach (var phone in Model.Phones)
+                        {
+                            <span class="badge">@phone.Phone</span>
+                        }
+                    }
+                    else
+                    {
+                        <span class="badge" style="background:transparent;color:#94a3b8;border:1px dashed #94a3b8">لا توجد أرقام</span>
+                    }
+                </span>
             </div>
+
             <div class="detail-row">
-                <span class="detail-label">تفاصيل أخرى</span>
-                <span class="detail-value">@Model.OtherDetails</span>
+                <span class="label">البريد الإلكتروني:</span>
+                <span class="value">@(!string.IsNullOrEmpty(Model.Email) ? Model.Email : "-")</span>
             </div>
+
+            <div class="detail-row">
+                <span class="label">حالة التفعيل:</span>
+                <span class="value" style="color:@(Model.IsActive ? "#10b981" : "#ef4444")">
+                    @(Model.IsActive ? "مفعل" : "غير مفعل")
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="label">أوقات العمل:</span>
+                <span class="value">@(!string.IsNullOrEmpty(Model.OpeningHours) ? Model.OpeningHours : "-")</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="label">الملاحظات:</span>
+                <span class="value">@(!string.IsNullOrEmpty(Model.Notes) ? Model.Notes : "لا توجد ملاحظات")</span>
+            </div>
+
         </div>
 
-        <a href="@Url.Action("List")" class="btn-back">← عودة للقائمة</a>
+        <div class="actions">
+            <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-edit">تعديل</a>
+
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post"
+                  onsubmit="return confirm('هل تريد حذف هذا المخزن؟');">
+                <button type="submit" class="btn btn-delete">حذف</button>
+            </form>
+
+            <a href="@Url.Action("List")" class="btn btn-back">رجوع للقائمة</a>
+        </div>
+
     </div>
 </body>
 

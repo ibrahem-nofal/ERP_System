@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>تفاصيل الصنف</title>
+    <title>تفاصيل المنتج</title>
     <style>
         body {
             background: #0f1724;
@@ -161,7 +161,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>تفاصيل الصنف</h1>
+        <h1>تفاصيل المنتج</h1>
 
         <div class="item-header">
             @if (Model.Images != null && Model.Images.Any())
@@ -178,7 +178,7 @@
             }
             <div class="item-basic">
                 <h2>@Model.Name</h2>
-                <p><strong>رقم الصنف:</strong> #@Model.Id</p>
+                <p><strong>رقم المنتج:</strong> #@Model.Id</p>
             </div>
         </div>
 
@@ -278,7 +278,7 @@
         @if (Model.Codes != null && Model.Codes.Any())
         {
             <div class="codes-section">
-                <h3>أكواد الصنف</h3>
+                <h3>أكواد المنتج</h3>
                 @foreach (var code in Model.Codes)
                 {
                     <div class="code-item">
