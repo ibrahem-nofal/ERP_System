@@ -27,7 +27,7 @@ namespace ERP_System.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Index(AddCategoryVm advm)
+        public IActionResult Index(AddRevenueNameVm advm)
         {
             if (!ModelState.IsValid) return View(advm);
 
@@ -39,6 +39,7 @@ namespace ERP_System.Controllers
 
             _context.RevenueNames.Add(rev);
             _context.SaveChanges();
+            TempData["SuccessMessage"] = "تم الحفظ بنجاح";
             return RedirectToAction(nameof(List));
         }
 
@@ -47,7 +48,7 @@ namespace ERP_System.Controllers
             var revenue = await _context.RevenueNames.FindAsync(id);
             if (revenue == null) return NotFound();
 
-            var vm = new AddCategoryVm
+            var vm = new AddRevenueNameVm
             {
                 Name = revenue.Name,
                 Detail = revenue.Description
@@ -57,7 +58,7 @@ namespace ERP_System.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, AddCategoryVm vm)
+        public async Task<IActionResult> Edit(int id, AddRevenueNameVm vm)
         {
             if (!ModelState.IsValid)
             {

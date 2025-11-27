@@ -79,6 +79,7 @@
             padding: 5px 10px;
             font-size: 14px;
             margin-left: 5px;
+            border-radius: 6px;
         }
 
         .btn-edit {
@@ -103,12 +104,12 @@
         <h1>مسميات الإيرادات</h1>
 
         <div class="header-actions">
-            <input type="text" placeholder="بحث..."
-                style="padding: 10px; border-radius: 6px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff;">
+            <input id="searchBox" type="text" placeholder="بحث..."
+                   style="padding: 10px; border-radius: 6px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff;">
             <a href="@Url.Action("Index")" class="btn btn-primary">+ مسمى إيراد جديد</a>
         </div>
 
-        <table>
+        <table id="revenueTable">
             <thead>
                 <tr>
                     <th>الاسم</th>
@@ -116,6 +117,7 @@
                     <th>الإجراءات</th>
                 </tr>
             </thead>
+
             <tbody>
                 @if (Model != null && Model.Any())
                 {
@@ -126,11 +128,15 @@
                             <td>@item.Description</td>
                             <td>
                                 <a href="@Url.Action("Details", new { id = item.Id })"
-                                    class="btn btn-action btn-details">تفاصيل</a>
-                                <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-action btn-edit">تعديل</a>
-                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;"
-                                    onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
-                                    <button type="submit" class="btn btn-action btn-delete">حذف</button>
+                                   class="btn-action btn-details">تفاصيل</a>
+
+                                <a href="@Url.Action("Edit", new { id = item.Id })"
+                                   class="btn-action btn-edit">تعديل</a>
+
+                                <form asp-action="Delete" asp-route-id="@item.Id" method="post"
+                                      style="display:inline;"
+                                      onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
+                                    <button type="submit" class="btn-action btn-delete">حذف</button>
                                 </form>
                             </td>
                         </tr>
@@ -147,6 +153,21 @@
             </tbody>
         </table>
     </div>
+
+    <script>
+        const searchBox = document.getElementById('searchBox');
+        const rows = document.querySelectorAll('#revenueTable tbody tr');
+
+        searchBox.addEventListener('input', function () {
+            const q = this.value.toLowerCase().trim();
+
+            rows.forEach(row => {
+                const txt = row.textContent.toLowerCase();
+                row.style.display = txt.includes(q) ? '' : 'none';
+            });
+        });
+    </script>
+
 </body>
 
 </html>

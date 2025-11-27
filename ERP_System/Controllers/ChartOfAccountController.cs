@@ -34,6 +34,7 @@ namespace ERP_System.Controllers
             {
                 _context.ChartOfAccounts.Add(account);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "تم حفظ الحساب بنجاح";
                 return RedirectToAction(nameof(List));
             }
             return View(account);
@@ -55,6 +56,7 @@ namespace ERP_System.Controllers
             {
                 _context.Update(account);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "تم تعديل الحساب بنجاح";
                 return RedirectToAction(nameof(List));
             }
             return View(account);
