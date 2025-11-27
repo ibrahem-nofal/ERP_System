@@ -8,11 +8,16 @@
 <html lang="ar" dir="rtl">
 
 <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
     <style>
         body {
             background: #0f1724;
             color: #e6eef6;
             font-family: "Segoe UI", Tahoma, sans-serif;
+            margin: 0;
+            padding: 20px;
         }
 
         .container {
@@ -24,6 +29,7 @@
         h1 {
             text-align: center;
             margin-bottom: 30px;
+            font-size: 28px;
             background: linear-gradient(90deg, #06b6d4, #7c3aed);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -38,6 +44,16 @@
             background: rgba(255, 255, 255, 0.02);
             padding: 15px;
             border-radius: 10px;
+            gap: 12px;
+        }
+
+        .search-box {
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.03);
+            color: #fff;
+            width: 320px;
         }
 
         .btn {
@@ -63,11 +79,11 @@
             overflow: hidden;
         }
 
-        th,
-        td {
+        th, td {
             padding: 15px;
             text-align: right;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: middle;
         }
 
         th {
@@ -76,9 +92,12 @@
         }
 
         .btn-action {
-            padding: 5px 10px;
+            padding: 6px 10px;
             font-size: 14px;
-            margin-left: 5px;
+            margin-left: 6px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .btn-edit {
@@ -95,6 +114,26 @@
             background: rgba(239, 68, 68, 0.2);
             color: #ef4444;
         }
+
+        .no-data {
+            text-align: center;
+            padding: 30px;
+            color: #94a3b8;
+        }
+
+        @@media (max-width: 800px) {
+            .header-actions
+
+        {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .search-box {
+            width: 100%;
+        }
+
+        }
     </style>
 </head>
 
@@ -103,12 +142,11 @@
         <h1>العملاء</h1>
 
         <div class="header-actions">
-            <input type="text" placeholder="بحث..."
-                style="padding: 10px; border-radius: 6px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff;">
+            <input type="text" id="searchBox" class="search-box" placeholder="بحث عن عميل ...">
             <a href="@Url.Action("Index")" class="btn btn-primary">+ عميل جديد</a>
         </div>
 
-        <table>
+        <table id="customerTable">
             <thead>
                 <tr>
                     <th>الاسم</th>
@@ -120,19 +158,18 @@
             <tbody>
                 @if (Model != null && Model.Any())
                 {
-                    @foreach (var item in Model)
+                    foreach (var item in Model)
                     {
                         <tr>
                             <td>@item.Name</td>
                             <td>@item.Address</td>
                             <td>@item.StartDate?.ToString("yyyy/MM/dd")</td>
                             <td>
-                                <a href="@Url.Action("Details", new { id = item.Id })"
-                                    class="btn btn-action btn-details">تفاصيل</a>
-                                <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-action btn-edit">تعديل</a>
+                                <a href="@Url.Action("Details", new { id = item.Id })" class="btn-action btn-details">تفاصيل</a>
+                                <a href="@Url.Action("Edit", new { id = item.Id })" class="btn-action btn-edit">تعديل</a>
                                 <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;"
-                                    onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
-                                    <button type="submit" class="btn btn-action btn-delete">حذف</button>
+                                      onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
+                                    <button type="submit" class="btn-action btn-delete">حذف</button>
                                 </form>
                             </td>
                         </tr>
@@ -141,7 +178,7 @@
                 else
                 {
                     <tr>
-                        <td colspan="4" style="text-align:center; padding: 30px; color: #94a3b8;">
+                        <td colspan="4" class="no-data">
                             لا يوجد عملاء حالياً
                         </td>
                     </tr>
@@ -149,6 +186,39 @@
             </tbody>
         </table>
     </div>
+
+    <script>
+        // احنا بننتظر تحميل DOM قبل ربط الحدث
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('searchBox');
+            const getRows = () => document.querySelectorAll('#customerTable tbody tr');
+
+            if (!searchInput) return;
+
+            // وظيفة البحث الأساسية: تبحث داخل كل نص الصف
+            const doSearch = (term) => {
+                const q = term.trim().toLowerCase();
+                getRows().forEach(row => {
+                    if (q === '') {
+                        row.style.display = '';
+                        return;
+                    }
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(q) ? '' : 'none';
+                });
+            };
+
+            // ربط حدث الكتابة
+            searchInput.addEventListener('keyup', function (e) {
+                doSearch(this.value);
+            });
+
+            // لو حبيت تبحث بالـ Enter فقط بدل كل ضغطة استخدم:
+            // searchInput.addEventListener('keydown', function(e) {
+            //   if (e.key === 'Enter') doSearch(this.value);
+            // });
+        });
+    </script>
 </body>
 
 </html>
