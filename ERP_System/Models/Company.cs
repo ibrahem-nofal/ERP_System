@@ -18,7 +18,13 @@ namespace ERP_System.Models
 
         public DateTime? DateCreated { get; set; }
 
-        public string OtherDetails { get; set; }
+        public string? OtherDetails { get; set; }
+
+        [MaxLength(50)]
+        public string? TaxNumber { get; set; }
+
+        [MaxLength(50)]
+        public string? PhoneNumber { get; set; }
 
         public ICollection<CompanyPhone> Phones { get; set; }
     }

@@ -1,0 +1,86 @@
+@model ERP_System.ViewModels.CompanyProfileViewModel
+
+@{
+    ViewData["Title"] = "ملف الشركة";
+}
+
+<div class="container mt-4">
+    <div class="card bg-dark text-white border-secondary">
+        <div class="card-header border-secondary">
+            <h4 class="mb-0">ملف الشركة</h4>
+        </div>
+        <div class="card-body">
+            @if (TempData["Success"] != null)
+            {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["Success"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+            }
+
+            <form asp-action="CompanyProfile" method="post" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label"></label>
+                            <input asp-for="Name" class="form-control bg-secondary text-white border-0" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Code" class="form-label"></label>
+                            <input asp-for="Code" class="form-control bg-secondary text-white border-0" />
+                            <span asp-validation-for="Code" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Address" class="form-label"></label>
+                            <textarea asp-for="Address" class="form-control bg-secondary text-white border-0"
+                                rows="3"></textarea>
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="TaxNumber" class="form-label"></label>
+                                <input asp-for="TaxNumber" class="form-control bg-secondary text-white border-0" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ContactNumber" class="form-label"></label>
+                                <input asp-for="ContactNumber" class="form-control bg-secondary text-white border-0" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div class="mb-3">
+                            <label class="form-label d-block">شعار الشركة</label>
+                            <div class="border border-secondary rounded p-3 d-inline-block bg-secondary"
+                                style="width: 200px; height: 200px; display: flex; align-items: center; justify-content: center;">
+                                @if (!string.IsNullOrEmpty(Model.LogoPath))
+                                {
+                                        <img src="~/images/@Model.LogoPath" alt="Company Logo" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                                }
+                                else
+                                {
+                                        <i class="bi bi-image fs-1 text-muted"></i>
+                                }
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <input asp-for="LogoFile" class="form-control bg-dark text-white border-secondary"
+                                type="file" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary px-4">حفظ التغييرات</button>
+                    <a asp-action="Index" class="btn btn-outline-light px-4">العودة للوحة التحكم</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

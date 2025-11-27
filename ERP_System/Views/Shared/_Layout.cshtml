@@ -116,42 +116,42 @@
 
             <ul class="nav flex-column">
                 <li class="nav-item mb-2">
-                    <a asp-controller="Dashboard" asp-action="Index"
-                       class="nav-link @(currentController == "Dashboard" ? "active" : "")">
+                    <a asp-area="" asp-controller="Dashboard" asp-action="Index"
+                        class="nav-link @(currentController == "Dashboard" ? "active" : "")">
                         <i class="bi bi-speedometer2"></i> لوحة التحكم
                     </a>
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a asp-controller="DefineEmployee" asp-action="List"
-                       class="nav-link @(currentController == "DefineEmployee" ? "active" : "")">
+                    <a asp-area="" asp-controller="DefineEmployee" asp-action="List"
+                        class="nav-link @(currentController == "DefineEmployee" ? "active" : "")">
                         <i class="bi bi-people"></i> إدارة المستخدمين
                     </a>
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a asp-controller="DefineItem" asp-action="List"
-                       class="nav-link @(currentController == "DefineItem" ? "active" : "")">
-                        <i class="bi bi-box-seam"></i> المنتجات 
+                    <a asp-area="" asp-controller="DefineItem" asp-action="List"
+                        class="nav-link @(currentController == "DefineItem" ? "active" : "")">
+                        <i class="bi bi-box-seam"></i> المنتجات
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a asp-controller="DefineStore" asp-action="List"
-                       class="nav-link @(currentController == "DefineStore" ? "active" : "")">
+                    <a asp-area="" asp-controller="DefineStore" asp-action="List"
+                        class="nav-link @(currentController == "DefineStore" ? "active" : "")">
                         <i class="bi bi-box-seam"></i> المخازن
                     </a>
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a asp-controller="DefineCustomer" asp-action="List"
-                       class="nav-link @(currentController == "DefineCustomer" ? "active" : "")">
+                    <a asp-area="" asp-controller="DefineCustomer" asp-action="List"
+                        class="nav-link @(currentController == "DefineCustomer" ? "active" : "")">
                         <i class="bi bi-person-badge"></i> العملاء
                     </a>
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a asp-controller="DefineSupplier" asp-action="List"
-                       class="nav-link @(currentController == "DefineSupplier" ? "active" : "")">
+                    <a asp-area="" asp-controller="DefineSupplier" asp-action="List"
+                        class="nav-link @(currentController == "DefineSupplier" ? "active" : "")">
                         <i class="bi bi-truck"></i> الموردين
                     </a>
                 </li>
@@ -160,32 +160,32 @@
             <h6>المعاملات</h6>
             <ul class="nav flex-column">
                 <li class="nav-item mb-2">
-                    <a asp-controller="InvoiceSale" asp-action="List"
-                       class="nav-link @(currentController == "InvoiceSale" ? "active" : "")">
+                    <a asp-area="" asp-controller="InvoiceSale" asp-action="List"
+                        class="nav-link @(currentController == "InvoiceSale" ? "active" : "")">
                         <i class="bi bi-receipt"></i> فواتير البيع
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a asp-controller="SalePayment" asp-action="List"
-                       class="nav-link @(currentController == "SalePayment" ? "active" : "")">
+                    <a asp-area="" asp-controller="SalePayment" asp-action="List"
+                        class="nav-link @(currentController == "SalePayment" ? "active" : "")">
                         <i class="bi bi-cash-coin"></i> سندات القبض
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a asp-controller="InvoicePurchase" asp-action="List"
-                       class="nav-link @(currentController == "InvoicePurchase" ? "active" : "")">
+                    <a asp-area="" asp-controller="InvoicePurchase" asp-action="List"
+                        class="nav-link @(currentController == "InvoicePurchase" ? "active" : "")">
                         <i class="bi bi-cart-check"></i> فواتير الشراء
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a asp-controller="PurchasePayment" asp-action="List"
-                       class="nav-link @(currentController == "PurchasePayment" ? "active" : "")">
+                    <a asp-area="" asp-controller="PurchasePayment" asp-action="List"
+                        class="nav-link @(currentController == "PurchasePayment" ? "active" : "")">
                         <i class="bi bi-cash"></i> سندات الصرف
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a asp-controller="InventoryTransfer" asp-action="List"
-                       class="nav-link @(currentController == "InventoryTransfer" ? "active" : "")">
+                    <a asp-area="" asp-controller="InventoryTransfer" asp-action="List"
+                        class="nav-link @(currentController == "InventoryTransfer" ? "active" : "")">
                         <i class="bi bi-arrow-left-right"></i> التحويلات المخزنية
                     </a>
                 </li>
@@ -194,26 +194,26 @@
             <h6>المحاسبة</h6>
             <ul class="nav flex-column">
                 <li class="nav-item mb-2">
-                    <a asp-controller="DefineExpenseName" asp-action="List"
-                       class="nav-link @(currentController == "DefineExpenseName" ? "active" : "")">
+                    <a asp-area="" asp-controller="DefineExpenseName" asp-action="List"
+                        class="nav-link @(currentController == "DefineExpenseName" ? "active" : "")">
                         <i class="bi bi-wallet2"></i> المصروفات
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a asp-controller="DefineRevenueName" asp-action="List"
-                       class="nav-link @(currentController == "DefineRevenueName" ? "active" : "")">
+                    <a asp-area="" asp-controller="DefineRevenueName" asp-action="List"
+                        class="nav-link @(currentController == "DefineRevenueName" ? "active" : "")">
                         <i class="bi bi-cash-stack"></i> الإيرادات
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a asp-controller="ChartOfAccount" asp-action="List"
-                       class="nav-link @(currentController == "ChartOfAccount" ? "active" : "")">
+                    <a asp-area="" asp-controller="ChartOfAccount" asp-action="List"
+                        class="nav-link @(currentController == "ChartOfAccount" ? "active" : "")">
                         <i class="bi bi-journal-text"></i> دليل الحسابات
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a asp-controller="JournalEntry" asp-action="List"
-                       class="nav-link @(currentController == "JournalEntry" ? "active" : "")">
+                    <a asp-area="" asp-controller="JournalEntry" asp-action="List"
+                        class="nav-link @(currentController == "JournalEntry" ? "active" : "")">
                         <i class="bi bi-book"></i> القيود اليومية
                     </a>
                 </li>
@@ -222,20 +222,20 @@
             <h6>التقارير</h6>
             <ul class="nav flex-column">
                 <li class="nav-item mb-2">
-                    <a asp-controller="Reports" asp-action="Sales"
-                       class="nav-link @(currentController == "Reports" && ViewContext.RouteData.Values["action"]?.ToString() == "Sales" ? "active" : "")">
+                    <a asp-area="" asp-controller="Reports" asp-action="Sales"
+                        class="nav-link @(currentController == "Reports" && ViewContext.RouteData.Values["action"]?.ToString() == "Sales" ? "active" : "")">
                         <i class="bi bi-bar-chart-line"></i> تقارير المبيعات
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a asp-controller="Reports" asp-action="Purchases"
-                       class="nav-link @(currentController == "Reports" && ViewContext.RouteData.Values["action"]?.ToString() == "Purchases" ? "active" : "")">
+                    <a asp-area="" asp-controller="Reports" asp-action="Purchases"
+                        class="nav-link @(currentController == "Reports" && ViewContext.RouteData.Values["action"]?.ToString() == "Purchases" ? "active" : "")">
                         <i class="bi bi-graph-up"></i> تقارير المشتريات
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a asp-controller="Reports" asp-action="Inventory"
-                       class="nav-link @(currentController == "Reports" && ViewContext.RouteData.Values["action"]?.ToString() == "Inventory" ? "active" : "")">
+                    <a asp-area="" asp-controller="Reports" asp-action="Inventory"
+                        class="nav-link @(currentController == "Reports" && ViewContext.RouteData.Values["action"]?.ToString() == "Inventory" ? "active" : "")">
                         <i class="bi bi-pie-chart"></i> تقارير المخزون
                     </a>
                 </li>
@@ -244,14 +244,14 @@
             <h6>الإعدادات</h6>
             <ul class="nav flex-column">
                 <li class="nav-item mb-2">
-                    <a asp-controller="Settings" asp-action="Index"
-                       class="nav-link @(currentController == "Settings" ? "active" : "")">
+                    <a class="nav-link @(currentController == "Settings" ? "active" : "")" asp-controller="Settings"
+                        asp-action="Index">
                         <i class="bi bi-gear"></i> إعدادات النظام
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a asp-controller="ActivityLog" asp-action="List"
-                       class="nav-link @(currentController == "ActivityLog" ? "active" : "")">
+                    <a asp-area="" asp-controller="ActivityLog" asp-action="List"
+                        class="nav-link @(currentController == "ActivityLog" ? "active" : "")">
                         <i class="bi bi-clock-history"></i> سجل العمليات
                     </a>
                 </li>
@@ -279,7 +279,7 @@
                     <!-- Notifications Dropdown -->
                     <div class="dropdown">
                         <div class="position-relative cursor-pointer" data-bs-toggle="dropdown" aria-expanded="false"
-                             style="cursor: pointer;">
+                            style="cursor: pointer;">
                             <i class="bi bi-bell fs-5 text-secondary"></i>
                             <span class="notification-badge">3</span>
                         </div>
@@ -319,7 +319,7 @@
                             <small class="text-muted">مدير النظام</small>
                         </div>
                         <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" width="40" height="40"
-                             class="rounded-circle border">
+                            class="rounded-circle border">
                     </div>
                 </div>
             </nav>
@@ -332,7 +332,7 @@
 
     <!-- ✅ إشعار TempData -->
     @if (TempData["Success"] != null || TempData["Error"] != null || TempData["Warning"] != null || TempData["Info"] !=
-        null)
+    null)
     {
         var klass = "app-toast-success";
         var icon = "bi bi-check-circle-fill";

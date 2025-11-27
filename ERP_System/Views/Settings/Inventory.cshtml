@@ -1,0 +1,65 @@
+@model ERP_System.ViewModels.InventorySettingsViewModel
+
+@{
+    ViewData["Title"] = "إعدادات المخزون";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card bg-dark text-white border-secondary h-100">
+                <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">وحدات القياس</h5>
+                    <button class="btn btn-sm btn-outline-info">إدارة</button>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush bg-dark">
+                        @foreach (var unit in Model.Units.Take(5))
+                        {
+                            <li class="list-group-item bg-dark text-white border-secondary">@unit.Name</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card bg-dark text-white border-secondary h-100">
+                <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">الفئات</h5>
+                    <button class="btn btn-sm btn-outline-info">إدارة</button>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush bg-dark">
+                        @foreach (var cat in Model.Categories.Take(5))
+                        {
+                            <li class="list-group-item bg-dark text-white border-secondary">@cat.Name</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="card bg-dark text-white border-secondary">
+                <div class="card-header border-secondary">
+                    <h5 class="mb-0">التكوين</h5>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="mb-3">
+                            <label asp-for="StockValuationMethod" class="form-label"></label>
+                            <select asp-for="StockValuationMethod" class="form-select bg-secondary text-white border-0">
+                                <option value="FIFO">الوارد أولاً يصرف أولاً (FIFO)</option>
+                                <option value="LIFO">الوارد أخيراً يصرف أولاً (LIFO)</option>
+                                <option value="WeightedAverage">المتوسط المرجح</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-info px-4">حفظ التكوين</button>
+                        <a asp-action="Index" class="btn btn-outline-light px-4">العودة للوحة التحكم</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

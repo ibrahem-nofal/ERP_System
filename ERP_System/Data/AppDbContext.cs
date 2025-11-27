@@ -47,6 +47,10 @@ namespace ERP_System.Data
         public DbSet<SalePayment> SalePayments { get; set; }
 
 
+        //sting
+        public DbSet<Setting> Settings { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<CompanyPhone>()
