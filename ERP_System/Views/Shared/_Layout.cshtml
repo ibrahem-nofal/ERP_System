@@ -27,7 +27,7 @@
     <style>
         /* ✅ لون الأيقونة */
         #menuToggle {
-            color: #212529;
+            color: #ffffff;
             cursor: pointer;
             transition: color 0.3s ease, transform 0.2s ease;
         }
@@ -396,9 +396,9 @@
 
                 // ✅ تغيير لون الأيقونة
                 if (sidebar.classList.contains("hidden")) {
-                    menuToggle.style.color = "#aaa"; // فضي عند الإخفاء
+                    menuToggle.style.color = "rgba(255, 255, 255, 0.5)"; // فضي عند الإخفاء
                 } else {
-                    menuToggle.style.color = "#212529"; // غامق عند الظهور
+                    menuToggle.style.color = "#ffffff"; // أبيض عند الظهور
                 }
             });
         }

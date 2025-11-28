@@ -1,7 +1,7 @@
-@model ERP_System.Models.LoginViewModel
+@model ERP_System.Models.RegisterViewModel
 
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Register";
     Layout = null;
 }
 
@@ -110,26 +110,31 @@
 
 <body>
     <div class="glass-card">
-        <h2>Welcome Back</h2>
-        <p>Login to your account</p>
-        <form asp-action="Login" method="post">
+        <h2>Create Account</h2>
+        <p>Join us today!</p>
+        <form asp-action="Register" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3 text-center"></div>
             <div class="mb-3">
                 <label asp-for="Username" class="form-label">Username</label>
-                <input asp-for="Username" class="form-control" placeholder="Enter your username" />
+                <input asp-for="Username" class="form-control" placeholder="Choose a username" />
                 <span asp-validation-for="Username" class="text-danger"></span>
             </div>
-            <div class="mb-4">
+            <div class="mb-3">
                 <label asp-for="Password" class="form-label">Password</label>
-                <input asp-for="Password" class="form-control" placeholder="Enter your password" />
+                <input asp-for="Password" class="form-control" placeholder="Create a password" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
+            <div class="mb-4">
+                <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm your password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
             <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-primary">Sign In</button>
+                <button type="submit" class="btn btn-primary">Sign Up</button>
             </div>
             <div class="mt-4 text-center">
-                <span class="text-white-50">Don't have an account?</span>
-                <a asp-action="Register" class="fw-bold ms-1">Sign Up</a>
+                <span class="text-white-50">Already have an account?</span>
+                <a asp-action="Login" class="fw-bold ms-1">Sign In</a>
             </div>
         </form>
     </div>
