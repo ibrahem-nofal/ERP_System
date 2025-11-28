@@ -2,146 +2,253 @@
 
 @{
     ViewData["Title"] = "تعديل حساب";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+
     <style>
-        body {
-            background: #0f1724;
-            color: #e6eef6;
-            font-family: "Segoe UI", Tahoma, sans-serif;
+        /* ------------ Root Theme (same as Add Item) -------------- */
+        :root {
+            --bg: #0f1724;
+            --panel: rgba(255,255,255,0.07);
+            --panel-light: rgba(255, 255, 255, 0.1);
+            --border: rgba(255,255,255,0.20);
+            --text: #e6eef6;
+            --muted: #9ca3af;
+            --gradient: linear-gradient(90deg,#06b6d4,#7c3aed);
+            --radius: 18px;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            background: var(--bg);
+            margin: 0;
+            padding: 35px;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            color: var(--text);
+            direction: rtl;
         }
 
         h1 {
             text-align: center;
+            font-size: 40px;
             margin-bottom: 30px;
-            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            background: var(--gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-weight: bold;
         }
 
-        .form-card {
-            background: rgba(255,255,255,0.02);
-            padding: 30px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.05);
+        .form-wrapper {
+            width: 100%;
+            max-width: 1000px;
+            margin: auto;
+            background: var(--panel);
+            padding: 36px;
+            border-radius: var(--radius);
+            box-shadow: 0 8px 40px rgba(0,0,0,0.45);
         }
 
-        .form-group {
-            margin-bottom: 20px;
+        .section-title {
+            font-size: 26px;
+            margin: 28px 0 16px;
+            color: #06b6d4;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 8px;
+            font-weight: 700;
         }
 
         label {
-            display: block;
+            font-size: 20px;
             margin-bottom: 8px;
-            color: #94a3b8;
-            font-weight: bold;
+            display: block;
+            font-weight: 700;
         }
 
-        input, select {
+        input[type="text"], input[type="number"], select, textarea {
             width: 100%;
-            padding: 12px;
-            border-radius: 6px;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.05);
-            color: #fff;
-            font-size: 14px;
-        }
-
-        input:focus, select:focus {
+            background: var(--panel-light);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 18px;
+            color: var(--text);
+            margin-bottom: 12px;
             outline: none;
-            border-color: #06b6d4;
-            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+            box-sizing: border-box;
         }
 
-        .btn-primary {
-            background: linear-gradient(90deg, #06b6d4, #7c3aed);
-            color: #021024;
-            padding: 12px 24px;
-            border-radius: 6px;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 20px;
+        textarea {
+            min-height: 120px;
+            resize: vertical;
         }
 
-        .checkbox-group {
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 28px;
+        }
+
+        @@media (max-width: 1000px) {
+            .grid-2, .grid-3
+
+        {
+            grid-template-columns: 1fr;
+        }
+
+        label {
+            font-size: 18px;
+        }
+
+        input, select, textarea {
+            font-size: 16px;
+            padding: 12px;
+        }
+
+        }
+
+        .switch-box {
+            background: rgba(255,255,255,0.04);
+            padding: 18px;
+            border-radius: 12px;
+            margin-top: 8px;
+        }
+
+        .switch-item {
+            font-size: 18px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-top: 10px;
         }
 
-        .checkbox-group input {
-            width: auto;
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            font-size: 22px;
+            margin-top: 20px;
+            background: var(--gradient);
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            color: #021024;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+            .submit-btn:hover {
+                transform: translateY(-3px);
+                opacity: 0.95;
+            }
+
+        .help {
+            color: var(--muted);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .text-danger {
+            color: #ef4444;
+            font-weight: 700;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>تعديل حساب</h1>
+    <h1>تعديل حساب</h1>
 
-        <div class="form-card">
-            <form asp-action="Edit" method="post">
-                <input type="hidden" asp-for="Id" />
-                
-                <div class="form-group">
-                    <label>كود الحساب</label>
-                    <input asp-for="Code" required />
+    <div class="form-wrapper">
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger" style="margin-bottom: 20px;"></div>
+
+            <input type="hidden" asp-for="Id" />
+
+            <div class="section-title">البيانات الأساسية</div>
+
+            <div class="grid-2">
+                <div>
+                    <label asp-for="Code">كود الحساب</label>
+                    <input asp-for="Code" type="text" required />
+                    <span asp-validation-for="Code" class="text-danger" style="display:block; margin-top:-8px; margin-bottom:10px;"></span>
                 </div>
 
-                <div class="form-group">
-                    <label>اسم الحساب</label>
-                    <input asp-for="Name" required />
+                <div>
+                    <label asp-for="Name">اسم الحساب</label>
+                    <input asp-for="Name" type="text" required />
+                    <span asp-validation-for="Name" class="text-danger" style="display:block; margin-top:-8px; margin-bottom:10px;"></span>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label>نوع الحساب</label>
+            <div class="grid-2">
+                <div>
+                    <label asp-for="AccountType">نوع الحساب</label>
                     <select asp-for="AccountType" required>
+                        <option value="">-- اختر نوع الحساب --</option>
                         <option value="Asset">أصول</option>
                         <option value="Liability">خصوم</option>
                         <option value="Equity">حقوق ملكية</option>
                         <option value="Revenue">إيرادات</option>
                         <option value="Expense">مصروفات</option>
                     </select>
+                    <span asp-validation-for="AccountType" class="text-danger" style="display:block; margin-top:-8px; margin-bottom:10px;"></span>
                 </div>
 
-                <div class="form-group">
-                    <label>المستوى</label>
-                    <input asp-for="Level" type="number" min="1" max="5" />
+                <div>
+                    <label asp-for="Level">المستوى</label>
+                    <input asp-for="Level" type="number" min="1" max="10" />
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label>طبيعة الحساب</label>
+            <div class="grid-2">
+                <div>
+                    <label asp-for="NormalBalance">طبيعة الحساب</label>
                     <select asp-for="NormalBalance">
                         <option value="Debit">مدين</option>
                         <option value="Credit">دائن</option>
                     </select>
                 </div>
 
-                <div class="checkbox-group">
-                    <input asp-for="IsLeaf" type="checkbox" />
-                    <label>حساب فرعي (يقبل القيود)</label>
-                </div>
+                <div>
+                    <label>خيارات</label>
+                    <div class="switch-box">
+                        <div class="switch-item">
+                            <input asp-for="IsLeaf" type="checkbox" />
+                            <label style="margin:0">حساب فرعي (يقبل القيود)</label>
+                        </div>
 
-                <div class="checkbox-group">
-                    <input asp-for="IsActive" type="checkbox" />
-                    <label>نشط</label>
+                        <div class="switch-item">
+                            <input asp-for="IsActive" type="checkbox" />
+                            <label style="margin:0">نشط</label>
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-                <button type="submit" class="btn-primary">حفظ التعديلات</button>
-            </form>
-        </div>
+            <div class="section-title">ملاحظات</div>
+            <label for="notes">ملاحظات إضافية (اختياري)</label>
+            <textarea id="notes" name="Notes" placeholder="ملاحظات حول الحساب — اختياري">@Model?.Notes</textarea>
+
+            <button type="submit" class="submit-btn">حفظ التعديلات</button>
+        </form>
     </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 </body>
 </html>

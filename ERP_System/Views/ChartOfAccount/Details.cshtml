@@ -1,0 +1,376 @@
+@model ERP_System.Models.ChartOfAccount
+
+@{
+    ViewData["Title"] = "تفاصيل الحساب";
+
+    Func<string, string> TranslateType = t =>
+    {
+        if (string.IsNullOrWhiteSpace(t)) return "-";
+        return t.ToLower() switch
+        {
+            "asset" => "أصول",
+            "liability" => "خصوم",
+            "equity" => "حقوق ملكية",
+            "revenue" => "إيرادات",
+            "expense" => "مصروفات",
+            _ => t
+        };
+    };
+
+    Func<string, string> TranslateBalance = b =>
+    {
+        if (string.IsNullOrWhiteSpace(b)) return "-";
+        return b.ToLower() switch
+        {
+            "debit" => "مدين",
+            "credit" => "دائن",
+            _ => b
+        };
+    };
+
+    string Safe(string s) => string.IsNullOrWhiteSpace(s) ? "-" : s;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <style>
+        /* ====== Theme variables ====== */
+        :root {
+            --bg: #0f1724;
+            --card: rgba(255,255,255,0.02);
+            --card-strong: rgba(255,255,255,0.04);
+            --border: rgba(255,255,255,0.06);
+            --text: #e6eef6;
+            --muted: #94a3b8;
+            --accent: #06b6d4;
+            --accent-2: #7c3aed;
+            --success: #10b981;
+            --danger: #ef4444;
+            --radius: 12px;
+            --gap: 18px;
+        }
+
+        /* ====== Reset & Layout ====== */
+        * {
+            box-sizing: border-box
+        }
+
+        html, body {
+            height: 100%
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 28px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px;
+            box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+            overflow: hidden;
+        }
+
+        header.card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(90deg,var(--accent),var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ====== Breadcrumbs ====== */
+        .breadcrumbs {
+            font-size: 13px;
+            color: var(--muted);
+            display: flex;
+            gap: 8px;
+            align-items: center
+        }
+
+            .breadcrumbs a {
+                color: var(--muted);
+                text-decoration: none
+            }
+
+        /* ====== Grid ====== */
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            gap: var(--gap);
+        }
+
+        @@media (max-width:640px) {
+            .details-grid
+
+        {
+            grid-template-columns: 1fr
+        }
+
+        body {
+            padding: 16px
+        }
+
+        }
+
+        .detail-item {
+            background: var(--card-strong);
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .detail-label {
+            display: block;
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 6px
+        }
+
+        .detail-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+            word-break: break-word
+        }
+
+        /* full-width notes */
+        .detail-full {
+            grid-column: 1 / -1
+        }
+
+        /* badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px
+        }
+
+            .badge svg {
+                width: 16px;
+                height: 16px;
+                opacity: 0.95
+            }
+
+        .badge-yes {
+            background: rgba(16,185,129,0.08);
+            color: var(--success);
+            border: 1px solid rgba(16,185,129,0.14)
+        }
+
+        .badge-no {
+            background: rgba(239,68,68,0.06);
+            color: var(--danger);
+            border: 1px solid rgba(239,68,68,0.10)
+        }
+
+        /* actions */
+        .actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border)
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            text-decoration: none
+        }
+
+            .btn svg {
+                width: 16px;
+                height: 16px
+            }
+
+        .btn-primary {
+            background: linear-gradient(90deg,var(--accent),var(--accent-2));
+            color: #021024
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text)
+        }
+
+        .btn:focus {
+            outline: 2px solid rgba(124,58,237,0.16);
+            outline-offset: 2px
+        }
+
+        /* small helper */
+        .muted {
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        /* print friendly */
+        @@media print {
+            body
+
+        {
+            padding: 8mm
+        }
+
+        .actions, .breadcrumbs {
+            display: none
+        }
+
+        .card {
+            box-shadow: none;
+            border-color: #ccc
+        }
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card" role="region" aria-labelledby="account-title">
+
+            <header class="card-header">
+                <div>
+                    <h1 id="account-title">تفاصيل الحساب</h1>
+                    <div class="breadcrumbs" aria-hidden="false">
+                        <a href="@Url.Action("List")">قائمة الحسابات</a>
+                        <span>›</span>
+                        <span class="muted">@Safe(Model.Name)</span>
+                    </div>
+                </div>
+
+                <div class="muted" aria-live="polite">الكود: <strong>@Safe(Model.Code)</strong></div>
+            </header>
+
+            <main>
+                <section class="details-grid" aria-label="معلومات الحساب الأساسية">
+
+                    <div class="detail-item" title="كود الحساب">
+                        <span class="detail-label">كود الحساب</span>
+                        <span class="detail-value">@Safe(Model.Code)</span>
+                    </div>
+
+                    <div class="detail-item" title="اسم الحساب">
+                        <span class="detail-label">اسم الحساب</span>
+                        <span class="detail-value">@Safe(Model.Name)</span>
+                    </div>
+
+                    <div class="detail-item" title="نوع الحساب">
+                        <span class="detail-label">نوع الحساب</span>
+                        <span class="detail-value">@TranslateType(Model.AccountType)</span>
+                    </div>
+
+                    <div class="detail-item" title="طبيعة الحساب">
+                        <span class="detail-label">طبيعة الحساب</span>
+                        <span class="detail-value">@TranslateBalance(Model.NormalBalance)</span>
+                    </div>
+
+                    <div class="detail-item" title="المستوى">
+                        <span class="detail-label">المستوى</span>
+                        <span class="detail-value">@Model.Level</span>
+                    </div>
+
+                    <div class="detail-item" title="هل حساب فرعي؟">
+                        <span class="detail-label">حساب فرعي (Leaf)</span>
+                        <span class="detail-value">
+                            @if (Model.IsLeaf)
+                            {
+                                <span class="badge badge-yes" aria-label="نعم — حساب فرعي">
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                    نعم
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-no" aria-label="لا — ليس حساب فرعي">
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                    لا
+                                </span>
+                            }
+                        </span>
+                    </div>
+
+                    <div class="detail-item" title="الحالة">
+                        <span class="detail-label">الحالة</span>
+                        <span class="detail-value">
+                            @if (Model.IsActive)
+                            {
+                                <span class="badge badge-yes" aria-label="نشط">
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" /></svg>
+                                    نشط
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-no" aria-label="غير نشط">
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                    غير نشط
+                                </span>
+                            }
+                        </span>
+                    </div>
+
+                    <div class="detail-item detail-full" title="ملاحظات">
+                        <span class="detail-label">ملاحظات</span>
+                        <div class="detail-value" style="font-weight:600;white-space:pre-wrap;">@Safe(Model.Notes)</div>
+                    </div>
+
+                </section>
+
+                <div class="actions" role="toolbar" aria-label="إجراءات">
+                    <a class="btn btn-outline" href="@Url.Action("List")">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                        عودة للقائمة
+                    </a>
+
+                    <a class="btn btn-primary" href="@Url.Action("Edit", new { id = Model.Id })">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor" /></svg>
+                        تعديل
+                    </a>
+                </div>
+
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

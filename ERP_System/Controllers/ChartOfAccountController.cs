@@ -40,6 +40,13 @@ namespace ERP_System.Controllers
             return View(account);
         }
 
+        public async Task<IActionResult> Details(int id)
+        {
+            var account = await _context.ChartOfAccounts.FindAsync(id);
+            if (account == null) return NotFound();
+            return View(account);
+        }
+
         public async Task<IActionResult> Edit(int id)
         {
             var account = await _context.ChartOfAccounts.FindAsync(id);
