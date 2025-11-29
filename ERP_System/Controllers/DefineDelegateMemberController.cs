@@ -18,10 +18,12 @@ namespace ERP_System.Controllers
         }
 
         // List all delegate members
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> List()
         {
             var delegates = await _context.DelegateMembers
                 .Include(d => d.Employee)
+                    .ThenInclude(e => e.Phones)
+                .OrderBy(d => d.Employee.Name)
                 .ToListAsync();
             return View(delegates);
         }
@@ -45,6 +47,7 @@ namespace ERP_System.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(DelegateMember delegateMember)
         {
+            ModelState.Remove("Employee");
             if (ModelState.IsValid)
             {
                 // Check if already exists (double check)
@@ -56,7 +59,7 @@ namespace ERP_System.Controllers
                 {
                     _context.Add(delegateMember);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(List));
                 }
             }
 
@@ -101,7 +104,7 @@ namespace ERP_System.Controllers
                 _context.DelegateMembers.Remove(delegateMember);
                 await _context.SaveChangesAsync();
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(List));
         }
     }
 }

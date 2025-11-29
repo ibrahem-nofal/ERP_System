@@ -4,6 +4,7 @@ using ERP_System.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERP_System.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251129113746_MakeAssignedByNullableInPurchaseHeader")]
+    partial class MakeAssignedByNullableInPurchaseHeader
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -730,71 +733,6 @@ namespace ERP_System.Migrations
 
                             t.HasCheckConstraint("CK_InvoiceSaleHeader_PayStatus", "[PayStatus] IN ('open', 'closed')");
                         });
-                });
-
-            modelBuilder.Entity("ERP_System.Models.InvoiceTransferDetail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("HeaderId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HeaderId");
-
-                    b.HasIndex("ItemId");
-
-                    b.ToTable("InvoiceTransferDetails");
-                });
-
-            modelBuilder.Entity("ERP_System.Models.InvoiceTransferHeader", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("AssignedBy")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("FromStoreId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Remarks")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ToStoreId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AssignedBy");
-
-                    b.HasIndex("FromStoreId");
-
-                    b.HasIndex("ToStoreId");
-
-                    b.ToTable("InvoiceTransferHeaders");
                 });
 
             modelBuilder.Entity("ERP_System.Models.Item", b =>
@@ -1564,51 +1502,6 @@ namespace ERP_System.Migrations
                     b.Navigation("Store");
                 });
 
-            modelBuilder.Entity("ERP_System.Models.InvoiceTransferDetail", b =>
-                {
-                    b.HasOne("ERP_System.Models.InvoiceTransferHeader", "Header")
-                        .WithMany("Details")
-                        .HasForeignKey("HeaderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ERP_System.Models.Item", "Item")
-                        .WithMany()
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Header");
-
-                    b.Navigation("Item");
-                });
-
-            modelBuilder.Entity("ERP_System.Models.InvoiceTransferHeader", b =>
-                {
-                    b.HasOne("ERP_System.Models.Employee", "AssignedByEmployee")
-                        .WithMany()
-                        .HasForeignKey("AssignedBy")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("ERP_System.Models.Store", "FromStore")
-                        .WithMany()
-                        .HasForeignKey("FromStoreId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ERP_System.Models.Store", "ToStore")
-                        .WithMany()
-                        .HasForeignKey("ToStoreId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("AssignedByEmployee");
-
-                    b.Navigation("FromStore");
-
-                    b.Navigation("ToStore");
-                });
-
             modelBuilder.Entity("ERP_System.Models.Item", b =>
                 {
                     b.HasOne("ERP_System.Models.Company", "Company")
@@ -1821,11 +1714,6 @@ namespace ERP_System.Migrations
                     b.Navigation("Logins");
 
                     b.Navigation("Phones");
-                });
-
-            modelBuilder.Entity("ERP_System.Models.InvoiceTransferHeader", b =>
-                {
-                    b.Navigation("Details");
                 });
 
             modelBuilder.Entity("ERP_System.Models.Item", b =>

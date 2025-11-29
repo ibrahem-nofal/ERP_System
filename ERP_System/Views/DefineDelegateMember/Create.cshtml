@@ -9,7 +9,7 @@
     <nav aria-label="breadcrumb" class="mb-4 animate__animated animate__fadeInDown">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a asp-action="Index" class="text-decoration-none">
+                <a asp-action="List" class="text-decoration-none">
                     <i class="bi bi-house-door me-1"></i>المندوبين
                 </a>
             </li>
@@ -32,10 +32,11 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="card-body p-4">
                     <form asp-action="Create" id="createForm">
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger alert-dismissible fade show"
+                            role="alert">
                             <i class="bi bi-exclamation-triangle-fill me-2"></i>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
@@ -58,7 +59,8 @@
                                 <span class="text-danger">*</span>
                             </label>
                             <div class="position-relative">
-                                <select asp-for="EmpId" class="form-select form-select-lg shadow-sm" asp-items="ViewBag.Employees" required>
+                                <select asp-for="EmpId" class="form-select form-select-lg shadow-sm"
+                                    asp-items="ViewBag.Employees" required>
                                     <option value="">-- اختر الموظف --</option>
                                 </select>
                                 <span asp-validation-for="EmpId" class="text-danger small mt-1 d-block"></span>
@@ -67,7 +69,7 @@
 
                         <!-- Action Buttons -->
                         <div class="d-flex gap-3 justify-content-end mt-5 pt-4 border-top">
-                            <a asp-action="Index" class="btn btn-lg btn-outline-secondary px-4">
+                            <a asp-action="List" class="btn btn-lg btn-outline-secondary px-4">
                                 <i class="bi bi-x-circle me-2"></i>
                                 إلغاء
                             </a>
@@ -81,13 +83,14 @@
             </div>
 
             <!-- Help Card -->
-            <div class="card border-0 bg-light mt-4 animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+            <div class="card border-0 help-card-glass mt-4 animate__animated animate__fadeInUp"
+                style="animation-delay: 0.2s;">
                 <div class="card-body">
-                    <h6 class="fw-bold mb-3">
+                    <h6 class="fw-bold mb-3 text-white">
                         <i class="bi bi-question-circle text-primary me-2"></i>
                         كيفية الاستخدام
                     </h6>
-                    <ul class="list-unstyled mb-0">
+                    <ul class="list-unstyled mb-0 text-white">
                         <li class="mb-2">
                             <i class="bi bi-check-circle-fill text-success me-2"></i>
                             اختر الموظف من القائمة المنسدلة
@@ -108,7 +111,7 @@
 </div>
 
 @section Styles {
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <style>
         .bg-gradient-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -122,7 +125,7 @@
             align-items: center;
             justify-content: center;
             font-size: 1.8rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .form-select:focus {
@@ -142,12 +145,46 @@
         .card {
             border-radius: 16px;
             overflow: hidden;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card h1,
+        .card h2,
+        .card h3,
+        .card h4,
+        .card h5,
+        .card h6,
+        .card label,
+        .card .form-label {
+            color: white !important;
+        }
+
+        /* Help Card Glass Style */
+        .help-card-glass {
+            background: rgba(0, 0, 0, 0.3) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: white !important;
+        }
+
+        .help-card-glass h6,
+        .help-card-glass li {
+            color: white !important;
         }
 
         .form-select {
             border-radius: 12px;
-            border: 2px solid #e9ecef;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(0, 0, 0, 0.2) !important;
+            color: white !important;
             transition: all 0.3s ease;
+        }
+
+        .form-select option {
+            background-color: #1e293b;
+            color: white;
         }
 
         .form-select:hover {
@@ -165,7 +202,7 @@
             padding: 0;
         }
 
-        .breadcrumb-item + .breadcrumb-item::before {
+        .breadcrumb-item+.breadcrumb-item::before {
             content: "←";
         }
     </style>
@@ -177,7 +214,7 @@
     }
     <script>
         // Form validation feedback
-        document.getElementById('createForm').addEventListener('submit', function(e) {
+        document.getElementById('createForm').addEventListener('submit', function (e) {
             const select = document.querySelector('select[name="EmpId"]');
             if (!select.value) {
                 e.preventDefault();
@@ -187,7 +224,7 @@
         });
 
         // Remove invalid class on change
-        document.querySelector('select[name="EmpId"]').addEventListener('change', function() {
+        document.querySelector('select[name="EmpId"]').addEventListener('change', function () {
             this.classList.remove('is-invalid');
         });
     </script>

@@ -99,6 +99,7 @@
             margin-left: 10px;
         }
     </style>
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 
 <body>
@@ -116,6 +117,12 @@
 
             <ul class="nav flex-column">
                 <li class="nav-item mb-2">
+                    <a asp-area="" asp-controller="Base" asp-action="Index"
+                        class="nav-link @(currentController == "Base" ? "active" : "")">
+                        <i class="bi bi-house-door"></i> الرئيسية
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
                     <a asp-area="" asp-controller="Dashboard" asp-action="Index"
                         class="nav-link @(currentController == "Dashboard" ? "active" : "")">
                         <i class="bi bi-speedometer2"></i> لوحة التحكم
@@ -125,14 +132,33 @@
                 <li class="nav-item mb-2">
                     <a asp-area="" asp-controller="DefineEmployee" asp-action="List"
                         class="nav-link @(currentController == "DefineEmployee" ? "active" : "")">
-                        <i class="bi bi-people"></i> إدارة المستخدمين
+                        <i class="bi bi-people"></i> الموظفين
                     </a>
                 </li>
 
                 <li class="nav-item mb-2">
+                    <a asp-area="" asp-controller="DefineDelegateMember" asp-action="List"
+                        class="nav-link @(currentController == "DefineDelegateMember" ? "active" : "")">
+                        <i class="bi bi-person-workspace"></i> المناديب
+                    </a>
+                </li>
+
+                <li class="nav-item mb-2">
+                    <a asp-area="" asp-controller="DefineCategory" asp-action="List"
+                        class="nav-link @(currentController == "DefineCategory" ? "active" : "")">
+                        <i class="bi bi-tags"></i> التصنيفات
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
                     <a asp-area="" asp-controller="DefineItem" asp-action="List"
                         class="nav-link @(currentController == "DefineItem" ? "active" : "")">
                         <i class="bi bi-box-seam"></i> المنتجات
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a asp-area="" asp-controller="DefineUnit" asp-action="List"
+                        class="nav-link @(currentController == "DefineUnit" ? "active" : "")">
+                        <i class="bi bi-rulers"></i> الوحدات
                     </a>
                 </li>
                 <li class="nav-item mb-2">
@@ -256,6 +282,14 @@
                     </a>
                 </li>
             </ul>
+
+            <ul class="nav flex-column mt-3">
+                <li class="nav-item mb-2">
+                    <a asp-area="" asp-controller="Account" asp-action="Logout" class="nav-link text-danger">
+                        <i class="bi bi-box-arrow-right"></i> تسجيل الخروج
+                    </a>
+                </li>
+            </ul>
         </aside>
 
         <!-- Main -->
@@ -269,53 +303,18 @@
 
                 <!-- Search box (Center) -->
                 <div class="position-relative flex-grow-1 mx-4" style="max-width: 450px;">
-                    <input type="text" class="form-control search-box" placeholder="ابحث هنا...">
+                    <input type="text" id="searchInput" class="form-control search-box" placeholder="ابحث في القائمة..."
+                        style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white; backdrop-filter: blur(5px);">
                     <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-secondary"></i>
                 </div>
 
-                <!-- Notifications & Profile (Left in RTL) -->
+                <!-- Profile (Left in RTL) -->
                 <div class="d-flex align-items-center gap-4">
-
-                    <!-- Notifications Dropdown -->
-                    <div class="dropdown">
-                        <div class="position-relative cursor-pointer" data-bs-toggle="dropdown" aria-expanded="false"
-                            style="cursor: pointer;">
-                            <i class="bi bi-bell fs-5 text-secondary"></i>
-                            <span class="notification-badge">3</span>
-                        </div>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
-                            <li>
-                                <h6 class="dropdown-header">الإشعارات</h6>
-                            </li>
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center gap-2" href="#">
-                                    <i class="bi bi-box-seam text-primary"></i>
-                                    <div>
-                                        <div class="small fw-bold">تم إضافة منتج جديد</div>
-                                        <div class="text-muted x-small" style="font-size: 0.75rem;">منذ 5 دقائق</div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center gap-2" href="#">
-                                    <i class="bi bi-exclamation-triangle text-warning"></i>
-                                    <div>
-                                        <div class="small fw-bold">تنبيه مخزون منخفض</div>
-                                        <div class="text-muted x-small" style="font-size: 0.75rem;">منذ 1 ساعة</div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item text-center small text-primary" href="#">عرض الكل</a></li>
-                        </ul>
-                    </div>
-
                     <!-- Profile -->
                     <div class="d-flex align-items-center border-start ps-3">
                         <div class="text-end profile-info ms-2">
-                            <span class="fw-semibold d-block" style="line-height: 1.2;">أحمد محمد</span>
+                            <span class="fw-semibold d-block" style="line-height: 1.2;">@(User.Identity?.Name ??
+                                "زائر")</span>
                             <small class="text-muted">مدير النظام</small>
                         </div>
                         <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" width="40" height="40"
@@ -369,6 +368,7 @@
     }
 
     <!-- ✅ JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const menuToggle = document.getElementById("menuToggle");
@@ -423,6 +423,34 @@
                 }
             }
         });
+
+        // ✅ Search Functionality
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function () {
+                const filter = this.value.toLowerCase();
+                const sidebar = document.getElementById('sidebar');
+                const navItems = sidebar.querySelectorAll('.nav-item');
+                const headers = sidebar.querySelectorAll('h6');
+
+                navItems.forEach(item => {
+                    const link = item.querySelector('.nav-link');
+                    if (link) {
+                        const text = link.textContent || link.innerText;
+                        if (text.toLowerCase().indexOf(filter) > -1) {
+                            item.style.display = "";
+                        } else {
+                            item.style.display = "none";
+                        }
+                    }
+                });
+
+                // Optional: Hide headers if all their children are hidden
+                // This is a bit more complex to do perfectly without specific grouping structure, 
+                // but we can leave headers visible or try to hide them. 
+                // For now, let's keep it simple.
+            });
+        }
     </script>
     @RenderSection("Scripts", required: false)
 </body>

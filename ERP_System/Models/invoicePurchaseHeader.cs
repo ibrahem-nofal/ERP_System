@@ -8,19 +8,22 @@ namespace ERP_System.Models
 
         public int? RefInvId { get; set; }
 
-        public string InvType { get; set; }  // PurchaseCash, PurchaseCredit, PurchaseReturn
+        public string? InvType { get; set; }  // PurchaseCash, PurchaseCredit, PurchaseReturn
 
         public DateTime DateCreated { get; set; } = DateTime.Now;
 
+        [Required(ErrorMessage = "المورد مطلوب")]
         public int? SupplierId { get; set; }
 
+        [Required(ErrorMessage = "المخزن مطلوب")]
         public int? StoreId { get; set; }
 
+        [Required(ErrorMessage = "حالة الطلب مطلوبة")]
         public string OrderStatus { get; set; } // wait, recieved, returned, returning
 
         public DateTime? DeliveryDate { get; set; }
 
-        public int AssignedBy { get; set; }
+        public int? AssignedBy { get; set; }
 
         public decimal TotalAmount { get; set; }
 
@@ -35,6 +38,7 @@ namespace ERP_System.Models
 
         public string Remarks { get; set; }
 
+        [Required(ErrorMessage = "حالة الدفع مطلوبة")]
         public string PayStatus { get; set; } // open, closed
 
         public bool IsPostpaid { get; set; } = false;
@@ -42,9 +46,9 @@ namespace ERP_System.Models
         public DateTime? PaymentDueDate { get; set; }
 
         // Navigation properties (optional)
-        public Supplier Supplier { get; set; }
-        public Store Store { get; set; }
-        public Employee AssignedByEmployee { get; set; }
-        public InvoicePurchaseHeader RefInvoice { get; set; }
+        public Supplier? Supplier { get; set; }
+        public Store? Store { get; set; }
+        public Employee? AssignedByEmployee { get; set; }
+        public InvoicePurchaseHeader? RefInvoice { get; set; }
     }
 }

@@ -24,7 +24,7 @@ namespace ERP_System.Controllers
         {
             if (User.Identity!.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Base");
             }
             return View();
         }
@@ -54,7 +54,7 @@ namespace ERP_System.Controllers
 
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Base");
                 }
                 else
                 {
@@ -70,7 +70,7 @@ namespace ERP_System.Controllers
         {
             if (User.Identity!.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Base");
             }
             return View();
         }

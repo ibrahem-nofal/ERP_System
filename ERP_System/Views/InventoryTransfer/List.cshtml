@@ -1,5 +1,7 @@
+@model IEnumerable<ERP_System.Models.InvoiceTransferHeader>
+
 @{
-    ViewData["Title"] = "التحويلات المخزنية";
+    ViewData["Title"] = "تحويلات المخازن";
 }
 
 <!DOCTYPE html>
@@ -7,12 +9,6 @@
 
 <head>
     <style>
-        /* body {
-            background: #0f1724;
-            color: #e6eef6;
-            font-family: "Segoe UI", Tahoma, sans-serif;
-        } */
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -38,19 +34,23 @@
             border-radius: 10px;
         }
 
-        .btn {
-            padding: 10px 20px;
+        .search-box {
+            padding: 10px;
             border-radius: 6px;
-            text-decoration: none;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            width: 300px;
         }
 
         .btn-primary {
             background: linear-gradient(90deg, #06b6d4, #7c3aed);
             color: #021024;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
         }
 
         table {
@@ -73,39 +73,112 @@
             color: #06b6d4;
             font-weight: bold;
         }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-edit {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .btn-details {
+            background: rgba(6, 182, 212, 0.2);
+            color: #06b6d4;
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>التحويلات المخزنية</h1>
+        <h1>تحويلات المخازن</h1>
 
         <div class="header-actions">
-            <div style="color: #94a3b8;">عرض سجل التحويلات بين المخازن</div>
-            <a href="@Url.Action("Index")" class="btn btn-primary">+ تحويل جديد</a>
+            <input type="text" id="searchBox" class="search-box" placeholder="بحث في التحويلات...">
+            <a asp-action="Create" class="btn btn-primary">+ تحويل جديد</a>
         </div>
 
         <table id="dataTable">
             <thead>
                 <tr>
-                    <th>رقم العملية</th>
+                    <th>كود التحويل</th>
                     <th>التاريخ</th>
                     <th>من مخزن</th>
                     <th>إلى مخزن</th>
-                    <th>الصنف</th>
-                    <th>الكمية</th>
                     <th>بواسطة</th>
+                    <th>ملاحظات</th>
+                    <th>الإجراءات</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td colspan="7" style="text-align:center; padding: 30px; color: #94a3b8;">
-                        لا توجد عمليات تحويل حالياً
-                    </td>
-                </tr>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Code</td>
+                            <td>@item.Date.ToString("yyyy/MM/dd HH:mm")</td>
+                            <td>@item.FromStore?.Name</td>
+                            <td>@item.ToStore?.Name</td>
+                            <td>@item.AssignedByEmployee?.Name</td>
+                            <td>@item.Remarks</td>
+                            <td>
+                                <div class="actions">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-details">عرض</a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-edit">تعديل</a>
+                                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;"
+                                        onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
+                                        <button type="submit" class="btn btn-delete">حذف</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding: 30px; color: #94a3b8;">
+                            لا توجد تحويلات حالياً
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
+
+    <script>
+        document.getElementById('searchBox').addEventListener('keyup', function () {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#dataTable tbody tr');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    </script>
 </body>
 
 </html>

@@ -1,21 +1,12 @@
-@model IEnumerable<ERP_System.Models.Employee>
+@model IEnumerable<ERP_System.Models.DelegateMember>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>قائمة الموظفين</title>
+    <title>قائمة المندوبين</title>
     <style>
-        /* body {
-                background: #0f1724;
-                color: #e6eef6;
-                font-family: "Segoe UI", Tahoma, sans-serif;
-                margin: 0;
-                padding: 30px;
-                direction: rtl;
-            } */
-
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -146,37 +137,34 @@
 
 <body>
     <div class="container">
-        <h1>قائمة الموظفين</h1>
+        <h1>قائمة المندوبين</h1>
 
         <div class="header-actions">
-            <input type="text" id="searchBox" class="search-box" placeholder="بحث عن موظف...">
-            <a href="@Url.Action("Index")" class="btn btn-primary">+ إضافة موظف جديد</a>
+            <input type="text" id="searchBox" class="search-box" placeholder="بحث عن مندوب...">
+            <a href="@Url.Action("Create")" class="btn btn-primary">+ إضافة مندوب جديد</a>
         </div>
 
         @if (Model != null && Model.Any())
         {
-            <table id="employeeTable">
+            <table id="delegateTable">
                 <thead>
                     <tr>
                         <th>الصورة</th>
                         <th>الاسم</th>
                         <th>نوع الوظيفة</th>
-                        <th>النوع</th>
-                        <th>العنوان</th>
-                        <th>رقم الهوية</th>
-                        <th>الحالة</th>
+                        <th>رقم الهاتف</th>
                         <th>الإجراءات</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var emp in Model)
+                    @foreach (var item in Model)
                     {
                         <tr>
                             <td>
-                                @if (emp.Image != null && emp.Image.EmpImageData != null)
+                                @if (item.Employee?.Image != null && item.Employee.Image.EmpImageData != null)
                                 {
-                                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(emp.Image.EmpImageData)"
-                                        alt="@emp.Name" class="employee-image">
+                                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(item.Employee.Image.EmpImageData)"
+                                        alt="@item.Employee.Name" class="employee-image">
                                 }
                                 else
                                 {
@@ -184,18 +172,22 @@
                                         style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
                                 }
                             </td>
-                            <td>@emp.Name</td>
-                            <td>@TranslateRole(emp.RoleType)</td>
-                            <td>@TranslateGender(emp.Gender)</td>
-                            <td>@emp.Address</td>
-                            <td>@emp.IdNumber</td>
-                            <td>@TranslateState(emp.State)</td>
+                            <td>@(item.Employee?.Name ?? "-")</td>
+                            <td>@TranslateRole(item.Employee?.RoleType)</td>
+                            <td>
+                                @if (item.Employee?.Phones != null && item.Employee.Phones.Any())
+                                {
+                                    @item.Employee.Phones.First().Phone
+                                }
+                                else
+                                {
+                                    <span>-</span>
+                                }
+                            </td>
                             <td>
                                 <div class="actions">
-                                    <a href="@Url.Action("Details", new { id = emp.Id })" class="btn btn-details">عرض</a>
-                                    <a href="@Url.Action("Edit", new { id = emp.Id })" class="btn btn-edit">تعديل</a>
-                                    <form asp-action="Delete" asp-route-id="@emp.Id" method="post" class="delete-form"
-                                        onsubmit="return confirm('هل أنت متأكد من حذف هذا الموظف؟');">
+                                    <form asp-action="Delete" asp-route-id="@item.EmpId" method="post" class="delete-form"
+                                        onsubmit="return confirm('هل أنت متأكد من حذف هذا المندوب؟');">
                                         <button type="submit" class="btn btn-delete">حذف</button>
                                     </form>
                                 </div>
@@ -208,16 +200,17 @@
         else
         {
             <div class="no-data">
-                <p>لا توجد بيانات موظفين حالياً</p>
-                <a href="@Url.Action("Index")" class="btn btn-primary">إضافة أول موظف</a>
+                <p>لا توجد بيانات مندوبين حالياً</p>
+                <a href="@Url.Action("Create")" class="btn btn-primary">إضافة أول مندوب</a>
             </div>
         }
     </div>
+
     <script>
         // Search functionality
         document.getElementById('searchBox').addEventListener('keyup', function () {
             const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#employeeTable tbody tr');
+            const rows = document.querySelectorAll('#delegateTable tbody tr');
 
             rows.forEach(row => {
                 const text = row.textContent.toLowerCase();
@@ -240,28 +233,6 @@
             "manager" => "مدير",
             "admin" => "مسؤول",
             _ => role
-        };
-    }
-
-    public string TranslateGender(string gender)
-    {
-        if (string.IsNullOrEmpty(gender)) return "-";
-        return gender.ToLower() switch
-        {
-            "male" => "ذكر",
-            "female" => "أنثى",
-            _ => gender
-        };
-    }
-
-    public string TranslateState(string state)
-    {
-        if (string.IsNullOrEmpty(state)) return "-";
-        return state.ToLower() switch
-        {
-            "active" => "نشط",
-            "inactive" => "غير نشط",
-            _ => state
         };
     }
 }

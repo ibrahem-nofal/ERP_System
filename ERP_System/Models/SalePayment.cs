@@ -26,8 +26,8 @@ namespace ERP_System.Models
 
         // Navigation properties
         [ForeignKey("InvSaleId")]
-        public InvoiceSaleHeader InvoiceSale { get; set; }
+        public InvoiceSaleHeader? InvoiceSale { get; set; }
         [ForeignKey("InvoiceReturnId")]
-        public InvoiceSaleHeader InvoiceReturn { get; set; }
+        public InvoiceSaleHeader? InvoiceReturn { get; set; }
     }
 }

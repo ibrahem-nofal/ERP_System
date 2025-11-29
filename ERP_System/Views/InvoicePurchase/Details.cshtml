@@ -1,0 +1,279 @@
+@model ERP_System.Models.InvoicePurchaseHeader
+
+@{
+    ViewData["Title"] = "تفاصيل فاتورة الشراء";
+    var details = ViewBag.Details as List<ERP_System.Models.InvoicePurchaseDetail>;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+        }
+
+        .info-item label {
+            display: block;
+            color: #94a3b8;
+            font-size: 0.875rem;
+            margin-bottom: 8px;
+        }
+
+        .info-item span {
+            display: block;
+            color: #e2e8f0;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: right;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            color: #94a3b8;
+            font-weight: 500;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            color: #e2e8f0;
+        }
+
+        .total-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .total-box {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            border-radius: 12px;
+            min-width: 300px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #94a3b8;
+        }
+
+        .total-row.final {
+            color: #06b6d4;
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 0;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .badge-paid { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .badge-unpaid { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .badge-partial { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <div>
+                <h1>فاتورة شراء #@Model.Id</h1>
+                <p style="color: #94a3b8; margin-top: 5px;">تاريخ الإنشاء: @Model.DateCreated.ToString("yyyy/MM/dd HH:mm")</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> تعديل
+                </a>
+                <a href="@Url.Action("List")" class="btn btn-secondary">
+                    <i class="fas fa-arrow-right"></i> عودة للقائمة
+                </a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>المورد</label>
+                    <span>@(Model.Supplier?.Name ?? "-")</span>
+                </div>
+                <div class="info-item">
+                    <label>المخزن</label>
+                    <span>@(Model.Store?.Name ?? "-")</span>
+                </div>
+                <div class="info-item">
+                    <label>حالة الدفع</label>
+                    <span>
+                        @if (Model.PayStatus == "closed")
+                        {
+                                <span class="badge badge-paid">مدفوع</span>
+                        }
+                        else if (Model.PayStatus == "open")
+                        {
+                                <span class="badge badge-unpaid">غير مدفوع</span>
+                        }
+                        else
+                        {
+                                <span class="badge badge-partial">@Model.PayStatus</span>
+                        }
+                    </span>
+                </div>
+                <div class="info-item">
+                    <label>حالة الطلب</label>
+                    <span>@Model.OrderStatus</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 style="color: #e2e8f0; margin-bottom: 20px;">الأصناف</h3>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الصنف</th>
+                            <th>الكمية</th>
+                            <th>السعر</th>
+                            <th>الإجمالي</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (details != null && details.Any())
+                        {
+                            foreach (var item in details)
+                            {
+                                        <tr>
+                                            <td>@(item.Item?.Name ?? "-")</td>
+                                            <td>@item.Quantity</td>
+                                            <td>@item.UnitPrice.ToString("N2")</td>
+                                            <td>@((item.Quantity * item.UnitPrice).ToString("N2"))</td>
+                                        </tr>
+                            }
+                        }
+                        else
+                        {
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: #94a3b8;">لا توجد أصناف</td>
+                                </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="total-section">
+                <div class="total-box">
+                    <div class="total-row">
+                        <span>المجموع الفرعي</span>
+                        <span>@Model.TotalAmount.ToString("N2")</span>
+                    </div>
+                    <div class="total-row">
+                        <span>الخصم</span>
+                        <span>@Model.Discount.ToString("N2")</span>
+                    </div>
+                    <div class="total-row final">
+                        <span>الإجمالي الصافي</span>
+                        <span>@((Model.TotalAmount - Model.Discount).ToString("N2"))</span>
+                    </div>
+                    <div class="total-row" style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1);">
+                        <span>المدفوع</span>
+                        <span style="color: #10b981;">@Model.Paid.ToString("N2")</span>
+                    </div>
+                    <div class="total-row">
+                        <span>المتبقي</span>
+                        <span style="color: #ef4444;">@Model.Remain.ToString("N2")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.Remarks))
+        {
+                <div class="card">
+                    <h3 style="color: #e2e8f0; margin-bottom: 10px;">ملاحظات</h3>
+                    <p style="color: #94a3b8;">@Model.Remarks</p>
+                </div>
+        }
+    </div>
+</body>
+</html>

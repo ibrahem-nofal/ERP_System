@@ -49,8 +49,8 @@ namespace ERP_System.Controllers
                 {
                     invoice.Paid += payment.AmountPaid;
                     invoice.Remain = invoice.NetAmount - invoice.Paid;
-                    if (invoice.Remain <= 0) invoice.PayStatus = "Paid";
-                    else invoice.PayStatus = "Partial";
+                    if (invoice.Remain <= 0) invoice.PayStatus = "closed";
+                    else invoice.PayStatus = "open";
                 }
 
                 await _context.SaveChangesAsync();
@@ -87,8 +87,8 @@ namespace ERP_System.Controllers
                 {
                     invoice.Paid -= payment.AmountPaid;
                     invoice.Remain = invoice.NetAmount - invoice.Paid;
-                    if (invoice.Paid == 0) invoice.PayStatus = "Unpaid";
-                    else invoice.PayStatus = "Partial";
+                    if (invoice.Paid == 0) invoice.PayStatus = "open";
+                    else invoice.PayStatus = "open";
                 }
 
                 _context.PurchasePayments.Remove(payment);

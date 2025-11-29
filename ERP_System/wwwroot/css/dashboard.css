@@ -14,6 +14,59 @@
     margin-bottom: 2rem;
 }
 
+/* Stat Card */
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    color: #fff;
+}
+
+.stat-card .icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat-card .value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card .label {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card .change {
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.stat-card .change.positive {
+    color: #10b981;
+}
+
+.stat-card .change.negative {
+    color: #ef4444;
+}
+
 /* Stat Card Colors */
 .stat-card.sales .icon {
     background: linear-gradient(135deg, #10B981, #34D399);
@@ -44,17 +97,17 @@
 }
 
 .chart-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 16px;
     padding: 1.5rem;
-    border: 1px solid var(--border-light);
-    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .chart-card h6 {
     font-size: 1.1rem;
     font-weight: 700;
-    color: var(--text-primary);
+    color: #fff;
     margin-bottom: 1.5rem;
 }
 
@@ -65,10 +118,16 @@
 
 /* Recent Activity */
 .activity-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 16px;
     padding: 1.5rem;
-    border: 1px solid var(--border-light);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 2rem;
+}
+
+.activity-card h6 {
+    color: #fff;
+    font-weight: 700;
 }
 
 .activity-item {
@@ -81,7 +140,7 @@
 }
 
 .activity-item:hover {
-    background: var(--light-bg);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .activity-icon {
@@ -96,18 +155,18 @@
 }
 
 .activity-icon.success {
-    background: rgba(16, 185, 129, 0.1);
-    color: var(--success-green);
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
 }
 
 .activity-icon.warning {
-    background: rgba(245, 158, 11, 0.1);
-    color: var(--warning-orange);
+    background: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
 }
 
 .activity-icon.info {
-    background: rgba(74, 144, 226, 0.1);
-    color: var(--primary-blue);
+    background: rgba(74, 144, 226, 0.2);
+    color: #60a5fa;
 }
 
 .activity-content {
@@ -116,13 +175,13 @@
 
 .activity-title {
     font-weight: 600;
-    color: var(--text-primary);
+    color: #fff;
     margin-bottom: 0.25rem;
 }
 
 .activity-time {
     font-size: 0.8rem;
-    color: var(--text-secondary);
+    color: #94a3b8;
 }
 
 /* Quick Actions */
@@ -134,27 +193,28 @@
 }
 
 .quick-action-btn {
-    background: white;
-    border: 2px solid var(--border-light);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     padding: 1.5rem;
     text-align: center;
     transition: all 0.3s ease;
     cursor: pointer;
     text-decoration: none;
-    color: var(--text-primary);
+    color: #fff;
+    display: block;
 }
 
 .quick-action-btn:hover {
-    border-color: var(--primary-blue);
-    background: rgba(74, 144, 226, 0.05);
+    border-color: #06b6d4;
+    background: rgba(6, 182, 212, 0.1);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .quick-action-btn i {
     font-size: 2rem;
-    color: var(--primary-blue);
+    color: #06b6d4;
     margin-bottom: 0.75rem;
     display: block;
 }

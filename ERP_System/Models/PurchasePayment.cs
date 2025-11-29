@@ -1,5 +1,4 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ERP_System.Models
 {
@@ -15,14 +14,14 @@ namespace ERP_System.Models
 
         public DateTime PaymentDate { get; set; } = DateTime.Now;
 
-        public string PaymentMethod { get; set; }  // cash, visa, vCash, insta
+        public string? PaymentMethod { get; set; }  // cash, visa, vCash, insta
 
-        public string Remarks { get; set; }
+        public string? Remarks { get; set; }
 
         public bool Out { get; set; } = true;
 
         // Navigation properties
-        public InvoicePurchaseHeader InvoiceReturn { get; set; }
-        public InvoicePurchaseHeader InvoicePurchase { get; set; }
+        public InvoicePurchaseHeader? InvoiceReturn { get; set; }
+        public InvoicePurchaseHeader? InvoicePurchase { get; set; }
     }
 }

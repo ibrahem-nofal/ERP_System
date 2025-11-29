@@ -45,6 +45,8 @@ namespace ERP_System.Data
         public DbSet<InvoiceSaleHeader> InvoiceSaleHeaders { get; set; }
         public DbSet<InvoiceSaleDetail> InvoiceSaleDetails { get; set; }
         public DbSet<SalePayment> SalePayments { get; set; }
+        public DbSet<InvoiceTransferHeader> InvoiceTransferHeaders { get; set; }
+        public DbSet<InvoiceTransferDetail> InvoiceTransferDetails { get; set; }
 
 
         //sting
@@ -276,6 +278,38 @@ namespace ERP_System.Data
                 .HasOne(p => p.InvoiceReturn)
                 .WithMany()
                 .HasForeignKey(p => p.InvoiceReturnId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // InvoiceTransferHeader
+            modelBuilder.Entity<InvoiceTransferHeader>()
+                .HasOne(t => t.FromStore)
+                .WithMany()
+                .HasForeignKey(t => t.FromStoreId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<InvoiceTransferHeader>()
+                .HasOne(t => t.ToStore)
+                .WithMany()
+                .HasForeignKey(t => t.ToStoreId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<InvoiceTransferHeader>()
+                .HasOne(t => t.AssignedByEmployee)
+                .WithMany()
+                .HasForeignKey(t => t.AssignedBy)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // InvoiceTransferDetail
+            modelBuilder.Entity<InvoiceTransferDetail>()
+                .HasOne(d => d.Header)
+                .WithMany(h => h.Details)
+                .HasForeignKey(d => d.HeaderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<InvoiceTransferDetail>()
+                .HasOne(d => d.Item)
+                .WithMany()
+                .HasForeignKey(d => d.ItemId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Unique Indexes

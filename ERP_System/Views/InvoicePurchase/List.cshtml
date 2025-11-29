@@ -49,15 +49,6 @@
             width: 300px;
         }
 
-        .btn {
-            padding: 10px 20px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
 
         .btn-primary {
             background: linear-gradient(90deg, #06b6d4, #7c3aed);
@@ -99,25 +90,35 @@
             gap: 10px;
         }
 
-        .btn-details {
-            background: rgba(6, 182, 212, 0.2);
-            color: #06b6d4;
+        .btn-action {
             padding: 5px 10px;
             font-size: 14px;
+            margin-left: 5px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
         .btn-edit {
             background: rgba(16, 185, 129, 0.2);
             color: #10b981;
-            padding: 5px 10px;
-            font-size: 14px;
+        }
+
+        .btn-details {
+            background: rgba(6, 182, 212, 0.2);
+            color: #06b6d4;
         }
 
         .btn-delete {
             background: rgba(239, 68, 68, 0.2);
             color: #ef4444;
-            padding: 5px 10px;
-            font-size: 14px;
         }
 
         .badge {
@@ -150,7 +151,7 @@
 
         <div class="header-actions">
             <input type="text" id="searchBox" class="search-box" placeholder="بحث في الفواتير...">
-            <a href="@Url.Action("Index")" class="btn btn-primary">+ فاتورة شراء جديدة</a>
+            <a href="@Url.Action("Create")" class="btn btn-primary">+ فاتورة شراء جديدة</a>
         </div>
 
         <table id="dataTable">

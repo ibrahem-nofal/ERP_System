@@ -1,0 +1,221 @@
+@model ERP_System.Models.InvoiceSaleHeader
+
+@{
+    ViewData["Title"] = "تعديل فاتورة البيع";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        label {
+            display: block;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #06b6d4;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
+        }
+
+        select.form-control {
+            background-color: rgba(0, 0, 0, 0.3);
+            color: white;
+        }
+
+        select.form-control option {
+            background-color: #1e293b;
+            color: white;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form-check-input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .form-check-label {
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #06b6d4, #7c3aed);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .text-danger {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 5px;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>تعديل فاتورة #@Model.Id</h1>
+        </div>
+
+        <form asp-action="Edit">
+            <div class="card">
+                <h3 style="color: #e2e8f0; margin-bottom: 20px;">بيانات الفاتورة</h3>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label asp-for="OrderStatus">حالة الطلب</label>
+                        <select asp-for="OrderStatus" class="form-control">
+                            <option value="wait">انتظار</option>
+                            <option value="sent">تم الإرسال</option>
+                            <option value="returned">مرتجع</option>
+                            <option value="returning">جاري الإرجاع</option>
+                        </select>
+                        <span asp-validation-for="OrderStatus" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="PayStatus">حالة الدفع</label>
+                        <select asp-for="PayStatus" class="form-control">
+                            <option value="Unpaid">غير مدفوع</option>
+                            <option value="Paid">مدفوع</option>
+                            <option value="Partial">جزئي</option>
+                        </select>
+                        <span asp-validation-for="PayStatus" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="DeliveryDate">تاريخ التوصيل</label>
+                        <input asp-for="DeliveryDate" class="form-control" type="datetime-local" />
+                        <span asp-validation-for="DeliveryDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="PaymentDueDate">تاريخ استحقاق الدفع</label>
+                        <input asp-for="PaymentDueDate" class="form-control" type="date" />
+                        <span asp-validation-for="PaymentDueDate" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-check" style="margin-top: 15px;">
+                    <input class="form-check-input" asp-for="IsPostpaid" />
+                    <label class="form-check-label" asp-for="IsPostpaid" style="color: #e2e8f0;">
+                        دفع آجل؟
+                    </label>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="form-group">
+                    <label asp-for="Remarks">ملاحظات</label>
+                    <textarea asp-for="Remarks" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Remarks" class="text-danger"></span>
+                </div>
+
+                <div class="btn-container">
+                    <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+                    <a asp-action="List" class="btn btn-secondary">إلغاء</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
+</body>
+
+</html>

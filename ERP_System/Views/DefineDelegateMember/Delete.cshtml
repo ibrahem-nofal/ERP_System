@@ -11,7 +11,7 @@
     </div>
 
     <nav class="breadcrumb-modern" data-aos="fade-down">
-        <a asp-action="Index" class="breadcrumb-item">
+        <a asp-action="List" class="breadcrumb-item">
             <i class="bi bi-house-door"></i>
             <span>المندوبين</span>
         </a>
@@ -57,7 +57,7 @@
                 <form asp-action="Delete" id="deleteForm">
                     <input type="hidden" asp-for="EmpId" />
                     <div class="form-actions">
-                        <a asp-action="Index" class="btn-modern btn-secondary-modern">
+                        <a asp-action="List" class="btn-modern btn-secondary-modern">
                             <span class="btn-icon"><i class="bi bi-arrow-right"></i></span>
                             <span class="btn-text">إلغاء</span>
                         </a>
@@ -176,6 +176,16 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            color: #1e293b;
+        }
+
+        .glass-card-danger h1,
+        .glass-card-danger h2,
+        .glass-card-danger h3,
+        .glass-card-danger h4,
+        .glass-card-danger h5,
+        .glass-card-danger h6 {
+            color: #1e293b;
         }
 
         .card-header-danger {
