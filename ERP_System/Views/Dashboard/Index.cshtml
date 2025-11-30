@@ -1,6 +1,37 @@
 @{
     ViewData["Title"] = "لوحة التحكم";
     var stats = ViewBag.Stats;
+
+    var formNames = new Dictionary<string, string>
+{
+{ "DefineItem", "الأصناف" },
+{ "DefineCustomer", "العملاء" },
+{ "InvoiceSale", "فواتير المبيعات" },
+{ "InvoicePurchase", "فواتير المشتريات" },
+{ "DefineStore", "المخازن" },
+{ "DefineCompany", "بيانات الشركة" },
+{ "DefineSupplier", "الموردين" },
+{ "DefineUnit", "الوحدات" },
+{ "DefineCategory", "الفئات" },
+{ "DefineEmployee", "الموظفين" },
+{ "InventoryTransfer", "تحويل مخزني" },
+{ "JournalEntry", "قيود اليومية" },
+{ "ChartOfAccount", "دليل الحسابات" },
+{ "Login", "تسجيل دخول" },
+{ "Logout", "تسجيل خروج" }
+};
+
+    var opNames = new Dictionary<string, string>
+{
+{ "Create", "إضافة" },
+{ "Edit", "تعديل" },
+{ "Delete", "حذف" },
+{ "Login", "تسجيل دخول" },
+{ "Logout", "تسجيل خروج" }
+};
+
+    string GetArabicFormName(string name) => name != null && formNames.ContainsKey(name) ? formNames[name] : name;
+    string GetArabicOpName(string name) => name != null && opNames.ContainsKey(name) ? opNames[name] : name;
 }
 
 <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
@@ -65,14 +96,6 @@
 
     <!-- Charts Section -->
     <div class="charts-section">
-        <!-- Products Distribution Chart -->
-        <div class="chart-card">
-            <h6>توزيع المنتجات حسب الفئة</h6>
-            <div class="chart-container">
-                <canvas id="productsChart"></canvas>
-            </div>
-        </div>
-
         <!-- Sales & Purchases Chart -->
         <div class="chart-card">
             <h6>المبيعات والمشتريات الشهرية</h6>
@@ -95,7 +118,8 @@
                         <i class="bi bi-check-circle"></i>
                     </div>
                     <div class="activity-content">
-                        <div class="activity-title">@activity.FormName - @activity.OpName</div>
+                        <div class="activity-title">@GetArabicFormName(activity.FormName) - @GetArabicOpName(activity.OpName)
+                        </div>
                         <div class="activity-time">
                             @if (activity.ActDate.HasValue)
                             {
@@ -147,54 +171,18 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
     <script>
-        // Products Distribution Pie Chart
-        const productsCtx = document.getElementById('productsChart').getContext('2d');
-        new Chart(productsCtx, {
-            type: 'pie',
-            data: {
-                labels: ['إلكترونيات', 'ملابس', 'أغذية', 'أدوات منزلية', 'أخرى'],
-                datasets: [{
-                    data: [30, 25, 20, 15, 10],
-                    backgroundColor: [
-                        '#4A90E2',
-                        '#10B981',
-                        '#F59E0B',
-                        '#EF4444',
-                        '#8B5CF6'
-                    ],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        rtl: true,
-                        labels: {
-                            font: {
-                                family: 'Cairo',
-                                size: 12
-                            },
-                            padding: 15,
-                            usePointStyle: true
-                        }
-                    }
-                }
-            }
-        });
-
         // Sales & Purchases Line Chart
         const salesCtx = document.getElementById('salesChart').getContext('2d');
+        const monthlyStats = @Html.Raw(Json.Serialize(ViewBag.MonthlyStats));
+
         new Chart(salesCtx, {
             type: 'line',
             data: {
-                labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
+                labels: monthlyStats.map(x => x.month),
                 datasets: [
                     {
                         label: 'المبيعات',
-                        data: [65000, 59000, 80000, 81000, 56000, 85000],
+                        data: monthlyStats.map(x => x.sales),
                         borderColor: '#10B981',
                         backgroundColor: 'rgba(16, 185, 129, 0.1)',
                         tension: 0.4,
@@ -202,7 +190,7 @@
                     },
                     {
                         label: 'المشتريات',
-                        data: [45000, 49000, 60000, 51000, 46000, 55000],
+                        data: monthlyStats.map(x => x.purchases),
                         borderColor: '#4A90E2',
                         backgroundColor: 'rgba(74, 144, 226, 0.1)',
                         tension: 0.4,

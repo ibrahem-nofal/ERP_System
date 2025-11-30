@@ -44,6 +44,34 @@ namespace ERP_System.Controllers
 
             ViewBag.RecentActivities = recentActivities;
 
+            // Monthly Sales & Purchases (Last 6 months)
+            var monthlyStats = new List<dynamic>();
+            var culture = new System.Globalization.CultureInfo("ar-EG");
+
+            for (int i = 5; i >= 0; i--)
+            {
+                var date = DateTime.Now.AddMonths(-i);
+                var monthStart = new DateTime(date.Year, date.Month, 1);
+                var monthEnd = monthStart.AddMonths(1).AddDays(-1);
+
+                var sales = await _context.InvoiceSaleHeaders
+                    .Where(x => x.DateCreated >= monthStart && x.DateCreated <= monthEnd && (x.InvType == "SalesCash" || x.InvType == "SalesCredit"))
+                    .SumAsync(x => (decimal?)x.NetAmount) ?? 0;
+
+                var purchases = await _context.InvoicePurchaseHeaders
+                    .Where(x => x.DateCreated >= monthStart && x.DateCreated <= monthEnd && (x.InvType == "PurchaseCash" || x.InvType == "PurchaseCredit"))
+                    .SumAsync(x => (decimal?)x.NetAmount) ?? 0;
+
+                monthlyStats.Add(new
+                {
+                    Month = date.ToString("MMMM", culture),
+                    Sales = sales,
+                    Purchases = purchases
+                });
+            }
+
+            ViewBag.MonthlyStats = monthlyStats;
+
             return View();
         }
     }
