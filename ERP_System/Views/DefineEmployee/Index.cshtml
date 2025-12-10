@@ -7,215 +7,288 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>نموذج بيانات الموظف</title>
+
     <style>
         /* body {
-            background: #0f1724;
-            color: #e6eef6;
-            font-family: "Segoe UI", Tahoma, sans-serif;
             margin: 0;
-            padding: 30px;
-            box-sizing: border-box;
-            direction: rtl;
+            padding: 20px;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            background: #0f1724;
+            color: #e2e8f0;
         } */
 
-        form {
-            max-width: 700px;
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
-            background: rgba(255,255,255,0.04);
             padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            background: linear-gradient(90deg, #06b6d4, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group,
+        .field-row {
+            margin-bottom: 15px;
         }
 
         label {
             display: block;
-            margin-bottom: 6px;
-            font-weight: bold;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+            font-weight: 500;
         }
 
-        input, select, textarea {
+        .form-control,
+        input,
+        select,
+        textarea {
             width: 100%;
             padding: 10px;
-            margin-bottom: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.12);
-            background: rgba(255,255,255,0.03);
             color: #fff;
+            font-size: 1rem;
             box-sizing: border-box;
         }
 
-        input[type="file"] {
-            padding: 5px;
-            background: none;
-        }
+            .form-control:focus,
+            input:focus,
+            select:focus,
+            textarea:focus {
+                outline: none;
+                border-color: #06b6d4;
+                background: rgba(255, 255, 255, 0.1);
+            }
 
-        .field-row {
-            margin-bottom: 14px;
-        }
+            select.form-control {
+                background-color: rgba(0, 0, 0, 0.3);
+                color: white;
+            }
+
+                select.form-control option {
+                    background-color: #1e293b;
+                    color: white;
+                }
 
         .text-danger {
             color: #ff6b6b;
             margin-top: 6px;
-            font-size: 0.95em;
+            font-size: 0.9rem;
             display: block;
         }
 
-        .phones-container input {
-            width: calc(100% - 40px);
-            display: inline-block;
-        }
-
-        .add-phone {
-            background: transparent;
-            color: #06b6d4;
-            border: 1px solid #06b6d4;
-            cursor: pointer;
-            border-radius: 8px;
-            padding: 6px 10px;
+        .phones-container {
+            width: 100%;
         }
 
         .phone-row {
             display: flex;
             gap: 8px;
             align-items: center;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
-        .phone-row input {
-            flex: 1;
-        }
+            .phone-row input {
+                flex: 1;
+            }
 
-        button[type="submit"] {
-            display: inline-block;
-            background: linear-gradient(90deg,#06b6d4,#7c3aed);
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
             border: none;
-            border-radius: 10px;
-            padding: 10px 18px;
-            color: #021024;
-            font-weight: bold;
             cursor: pointer;
-            margin-top: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
         }
 
-        button[type="button"].remove-phone {
-            background: #ff6b6b;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            padding: 6px 10px;
-            cursor: pointer;
+        .btn-primary {
+            background: linear-gradient(135deg, #06b6d4, #7c3aed);
+            color: white;
+            width: 100%;
         }
 
-        /* small helper to highlight invalid input */
-        input.input-validation-error, textarea.input-validation-error, select.input-validation-error {
-            outline: 2px solid rgba(255,107,107,0.18);
+        .btn-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 5px 10px;
+        }
+
+        .add-phone {
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid #06b6d4;
+            background: rgba(6, 182, 212, 0.1);
+            color: #06b6d4;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .remove-phone {
+            padding: 6px 12px;
+        }
+
+        /* نفس ستايل الـ input-validation-error */
+        input.input-validation-error,
+        textarea.input-validation-error,
+        select.input-validation-error {
+            outline: 2px solid rgba(255, 107, 107, 0.18);
             border-color: #ff6b6b;
-            background: rgba(255,107,107,0.02);
+            background: rgba(255, 107, 107, 0.02);
         }
     </style>
 </head>
+
 <body>
-    <h1 style="text-align:center; margin-bottom:18px;">نموذج بيانات الموظف</h1>
-
-    @* عرض رسائل عامة (مثل أخطاء DB) *@
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="text-danger" style="text-align:center; margin-bottom:10px;">@TempData["ErrorMessage"]</div>
-    }
-
-    <form id="empForm" asp-action="Index" method="post" enctype="multipart/form-data" novalidate>
-        @Html.AntiForgeryToken()
-
-        <!-- Summary of model-level errors -->
-        <div class="field-row">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="container">
+        <div class="page-header">
+            <h1>نموذج بيانات الموظف</h1>
         </div>
 
-        <div class="field-row">
-            <label asp-for="Name"></label>
-            <input asp-for="Name" maxlength="150" class="form-control" />
-            <span asp-validation-for="Name" class="text-danger"></span>
-        </div>
+        @* رسائل عامة *@
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="text-danger" style="text-align:center; margin-bottom:10px;">
+                @TempData["ErrorMessage"]
+            </div>
+        }
 
-        <div class="field-row">
-            <label asp-for="RoleType">نوع الوظيفة (RoleType)</label>
-            <select asp-for="RoleType" class="form-control">
-                <option value="0">مندوب</option>
-                <option value="1">موظف</option>
-            </select>
-            <span asp-validation-for="RoleType" class="text-danger"></span>
-        </div>
+        <form id="empForm" asp-action="Index" method="post" enctype="multipart/form-data" novalidate>
+            @Html.AntiForgeryToken()
 
-        <div class="field-row">
-            <label asp-for="Gender">النوع (Gender)</label>
-            <select asp-for="Gender" class="form-control">
-                <option value="0">ذكر</option>
-                <option value="1">أنثى</option>
-            </select>
-            <span asp-validation-for="Gender" class="text-danger"></span>
-        </div>
+            <div class="card">
+                <h3 style="color:#e2e8f0; margin-bottom:20px;">بيانات أساسية</h3>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-        <div class="field-row">
-            <label asp-for="Address">العنوان</label>
-            <textarea asp-for="Address" maxlength="200" class="form-control"></textarea>
-            <span asp-validation-for="Address" class="text-danger"></span>
-        </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label asp-for="Name"></label>
+                        <input asp-for="Name" maxlength="150" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
 
-        <div class="field-row">
-            <label asp-for="IdNumber">رقم الهوية</label>
-            <input asp-for="IdNumber" maxlength="25" class="form-control" />
-            <span asp-validation-for="IdNumber" class="text-danger"></span>
-        </div>
+                    <div class="form-group">
+                        <label asp-for="RoleType">نوع الوظيفة (RoleType)</label>
+                        <select asp-for="RoleType" class="form-control">
+                            <option value="0">مندوب</option>
+                            <option value="1">موظف</option>
+                        </select>
+                        <span asp-validation-for="RoleType" class="text-danger"></span>
+                    </div>
 
-        <div class="field-row">
-            <label asp-for="BirthDate">تاريخ الميلاد</label>
-            <input asp-for="BirthDate" type="date" class="form-control" />
-            <span asp-validation-for="BirthDate" class="text-danger"></span>
-        </div>
+                    <div class="form-group">
+                        <label asp-for="Gender">النوع (Gender)</label>
+                        <select asp-for="Gender" class="form-control">
+                            <option value="0">ذكر</option>
+                            <option value="1">أنثى</option>
+                        </select>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                    </div>
 
-        <div class="field-row">
-            <label asp-for="Qualification">المؤهل الدراسي (Qualification)</label>
-            <select asp-for="Qualification" class="form-control">
-                <option value="0">بكالوريوس</option>
-                <option value="1">دبلوم</option>
-                <option value="2">شهادة متوسطة</option>
-            </select>
-            <span asp-validation-for="Qualification" class="text-danger"></span>
-        </div>
+                    <div class="form-group">
+                        <label asp-for="BirthDate">تاريخ الميلاد</label>
+                        <input asp-for="BirthDate" type="date" class="form-control" />
+                        <span asp-validation-for="BirthDate" class="text-danger"></span>
+                    </div>
 
-        <div class="field-row">
-            <label asp-for="State">الحالة الوظيفية (State)</label>
-            <select asp-for="State" class="form-control">
-                <option value="0">اعزب</option>
-                <option value="1">متزوج</option>
-                <option value="2">ارمل</option>
-                <option value="3">مطلق</option>
-            </select>
-            <span asp-validation-for="State" class="text-danger"></span>
-        </div>
+                    <div class="form-group">
+                        <label asp-for="Qualification">المؤهل الدراسي (Qualification)</label>
+                        <select asp-for="Qualification" class="form-control">
+                            <option value="0">بكالوريوس</option>
+                            <option value="1">دبلوم</option>
+                            <option value="2">شهادة متوسطة</option>
+                        </select>
+                        <span asp-validation-for="Qualification" class="text-danger"></span>
+                    </div>
 
-        <div class="field-row">
-            <label>أرقام الهواتف</label>
-            <div id="phonesContainer" class="phones-container">
-                <div class="phone-row">
-                    <input type="text" name="Phones[0]" class="phone-input" placeholder="رقم الهاتف" maxlength="20" />
-                    <button type="button" class="add-phone">+</button>
+                    <div class="form-group">
+                        <label asp-for="State">الحالة الوظيفية (State)</label>
+                        <select asp-for="State" class="form-control">
+                            <option value="0">أعزب</option>
+                            <option value="1">متزوج</option>
+                            <option value="2">أرمل</option>
+                            <option value="3">مطلق</option>
+                        </select>
+                        <span asp-validation-for="State" class="text-danger"></span>
+                    </div>
                 </div>
             </div>
-            <!-- Model binding errors for collection-level -->
-            <span asp-validation-for="Phones" class="text-danger"></span>
-        </div>
 
-        <div class="field-row">
-            <label asp-for="EmpImage">صورة الموظف</label>
-            <input asp-for="EmpImage" type="file" accept="image/*" />
-            <span asp-validation-for="EmpImage" class="text-danger"></span>
-        </div>
+            <div class="card">
+                <h3 style="color:#e2e8f0; margin-bottom:20px;">بيانات إضافية</h3>
+                <div class="form-grid">
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label asp-for="Address">العنوان</label>
+                        <textarea asp-for="Address" maxlength="200" class="form-control"></textarea>
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
 
-        <button id="submitBtn" type="submit">إرسال البيانات</button>
-    </form>
+                    <div class="form-group">
+                        <label asp-for="IdNumber">رقم الهوية</label>
+                        <input asp-for="IdNumber" maxlength="25" class="form-control" />
+                        <span asp-validation-for="IdNumber" class="text-danger"></span>
+                    </div>
 
-    @* client-side validation scripts (unobtrusive jquery validation) *@
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>أرقام الهواتف</label>
+                        <div id="phonesContainer" class="phones-container">
+                            <div class="phone-row">
+                                <input type="text" name="Phones[0]" class="form-control phone-input"
+                                       placeholder="رقم الهاتف" maxlength="20" />
+                                <button type="button" class="add-phone">+</button>
+                            </div>
+                        </div>
+                        <span asp-validation-for="Phones" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="EmpImage">صورة الموظف</label>
+                        <input asp-for="EmpImage" type="file" accept="image/*" class="form-control" />
+                        <span asp-validation-for="EmpImage" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <button id="submitBtn" type="submit" class="btn btn-primary">
+                    إرسال البيانات
+                </button>
+            </div>
+        </form>
+    </div>
+
     @section Scripts {
         <partial name="_ValidationScriptsPartial" />
         <script>
@@ -227,8 +300,8 @@
                     let row = document.createElement("div");
                     row.classList.add("phone-row");
                     row.innerHTML = `
-                        <input type="text" name="Phones[${phoneIndex}]" class="phone-input" placeholder="رقم الهاتف" maxlength="20" />
-                        <button type="button" class="remove-phone">-</button>
+                        <input type="text" name="Phones[${phoneIndex}]" class="form-control phone-input" placeholder="رقم الهاتف" maxlength="20" />
+                        <button type="button" class="btn btn-danger remove-phone">-</button>
                     `;
                     container.appendChild(row);
                     phoneIndex++;
@@ -239,22 +312,15 @@
                 }
             });
 
-            // attach debug logging (optional) and focus first invalid field after submit
+            // focus أول حقل فيه Error بعد الـ submit
             (function () {
                 const form = document.getElementById('empForm');
                 if (!form) return;
 
-                form.addEventListener('submit', function (ev) {
-                    // small debug to console (you can remove)
-                    try {
-                        console.log('Submitting form...');
-                    } catch (ex) { }
-
-                    // let browser/validation run first, then focus the first invalid field (if any)
+                form.addEventListener('submit', function () {
                     setTimeout(function () {
                         const firstError = document.querySelector('.input-validation-error, .text-danger:not(:empty)');
                         if (firstError) {
-                            // if the error is a span, try to find the related input
                             if (firstError.tagName.toLowerCase() === 'span') {
                                 const forAttr = firstError.getAttribute('data-valmsg-for');
                                 if (forAttr) {
@@ -271,9 +337,8 @@
         </script>
     }
 
-    @* If your layout normally renders scripts at the end, you can also include the partial directly: *@
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js" integrity="" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js" integrity="" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js" crossorigin="anonymous"></script>
 </body>
 </html>

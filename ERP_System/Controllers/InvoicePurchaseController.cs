@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ERP_System.Models;
 using ERP_System.Data;
+using ERP_System.Services.Interfaces;
+using ERP_System.ViewModels;
 
 namespace ERP_System.Controllers
 {
@@ -10,10 +12,14 @@ namespace ERP_System.Controllers
     public class InvoicePurchaseController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IInventoryService _inventoryService;
+        private readonly IJournalEntryService _journalEntryService;
 
-        public InvoicePurchaseController(AppDbContext context)
+        public InvoicePurchaseController(AppDbContext context, IInventoryService inventoryService, IJournalEntryService journalEntryService)
         {
             _context = context;
+            _inventoryService = inventoryService;
+            _journalEntryService = journalEntryService;
         }
 
         public async Task<IActionResult> List()
@@ -159,6 +165,19 @@ namespace ERP_System.Controllers
                             totalAmount += item.Quantity * item.UnitPrice;
 
                             _context.Add(item);
+
+                            // Update Inventory
+                            if (invoice.StoreId.HasValue)
+                            {
+                                await _inventoryService.AddStockAsync(
+                                   item.ItemId,
+                                   invoice.StoreId.Value,
+                                   item.Quantity,
+                                   $"فاتورة شراء #{invoice.Id}",
+                                   invoice.Id,
+                                   "Purchase"
+                               );
+                            }
                         }
                         await _context.SaveChangesAsync();
                     }
@@ -181,6 +200,9 @@ namespace ERP_System.Controllers
                         invoice.Remain = effectiveNetAmount;
                     }
 
+                    // 4. Create Automatic Journal Entry
+                    await CreatePurchaseJournalEntry(invoice);
+
                     _context.Update(invoice);
                     await _context.SaveChangesAsync();
 
@@ -196,6 +218,66 @@ namespace ERP_System.Controllers
             ViewData["StoreId"] = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(_context.Stores, "Id", "Name", invoice.StoreId);
             ViewData["Items"] = _context.Items.Select(i => new { i.Id, i.Name, i.BuyPrice }).ToList();
             return View(invoice);
+        }
+
+        private async Task CreatePurchaseJournalEntry(InvoicePurchaseHeader invoice)
+        {
+            // 1. Get Accounts
+            int inventoryAccId = await _journalEntryService.GetOrCreateAccountAsync("المخزون", "1200", "Asset");
+            int cashAccId = await _journalEntryService.GetOrCreateAccountAsync("النقدية", "1100", "Asset");
+            int apAccId = await _journalEntryService.GetOrCreateAccountAsync("الموردين", "2100", "Liability");
+
+            // 2. Prepare Debit/Credit
+            var details = new List<JournalDetailVm>();
+
+            // Debit Inventory (Asset Increase)
+            details.Add(new JournalDetailVm
+            {
+                AccountId = inventoryAccId,
+                Debit = invoice.TotalAmount,
+                Credit = 0,
+                Note = $"فاتورة شراء #{invoice.Id}"
+            });
+
+            // Credit Cash or AP
+            if (invoice.PayStatus == "closed") // Cash
+            {
+                details.Add(new JournalDetailVm
+                {
+                    AccountId = cashAccId,
+                    Debit = 0,
+                    Credit = invoice.TotalAmount,
+                    Note = "سداد نقدي"
+                });
+            }
+            else // Credit
+            {
+                details.Add(new JournalDetailVm
+                {
+                    AccountId = apAccId,
+                    Debit = 0,
+                    Credit = invoice.TotalAmount,
+                    Note = "استحقاق للمورد"
+                });
+            }
+
+            // 3. Create Entry
+            var entry = new JournalEntry
+            {
+                Description = $"قيد مشتريات - فاتورة #{invoice.Id} - {invoice.Supplier?.Name}",
+                CreatedAt = invoice.DateCreated,
+                SourceType = "Purchase Invoice",
+                InvPurId = invoice.Id,
+                Details = details.Select(d => new JournalDetail
+                {
+                    AccountId = d.AccountId,
+                    Debit = d.Debit,
+                    Credit = d.Credit,
+                    Note = d.Note
+                }).ToList()
+            };
+
+            await _journalEntryService.CreateAutomaticEntryAsync(entry);
         }
 
         [HttpPost, ActionName("Delete")]

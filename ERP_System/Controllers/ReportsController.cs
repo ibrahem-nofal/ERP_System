@@ -6,19 +6,29 @@ namespace ERP_System.Controllers
     [Authorize]
     public class ReportsController : Controller
     {
-        public IActionResult Sales()
+        private readonly ERP_System.Services.Interfaces.IReportService _reportService;
+
+        public ReportsController(ERP_System.Services.Interfaces.IReportService reportService)
         {
-            return View();
+            _reportService = reportService;
         }
 
-        public IActionResult Purchases()
+        public async Task<IActionResult> Sales()
         {
-            return View();
+            var data = await _reportService.GetSalesSummaryAsync();
+            return View(data);
         }
 
-        public IActionResult Inventory()
+        public async Task<IActionResult> Purchases()
         {
-            return View();
+            var data = await _reportService.GetPurchasesSummaryAsync();
+            return View(data);
+        }
+
+        public async Task<IActionResult> Inventory()
+        {
+            var data = await _reportService.GetInventorySummaryAsync();
+            return View(data);
         }
     }
 }

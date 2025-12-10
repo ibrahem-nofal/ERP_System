@@ -1,215 +1,341 @@
 @using ERP_System.ViewModels
 @model AddEmpVm
+
 <!doctype html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>تعديل بيانات الموظف</title>
+
     <style>
         /* body {
-            background: #0f1724;
-            color: #e6eef6;
-            font-family: "Segoe UI", Tahoma, sans-serif;
             margin: 0;
-            padding: 30px;
-            box-sizing: border-box;
-            direction: rtl;
+            padding: 20px;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            background: #0f1724;
+            color: #e2e8f0;
         } */
 
-        h1 {
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
             text-align: center;
-            margin-bottom: 20px;
+        }
+
+        h1 {
             background: linear-gradient(90deg, #06b6d4, #7c3aed);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            margin-bottom: 10px;
         }
 
-        form {
-            max-width: 700px;
-            margin: 0 auto;
-            background: rgba(255,255,255,0.04);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        .card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
         }
 
         label {
             display: block;
-            margin-bottom: 6px;
-            font-weight: bold;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+            font-weight: 500;
         }
 
-        input, select, textarea {
+        .form-control,
+        input,
+        select,
+        textarea {
             width: 100%;
             padding: 10px;
-            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.05);
             color: #fff;
+            font-size: 1rem;
             box-sizing: border-box;
         }
 
-            input[type="file"] {
-                padding: 5px;
-                background: none;
-            }
+        .form-control:focus,
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #06b6d4;
+            background: rgba(255, 255, 255, 0.1);
+        }
 
-        button {
-            display: inline-block;
-            background: linear-gradient(90deg,#06b6d4,#7c3aed);
+        select.form-control {
+            background-color: rgba(0, 0, 0, 0.3);
+            color: white;
+        }
+
+        select.form-control option {
+            background-color: #1e293b;
+            color: white;
+        }
+
+        .text-danger {
+            color: #ff6b6b;
+            margin-top: 6px;
+            font-size: 0.9rem;
+            display: block;
+        }
+
+        .phones-container {
+            width: 100%;
+        }
+
+        .phone-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .phone-row input {
+            flex: 1;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
             border: none;
-            border-radius: 10px;
-            padding: 10px 18px;
-            color: #021024;
-            font-weight: bold;
             cursor: pointer;
-            margin-left: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
         }
 
-            button:hover {
-                opacity: 0.9;
-            }
+        .btn-primary {
+            background: linear-gradient(135deg, #06b6d4, #7c3aed);
+            color: white;
+        }
 
-        .btn-secondary {
-            background: rgba(255,255,255,0.1);
-            color: #e6eef6;
+        .btn-secondary-link {
+            background: rgba(255, 255, 255, 0.08);
+            color: #e2e8f0;
             text-decoration: none;
-            padding: 10px 18px;
-            border-radius: 10px;
+            padding: 10px 20px;
+            border-radius: 8px;
             display: inline-block;
         }
 
-        .phones-container input {
-            width: calc(100% - 40px);
-            display: inline-block;
+        .btn-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 6px 12px;
         }
 
         .add-phone {
-            background: transparent;
-            color: #06b6d4;
-            border: 1px solid #06b6d4;
-            cursor: pointer;
+            padding: 6px 12px;
             border-radius: 8px;
-            padding: 6px 10px;
-        }
-
-        .phone-item {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 6px;
-        }
-
-        .remove-phone {
-            background: #ef4444;
-            color: #fff;
-            padding: 6px 10px;
+            border: 1px solid #06b6d4;
+            background: rgba(6, 182, 212, 0.1);
+            color: #06b6d4;
+            cursor: pointer;
+            font-weight: 600;
         }
 
         .form-actions {
             display: flex;
             gap: 10px;
             justify-content: center;
-            margin-top: 20px;
+            margin-top: 10px;
+        }
+
+        /* نفس ستايل الـ input-validation-error */
+        input.input-validation-error,
+        textarea.input-validation-error,
+        select.input-validation-error {
+            outline: 2px solid rgba(255, 107, 107, 0.18);
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.02);
         }
     </style>
 </head>
+
 <body>
-    <h1>تعديل بيانات الموظف</h1>
-    <form asp-action="Edit" asp-route-id="@ViewBag.EmployeeId" method="post" enctype="multipart/form-data">
+    <div class="container">
+        <div class="page-header">
+            <h1>تعديل بيانات الموظف</h1>
+        </div>
 
-        <label for="name">الاسم الكامل</label>
-        <input type="text" asp-for="Name" maxlength="150" required>
+        <form asp-action="Edit" asp-route-id="@ViewBag.EmployeeId" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
 
-        <label for="roleType">نوع الوظيفة (RoleType)</label>
-        <select asp-for="RoleType" required>
-            <option value="0">مندوب</option>
-            <option value="1">موظف</option>
-        </select>
+            <div class="card">
+                <h3 style="color:#e2e8f0; margin-bottom:20px;">البيانات الأساسية</h3>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-        <label for="gender">النوع (Gender)</label>
-        <select asp-for="Gender" required>
-            <option value="0">ذكر</option>
-            <option value="1">أنثى</option>
-        </select>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label asp-for="Name">الاسم الكامل</label>
+                        <input type="text" asp-for="Name" maxlength="150" class="form-control" required />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
 
-        <label for="address">العنوان</label>
-        <textarea asp-for="Address" maxlength="200" required></textarea>
+                    <div class="form-group">
+                        <label asp-for="RoleType">نوع الوظيفة (RoleType)</label>
+                        <select asp-for="RoleType" class="form-control" required>
+                            <option value="0">مندوب</option>
+                            <option value="1">موظف</option>
+                        </select>
+                        <span asp-validation-for="RoleType" class="text-danger"></span>
+                    </div>
 
-        <label for="idNumber">رقم الهوية</label>
-        <input type="text" asp-for="IdNumber" maxlength="25">
+                    <div class="form-group">
+                        <label asp-for="Gender">النوع (Gender)</label>
+                        <select asp-for="Gender" class="form-control" required>
+                            <option value="0">ذكر</option>
+                            <option value="1">أنثى</option>
+                        </select>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                    </div>
 
-        <label for="birthDate">تاريخ الميلاد</label>
-        <input type="date" asp-for="BirthDate">
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label asp-for="Address">العنوان</label>
+                        <textarea asp-for="Address" maxlength="200" class="form-control" required></textarea>
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
 
-        <label for="qualification">المؤهل الدراسي (Qualification)</label>
-        <select asp-for="Qualification">
-            <option value="0">بكالوريوس</option>
-            <option value="1">دبلوم</option>
-            <option value="2">شهادة متوسطة</option>
-        </select>
+                    <div class="form-group">
+                        <label asp-for="IdNumber">رقم الهوية</label>
+                        <input type="text" asp-for="IdNumber" maxlength="25" class="form-control" />
+                        <span asp-validation-for="IdNumber" class="text-danger"></span>
+                    </div>
 
-        <label for="state">الحالة الوظيفية (State)</label>
-        <select asp-for="State">
-            <option value="0">اعزب</option>
-            <option value="1">متزوج</option>
-            <option value="2">ارمل</option>
-            <option value="3">مطلق</option>
-        </select>
+                    <div class="form-group">
+                        <label asp-for="BirthDate">تاريخ الميلاد</label>
+                        <input type="date" asp-for="BirthDate" class="form-control" />
+                        <span asp-validation-for="BirthDate" class="text-danger"></span>
+                    </div>
 
-        <label>أرقام الهواتف</label>
-        <div id="phonesContainer">
-            @if (Model.Phones != null && Model.Phones.Any())
-            {
-                @for (int i = 0; i < Model.Phones.Count; i++)
-                {
-                    <div class="phone-row">
-                        <input type="text" name="Phones[@i]" value="@Model.Phones[i]" class="phone-input" placeholder="رقم الهاتف" maxlength="20" />
-                        @if (i == 0)
+                    <div class="form-group">
+                        <label asp-for="Qualification">المؤهل الدراسي (Qualification)</label>
+                        <select asp-for="Qualification" class="form-control">
+                            <option value="0">بكالوريوس</option>
+                            <option value="1">دبلوم</option>
+                            <option value="2">شهادة متوسطة</option>
+                        </select>
+                        <span asp-validation-for="Qualification" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="State">الحالة الوظيفية (State)</label>
+                        <select asp-for="State" class="form-control">
+                            <option value="0">اعزب</option>
+                            <option value="1">متزوج</option>
+                            <option value="2">ارمل</option>
+                            <option value="3">مطلق</option>
+                        </select>
+                        <span asp-validation-for="State" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="color:#e2e8f0; margin-bottom:20px;">بيانات التواصل والصورة</h3>
+
+                <div class="form-group" style="margin-bottom:20px;">
+                    <label>أرقام الهواتف</label>
+                    <div id="phonesContainer" class="phones-container">
+                        @if (Model.Phones != null && Model.Phones.Any())
                         {
-                            <button type="button" class="add-phone">+</button>
+                            for (int i = 0; i < Model.Phones.Count; i++)
+                            {
+                                <div class="phone-row">
+                                    <input type="text" name="Phones[@i]" value="@Model.Phones[i]"
+                                        class="form-control phone-input" placeholder="رقم الهاتف" maxlength="20" />
+                                    @if (i == 0)
+                                    {
+                                        <button type="button" class="add-phone">+</button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-danger remove-phone">-</button>
+                                    }
+                                </div>
+                            }
                         }
                         else
                         {
-                            <button type="button" class="remove-phone">-</button>
+                            <div class="phone-row">
+                                <input type="text" name="Phones[0]" class="form-control phone-input"
+                                    placeholder="رقم الهاتف" maxlength="20" />
+                                <button type="button" class="add-phone">+</button>
+                            </div>
                         }
                     </div>
-                }
-            }
-            else
-            {
-                <div class="phone-row">
-                    <input type="text" name="Phones[0]" class="phone-input" placeholder="رقم الهاتف" maxlength="20" />
-                    <button type="button" class="add-phone">+</button>
+                    <span asp-validation-for="Phones" class="text-danger"></span>
                 </div>
-            }
-        </div>
 
-        <label for="image">صورة الموظف (اختياري - اتركه فارغاً للاحتفاظ بالصورة الحالية)</label>
-        <input type="file" asp-for="EmpImage" accept="image/*">
+                <div class="form-group">
 
-        <div class="form-actions">
-            <button type="submit">حفظ التعديلات</button>
-            <a href="@Url.Action("List")" class="btn-secondary">إلغاء</a>
-        </div>
-    </form>
+                    <label for="image">صورة الموظف (اختياري - اتركه فارغاً للاحتفاظ بالصورة الحالية)</label>
+
+                    @if (Model.EmpImage == null)
+                    {
+                        <div style="margin-bottom: 10px;">
+                            <img src="@Url.Action("GetImage", new { id = ViewBag.EmployeeId })" alt="صورة الموظف الحالية"
+                                style="max-width: 150px; max-height: 150px; border-radius: 8px; border: 1px solid #ccc;" />
+                        </div>
+                    }
+
+                    <input type="file" asp-for="EmpImage" accept="image/*" class="form-control" data-val="false" />
+                    <span asp-validation-for="EmpImage" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">حفظ التعديلات</button>
+                    <a href="@Url.Action("List")" class="btn-secondary-link">إلغاء</a>
+                </div>
+            </div>
+        </form>
+    </div>
 
     <script>
         let phoneIndex = @(Model.Phones?.Count ?? 1);
 
         document.addEventListener("click", function (e) {
             if (e.target.classList.contains("add-phone")) {
-
                 let container = document.getElementById("phonesContainer");
 
                 let row = document.createElement("div");
                 row.classList.add("phone-row");
 
                 row.innerHTML = `
-                    <input type="text" name="Phones[${phoneIndex}]" class="phone-input" placeholder="رقم الهاتف" maxlength="20" />
-                    <button type="button" class="remove-phone">-</button>
+                    <input type="text" name="Phones[${phoneIndex}]" class="form-control phone-input" placeholder="رقم الهاتف" maxlength="20" />
+                    <button type="button" class="btn btn-danger remove-phone">-</button>
                 `;
 
                 container.appendChild(row);
@@ -222,4 +348,5 @@
         });
     </script>
 </body>
+
 </html>

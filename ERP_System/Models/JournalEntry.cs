@@ -12,13 +12,13 @@
 
         public int? InvSaleId { get; set; }
 
-        public int AssignedBy { get; set; }
+        public int? AssignedBy { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         // Navigation properties
         public InvoicePurchaseHeader InvoicePurchase { get; set; }
-         public InvoiceSaleHeader InvoiceSale { get; set; }
+        public InvoiceSaleHeader InvoiceSale { get; set; }
         public Employee AssignedByEmployee { get; set; }
         public ICollection<JournalDetail> Details { get; set; }
     }

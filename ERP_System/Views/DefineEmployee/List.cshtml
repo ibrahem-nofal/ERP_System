@@ -259,8 +259,10 @@
         if (string.IsNullOrEmpty(state)) return "-";
         return state.ToLower() switch
         {
-            "active" => "نشط",
-            "inactive" => "غير نشط",
+            "single" => "أعزب",
+            "married" => "متزوج",
+            "widowed" => "أرمل",
+            "divorced" => "مطلق",
             _ => state
         };
     }

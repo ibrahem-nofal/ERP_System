@@ -122,7 +122,7 @@ namespace ERP_System.Data
 
             modelBuilder.Entity<Inventory>()
                 .HasOne(i => i.Store)
-                .WithMany()
+                .WithMany(s => s.Inventories)
                 .HasForeignKey(i => i.StoreId)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -354,7 +354,7 @@ namespace ERP_System.Data
                 .ToTable(t => t.HasCheckConstraint("CK_SalePayment_PaymentMethod", "[PaymentMethod] IN ('cash', 'visa', 'vCash', 'insta')"));
 
             modelBuilder.Entity<InventoryTransaction>()
-                .ToTable(t => t.HasCheckConstraint("CK_InventoryTransaction_TransactionType", "[TransactionType] IN ('Purchase', 'PurchaseReturn', 'Sales', 'SalesReturn', 'Adjustment')"));
+                .ToTable(t => t.HasCheckConstraint("CK_InventoryTransaction_TransactionType", "[TransactionType] IN ('Purchase', 'PurchaseReturn', 'Sale', 'SaleReturn', 'Adjustment')"));
 
             modelBuilder.Entity<ChartOfAccount>()
                 .ToTable(t =>

@@ -1,24 +1,23 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ERP_System.Models;
-using ERP_System.Data;
 using ERP_System.ViewModels;
-using Microsoft.EntityFrameworkCore;
+using ERP_System.Services.Interfaces;
 
 namespace ERP_System.Controllers
 {
     [Authorize]
     public class DefineCompanyController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly ICompanyService _companyService;
 
-        public DefineCompanyController(AppDbContext context)
+        public DefineCompanyController(ICompanyService companyService)
         {
-            _context = context;
+            _companyService = companyService;
         }
         public async Task<IActionResult> List()
         {
-            var companies = await _context.Companies.ToListAsync();
+            var companies = await _companyService.GetAllAsync();
             return View(companies);
         }
 
@@ -28,7 +27,7 @@ namespace ERP_System.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(AddCompVm advm)
+        public async Task<IActionResult> Index(AddCompVm advm)
         {
             if (!ModelState.IsValid) return View(advm);
 
@@ -41,32 +40,14 @@ namespace ERP_System.Controllers
                 OtherDetails = advm.OtherDetails
             };
 
-            _context.Companies.Add(comp);
-            _context.SaveChanges(); // Save to get ID
-
-            if (advm.Phones != null)
-            {
-                foreach (var ph in advm.Phones)
-                {
-                    if (!string.IsNullOrWhiteSpace(ph))
-                    {
-                        var compPhone = new CompanyPhone
-                        {
-                            Company = comp,
-                            Phone = ph
-                        };
-                        _context.CompanyPhones.Add(compPhone);
-                    }
-                }
-                _context.SaveChanges();
-            }
+            await _companyService.AddAsync(comp, advm.Phones);
 
             return RedirectToAction(nameof(List));
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            var company = await _context.Companies.Include(c => c.Phones).FirstOrDefaultAsync(c => c.Id == id);
+            var company = await _companyService.GetByIdAsync(id);
             if (company == null) return NotFound();
 
             var vm = new AddCompVm
@@ -76,7 +57,7 @@ namespace ERP_System.Controllers
                 Address = company.Address,
                 DateCreated = company.DateCreated,
                 OtherDetails = company.OtherDetails,
-                Phones = company.Phones.Select(p => p.Phone).ToList()
+                Phones = company.Phones?.Select(p => p.Phone).ToList() ?? new List<string>()
             };
 
             ViewBag.Id = id;
@@ -92,48 +73,32 @@ namespace ERP_System.Controllers
                 return View(vm);
             }
 
-            var company = await _context.Companies.Include(c => c.Phones).FirstOrDefaultAsync(c => c.Id == id);
-            if (company == null) return NotFound();
-
-            company.Code = vm.Code;
-            company.Name = vm.Name;
-            company.Address = vm.Address;
-            company.DateCreated = vm.DateCreated;
-            company.OtherDetails = vm.OtherDetails;
-
-            // Update phones
-            _context.CompanyPhones.RemoveRange(company.Phones);
-
-            if (vm.Phones != null)
+            var company = new Company
             {
-                foreach (var ph in vm.Phones)
-                {
-                    if (!string.IsNullOrWhiteSpace(ph))
-                    {
-                        _context.CompanyPhones.Add(new CompanyPhone { Company = company, Phone = ph });
-                    }
-                }
-            }
+                Id = id,
+                Code = vm.Code,
+                Name = vm.Name,
+                Address = vm.Address,
+                DateCreated = vm.DateCreated,
+                OtherDetails = vm.OtherDetails
+            };
 
-            await _context.SaveChangesAsync();
+            // Note: Service handles checking if exists and updating phone logic
+            await _companyService.UpdateAsync(company, vm.Phones);
+
             return RedirectToAction(nameof(List));
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var company = await _context.Companies.Include(c => c.Phones).FirstOrDefaultAsync(c => c.Id == id);
+            var company = await _companyService.GetByIdAsync(id);
             if (company == null) return NotFound();
             return View(company);
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            var company = await _context.Companies.FindAsync(id);
-            if (company != null)
-            {
-                _context.Companies.Remove(company);
-                await _context.SaveChangesAsync();
-            }
+            await _companyService.DeleteAsync(id);
             return RedirectToAction(nameof(List));
         }
     }

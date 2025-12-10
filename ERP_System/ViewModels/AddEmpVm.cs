@@ -39,7 +39,7 @@ namespace ERP_System.ViewModels
         [MinLength(1, ErrorMessage = "الرجاء إدخال رقم هاتف واحد على الأقل.")]
         public List<string> Phones { get; set; } = new List<string>();
 
-        [Required(ErrorMessage = "الرجاء اختيار صورة للموظف.")]
-        public IFormFile EmpImage { get; set; }
+        // [Required(ErrorMessage = "الرجاء اختيار صورة للموظف.")]
+        public IFormFile? EmpImage { get; set; }
     }
 }

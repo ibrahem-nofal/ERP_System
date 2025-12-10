@@ -1,34 +1,31 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ERP_System.Models;
-using ERP_System.Data;
+using ERP_System.Services.Interfaces;
 using ERP_System.ViewModels;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ERP_System.Controllers
 {
     [Authorize]
     public class JournalEntryController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IJournalEntryService _journalService;
 
-        public JournalEntryController(AppDbContext context)
+        public JournalEntryController(IJournalEntryService journalService)
         {
-            _context = context;
+            _journalService = journalService;
         }
 
         public async Task<IActionResult> List()
         {
-            var entries = await _context.JournalEntries
-                .Include(j => j.AssignedByEmployee)
-                .OrderByDescending(j => j.CreatedAt)
-                .ToListAsync();
+            var entries = await _journalService.GetAllAsync();
             return View(entries);
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            ViewBag.Accounts = _context.ChartOfAccounts.Where(a => a.IsLeaf).ToList();
+            ViewBag.Accounts = await _journalService.GetLeafAccountsAsync();
             return View(new JournalEntryVm());
         }
 
@@ -42,40 +39,21 @@ namespace ERP_System.Controllers
 
             if (vm.Details.Sum(d => d.Debit) != vm.Details.Sum(d => d.Credit))
             {
-                return BadRequest("Total Debit must equal Total Credit.");
+                return BadRequest("إجمالي المدين يجب أن يساوي إجمالي الدائن.");
             }
 
-            var entry = new JournalEntry
-            {
-                Description = vm.Description,
-                CreatedAt = vm.Date,
-                SourceType = "Manual",
-                // AssignedBy = User.Identity.GetUserId() // Implement auth later
-                Details = vm.Details.Select(d => new JournalDetail
-                {
-                    AccountId = d.AccountId,
-                    Debit = d.Debit,
-                    Credit = d.Credit,
-                    Note = d.Note
-                }).ToList()
-            };
+            // Implement user ID fetching if available, e.g. from Claims
+            // int? userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)); 
 
-            _context.JournalEntries.Add(entry);
-            await _context.SaveChangesAsync();
+            var id = await _journalService.AddAsync(vm);
 
-            return Ok(new { id = entry.Id });
+            return Ok(new { id = id });
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var entry = await _context.JournalEntries
-                .Include(j => j.Details)
-                .ThenInclude(d => d.Account)
-                .Include(j => j.AssignedByEmployee)
-                .FirstOrDefaultAsync(j => j.Id == id);
-
+            var entry = await _journalService.GetByIdAsync(id);
             if (entry == null) return NotFound();
-
             return View(entry);
         }
     }

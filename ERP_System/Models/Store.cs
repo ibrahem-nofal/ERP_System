@@ -30,10 +30,12 @@ namespace ERP_System.Models
 
         public string? Notes { get; set; }
 
-      
+
 
         // صور (1..n)
         public ICollection<StoreImage> Images { get; set; }
+
+        public ICollection<Inventory> Inventories { get; set; } = new List<Inventory>();
     }
 
     public class StorePhone

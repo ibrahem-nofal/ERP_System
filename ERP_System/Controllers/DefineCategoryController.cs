@@ -1,24 +1,23 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ERP_System.Models;
-using ERP_System.Data;
 using ERP_System.ViewModels;
-using Microsoft.EntityFrameworkCore;
+using ERP_System.Services.Interfaces;
 
 namespace ERP_System.Controllers
 {
     [Authorize]
     public class DefineCategoryController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly ICategoryService _categoryService;
 
-        public DefineCategoryController(AppDbContext context)
+        public DefineCategoryController(ICategoryService categoryService)
         {
-            _context = context;
+            _categoryService = categoryService;
         }
         public async Task<IActionResult> List()
         {
-            var categories = await _context.Categories.ToListAsync();
+            var categories = await _categoryService.GetAllAsync();
             return View(categories);
         }
 
@@ -28,7 +27,7 @@ namespace ERP_System.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(AddCategoryVm advm)
+        public async Task<IActionResult> Index(AddCategoryVm advm)
         {
             if (!ModelState.IsValid) return View(advm);
 
@@ -38,14 +37,13 @@ namespace ERP_System.Controllers
                 Detail = advm.Detail
             };
 
-            _context.Categories.Add(cat);
-            _context.SaveChanges();
+            await _categoryService.AddAsync(cat);
             return RedirectToAction(nameof(List));
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _categoryService.GetByIdAsync(id);
             if (category == null) return NotFound();
 
             var vm = new AddCategoryVm
@@ -66,31 +64,27 @@ namespace ERP_System.Controllers
                 return View(vm);
             }
 
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null) return NotFound();
+            var category = new Category
+            {
+                Id = id,
+                Name = vm.Name,
+                Detail = vm.Detail
+            };
 
-            category.Name = vm.Name;
-            category.Detail = vm.Detail;
-
-            await _context.SaveChangesAsync();
+            await _categoryService.UpdateAsync(category);
             return RedirectToAction(nameof(List));
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _categoryService.GetByIdAsync(id);
             if (category == null) return NotFound();
             return View(category);
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
-            if (category != null)
-            {
-                _context.Categories.Remove(category);
-                await _context.SaveChangesAsync();
-            }
+            await _categoryService.DeleteAsync(id);
             return RedirectToAction(nameof(List));
         }
     }

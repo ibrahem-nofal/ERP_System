@@ -1,33 +1,28 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ERP_System.Models;
-using ERP_System.Data;
 using ERP_System.ViewModels;
-using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ERP_System.Services.Interfaces;
 
 namespace ERP_System.Controllers
 {
     [Authorize]
     public class DefineEmployeeController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IEmployeeService _employeeService;
 
-        public DefineEmployeeController(AppDbContext context)
+        public DefineEmployeeController(IEmployeeService employeeService)
         {
-            _context = context;
+            _employeeService = employeeService;
         }
 
         // ??? ???? ????????
         public async Task<IActionResult> List()
         {
-            var employees = await _context.Employees
-                .Include(e => e.Phones)
-                .Include(e => e.Image)
-                .ToListAsync();
+            var employees = await _employeeService.GetAllAsync();
             return View(employees);
         }
 
@@ -57,7 +52,7 @@ namespace ERP_System.Controllers
 
             // ???? ?? ????? ??? ??????
             if (!string.IsNullOrWhiteSpace(advm.IdNumber) &&
-                await _context.Employees.AnyAsync(e => e.IdNumber == advm.IdNumber))
+                await _employeeService.IsIdNumberExistsAsync(advm.IdNumber))
             {
                 ModelState.AddModelError(nameof(advm.IdNumber), "??? ?????? ??? ?????? ?? ???? ?????? ????? ??? ???.");
             }
@@ -67,7 +62,7 @@ namespace ERP_System.Controllers
                 return View(advm);
             }
 
-            byte[] imageBytes = null;
+            byte[]? imageBytes = null;
             if (advm.EmpImage != null)
             {
                 using (var ms = new MemoryStream())
@@ -91,34 +86,9 @@ namespace ERP_System.Controllers
 
             try
             {
-                _context.Employees.Add(emp);
-
-                if (advm.Phones != null)
-                {
-                    foreach (var ph in advm.Phones.Where(p => !string.IsNullOrWhiteSpace(p)))
-                    {
-                        var empPhone = new EmpPhone
-                        {
-                            Employee = emp,
-                            Phone = ph.Trim()
-                        };
-                        _context.EmpPhones.Add(empPhone);
-                    }
-                }
-
-                if (imageBytes != null)
-                {
-                    var img = new EmpImage
-                    {
-                        Employee = emp,
-                        EmpImageData = imageBytes
-                    };
-                    _context.EmpImages.Add(img);
-                }
-
-                await _context.SaveChangesAsync();
+                await _employeeService.AddAsync(emp, advm.Phones, imageBytes);
             }
-            catch (DbUpdateException)
+            catch (Exception)
             {
                 ModelState.AddModelError("", "????? ??? ????????. ?? ???? ???? ??? ???? ???? ?? ????? ?? ????? ????????.");
                 return View(advm);
@@ -130,10 +100,7 @@ namespace ERP_System.Controllers
         // ??? ?????? ????
         public async Task<IActionResult> Details(int id)
         {
-            var employee = await _context.Employees
-                .Include(e => e.Phones)
-                .Include(e => e.Image)
-                .FirstOrDefaultAsync(e => e.Id == id);
+            var employee = await _employeeService.GetByIdAsync(id);
 
             if (employee == null)
             {
@@ -146,10 +113,7 @@ namespace ERP_System.Controllers
         // ??? ???? ????? ???? (GET)
         public async Task<IActionResult> Edit(int id)
         {
-            var employee = await _context.Employees
-                .Include(e => e.Phones)
-                .Include(e => e.Image)
-                .FirstOrDefaultAsync(e => e.Id == id);
+            var employee = await _employeeService.GetByIdAsync(id);
 
             if (employee == null)
             {
@@ -182,16 +146,6 @@ namespace ERP_System.Controllers
             advm.Name = advm.Name?.Trim();
             advm.Address = advm.Address?.Trim();
 
-            var employee = await _context.Employees
-                .Include(e => e.Phones)
-                .Include(e => e.Image)
-                .FirstOrDefaultAsync(e => e.Id == id);
-
-            if (employee == null)
-            {
-                return NotFound();
-            }
-
             // ?????? ?? ??????
             if (string.IsNullOrWhiteSpace(advm.Name))
                 ModelState.AddModelError(nameof(advm.Name), "?????? ????? ??? ??????.");
@@ -199,11 +153,11 @@ namespace ERP_System.Controllers
             if (string.IsNullOrWhiteSpace(advm.IdNumber))
                 ModelState.AddModelError(nameof(advm.IdNumber), "?????? ????? ??? ??????.");
 
-            // ??? ????? ??? ?????? ?? ?????? ??? ??? ??? ??????
+            // ??? ????? ??? ??????
             if (!string.IsNullOrWhiteSpace(advm.IdNumber) &&
-                await _context.Employees.AnyAsync(e => e.IdNumber == advm.IdNumber && e.Id != id))
+                await _employeeService.IsIdNumberExistsAsync(advm.IdNumber, id))
             {
-                ModelState.AddModelError(nameof(advm.IdNumber), "??? ?????? ??? ?????? ?? ??? ???? ???.");
+                ModelState.AddModelError(nameof(advm.IdNumber), "رقم الهوية هذا مسجل من قبل، يرجى التحقق من الرقم.");
             }
 
             if (!ModelState.IsValid)
@@ -213,58 +167,35 @@ namespace ERP_System.Controllers
             }
 
             // ????? ?????? ??????
-            employee.Name = advm.Name;
-            employee.RoleType = ((RoleType)advm.RoleType).ToString();
-            employee.Gender = ((Gender)advm.Gender).ToString();
-            employee.Address = advm.Address;
-            employee.IdNumber = advm.IdNumber;
-            employee.BirthDate = advm.BirthDate;
-            employee.Qualification = ((Qualification)advm.Qualification).ToString();
-            employee.State = ((State)advm.State).ToString();
-
-            // ????? ???????
-            _context.EmpPhones.RemoveRange(employee.Phones ?? Enumerable.Empty<EmpPhone>());
-
-            if (advm.Phones != null)
+            var employee = new Employee
             {
-                foreach (var ph in advm.Phones.Where(p => !string.IsNullOrWhiteSpace(p)))
-                {
-                    _context.EmpPhones.Add(new EmpPhone
-                    {
-                        EmpId = employee.Id,
-                        Phone = ph.Trim()
-                    });
-                }
-            }
+                Id = id,
+                Name = advm.Name,
+                RoleType = ((RoleType)advm.RoleType).ToString(),
+                Gender = ((Gender)advm.Gender).ToString(),
+                Address = advm.Address,
+                IdNumber = advm.IdNumber,
+                BirthDate = advm.BirthDate,
+                Qualification = ((Qualification)advm.Qualification).ToString(),
+                State = ((State)advm.State).ToString()
+            };
 
             // ????? ??????
+            byte[]? imageBytes = null;
             if (advm.EmpImage != null)
             {
                 using (var ms = new MemoryStream())
                 {
                     await advm.EmpImage.CopyToAsync(ms);
-                    var imageBytes = ms.ToArray();
-
-                    if (employee.Image != null)
-                    {
-                        employee.Image.EmpImageData = imageBytes;
-                    }
-                    else
-                    {
-                        _context.EmpImages.Add(new EmpImage
-                        {
-                            EmpId = employee.Id,
-                            EmpImageData = imageBytes
-                        });
-                    }
+                    imageBytes = ms.ToArray();
                 }
             }
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _employeeService.UpdateAsync(employee, advm.Phones, imageBytes);
             }
-            catch (DbUpdateException)
+            catch (Exception)
             {
                 ModelState.AddModelError("", "????? ??? ?????????. ?? ???? ???? ??? ???? ???? ?? ????? ?? ????? ????????.");
                 ViewBag.EmployeeId = id;
@@ -279,29 +210,29 @@ namespace ERP_System.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            var employee = await _context.Employees
-                .Include(e => e.Phones)
-                .Include(e => e.Image)
-                .FirstOrDefaultAsync(e => e.Id == id);
-
-            if (employee == null)
-            {
-                return NotFound();
-            }
-
-            _context.Employees.Remove(employee);
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _employeeService.DeleteAsync(id);
             }
-            catch (DbUpdateException)
+            catch (Exception)
             {
                 TempData["ErrorMessage"] = "?? ???? ??? ?????? ???? ???? ?????? ?????? ??.";
                 return RedirectToAction("List");
             }
 
             return RedirectToAction("List");
+        }
+
+        // Action لعرض الصورة
+        [HttpGet]
+        public async Task<IActionResult> GetImage(int id)
+        {
+            var empImage = await _employeeService.GetImageAsync(id);
+            if (empImage != null && empImage.EmpImageData != null)
+            {
+                return File(empImage.EmpImageData, "image/jpeg"); // أو نوع الصورة المناسب
+            }
+            return NotFound();
         }
     }
 }

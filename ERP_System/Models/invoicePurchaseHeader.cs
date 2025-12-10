@@ -36,7 +36,7 @@ namespace ERP_System.Models
 
         public decimal Remain { get; set; } = 0;
 
-        public string Remarks { get; set; }
+        public string? Remarks { get; set; }
 
         [Required(ErrorMessage = "حالة الدفع مطلوبة")]
         public string PayStatus { get; set; } // open, closed

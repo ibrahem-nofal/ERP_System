@@ -20,7 +20,7 @@ namespace ERP_System.Models
         [MaxLength(50)]
         public string PaymentMethod { get; set; } // cash, visa, vCash, insta
 
-        public string Remarks { get; set; }
+        public string? Remarks { get; set; }
 
         public bool In { get; set; } = true;
 

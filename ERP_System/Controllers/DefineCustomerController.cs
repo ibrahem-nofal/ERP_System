@@ -1,28 +1,25 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ERP_System.Models;
-using ERP_System.Data;
 using ERP_System.ViewModels;
+using ERP_System.Services.Interfaces;
 
 namespace ERP_System.Controllers
 {
     [Authorize]
     public class DefineCustomerController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly ICustomerService _customerService;
 
-        public DefineCustomerController(AppDbContext context)
+        public DefineCustomerController(ICustomerService customerService)
         {
-            _context = context;
+            _customerService = customerService;
         }
 
         // List all customers
         public async Task<IActionResult> List()
         {
-            var customers = await _context.Customers
-                .Include(c => c.Phones)
-                .ToListAsync();
+            var customers = await _customerService.GetAllAsync();
             return View(customers);
         }
 
@@ -34,8 +31,10 @@ namespace ERP_System.Controllers
 
         // Create new customer (POST)
         [HttpPost]
-        public IActionResult Index(AddCustVm advm)
+        public async Task<IActionResult> Index(AddCustVm advm)
         {
+            if (!ModelState.IsValid) return View(advm);
+
             var cust = new Customer
             {
                 Name = advm.Name,
@@ -46,31 +45,22 @@ namespace ERP_System.Controllers
                 StartDate = advm.StartDate
             };
 
-            _context.Customers.Add(cust);
-
-            if (advm.Phones != null)
+            try
             {
-                foreach (var ph in advm.Phones)
-                {
-                    var custPhone = new CustomerPhone
-                    {
-                        Customer = cust,
-                        Phone = ph
-                    };
-                    _context.CustomerPhones.Add(custPhone);
-                }
+                await _customerService.AddAsync(cust, advm.Phones);
             }
-
-            _context.SaveChanges();
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "حدث خطأ أثناء الحفظ. يرجى التأكد من صحة البيانات.");
+                return View(advm);
+            }
             return RedirectToAction("List");
         }
 
         // View customer details
         public async Task<IActionResult> Details(int id)
         {
-            var customer = await _context.Customers
-                .Include(c => c.Phones)
-                .FirstOrDefaultAsync(c => c.Id == id);
+            var customer = await _customerService.GetByIdAsync(id);
 
             if (customer == null)
             {
@@ -83,9 +73,7 @@ namespace ERP_System.Controllers
         // Edit customer (GET)
         public async Task<IActionResult> Edit(int id)
         {
-            var customer = await _context.Customers
-                .Include(c => c.Phones)
-                .FirstOrDefaultAsync(c => c.Id == id);
+            var customer = await _customerService.GetByIdAsync(id);
 
             if (customer == null)
             {
@@ -111,38 +99,24 @@ namespace ERP_System.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(int id, AddCustVm advm)
         {
-            var customer = await _context.Customers
-                .Include(c => c.Phones)
-                .FirstOrDefaultAsync(c => c.Id == id);
-
-            if (customer == null)
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                ViewBag.CustomerId = id;
+                return View(advm);
             }
 
-            customer.Name = advm.Name;
-            customer.Gender = ((Gender)advm.Gender).ToString();
-            customer.Address = advm.Address;
-            customer.StartDate = advm.StartDate;
-            customer.BirthDate = advm.BirthDate;
-            customer.OtherDetails = advm.OtherDetails;
-
-            // Update phones
-            _context.CustomerPhones.RemoveRange(customer.Phones);
-            if (advm.Phones != null)
+            var customer = new Customer
             {
-                foreach (var ph in advm.Phones)
-                {
-                    var custPhone = new CustomerPhone
-                    {
-                        CustomerId = customer.Id,
-                        Phone = ph
-                    };
-                    _context.CustomerPhones.Add(custPhone);
-                }
-            }
+                Id = id,
+                Name = advm.Name,
+                Gender = ((Gender)advm.Gender).ToString(),
+                Address = advm.Address,
+                StartDate = advm.StartDate,
+                BirthDate = advm.BirthDate,
+                OtherDetails = advm.OtherDetails
+            };
 
-            await _context.SaveChangesAsync();
+            await _customerService.UpdateAsync(customer, advm.Phones);
 
             return RedirectToAction("List");
         }
@@ -151,18 +125,7 @@ namespace ERP_System.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            var customer = await _context.Customers
-                .Include(c => c.Phones)
-                .FirstOrDefaultAsync(c => c.Id == id);
-
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            _context.Customers.Remove(customer);
-            await _context.SaveChangesAsync();
-
+            await _customerService.DeleteAsync(id);
             return RedirectToAction("List");
         }
     }

@@ -1,0 +1,151 @@
+@model ERP_System.Models.JournalEntry
+
+@{
+    ViewData["Title"] = "تفاصيل القيد";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <style>
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #e6eef6;
+            text-align: center;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .label {
+            color: #94a3b8;
+            font-weight: bold;
+        }
+
+        .value {
+            color: #e6eef6;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #e6eef6;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            color: #06b6d4;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #e6eef6;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>تفاصيل قيد يومية #@Model.Id</h2>
+
+            <div class="info-row">
+                <span class="label">التاريخ:</span>
+                <span class="value">@Model.CreatedAt.ToString("yyyy/MM/dd")</span>
+            </div>
+            <div class="info-row">
+                <span class="label">الوصف:</span>
+                <span class="value">@Model.Description</span>
+            </div>
+            <div class="info-row">
+                <span class="label">المصدر:</span>
+                <span class="value">@Model.SourceType</span>
+            </div>
+            <div class="info-row">
+                <span class="label">تم الإنشاء بواسطة:</span>
+                <span class="value">@(Model.AssignedByEmployee?.Name ?? "غير محدد")</span>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>الحساب</th>
+                        <th>مدين</th>
+                        <th>دائن</th>
+                        <th>ملاحظات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Details != null)
+                    {
+                        foreach (var detail in Model.Details)
+                        {
+                            <tr>
+                                <td>@(detail.Account?.Name ?? "-")</td>
+                                <td>@detail.Debit.ToString("N2")</td>
+                                <td>@detail.Credit.ToString("N2")</td>
+                                <td>@detail.Note</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td>الإجمالي</td>
+                        <td>@Model.Details?.Sum(d => d.Debit).ToString("N2")</td>
+                        <td>@Model.Details?.Sum(d => d.Credit).ToString("N2")</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div style="text-align: center;">
+                <a href="@Url.Action("List")" class="btn-back">عودة للقائمة</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

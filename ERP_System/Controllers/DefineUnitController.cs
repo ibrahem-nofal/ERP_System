@@ -1,24 +1,23 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ERP_System.Models;
-using ERP_System.Data;
 using ERP_System.ViewModels;
-using Microsoft.EntityFrameworkCore;
+using ERP_System.Services.Interfaces;
 
 namespace ERP_System.Controllers
 {
     [Authorize]
     public class DefineUnitController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IUnitService _unitService;
 
-        public DefineUnitController(AppDbContext context)
+        public DefineUnitController(IUnitService unitService)
         {
-            _context = context;
+            _unitService = unitService;
         }
         public async Task<IActionResult> List()
         {
-            var units = await _context.Units.ToListAsync();
+            var units = await _unitService.GetAllAsync();
             return View(units);
         }
 
@@ -28,7 +27,7 @@ namespace ERP_System.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(AddUnitVm advm)
+        public async Task<IActionResult> Index(AddUnitVm advm)
         {
             if (!ModelState.IsValid) return View(advm);
 
@@ -38,14 +37,13 @@ namespace ERP_System.Controllers
                 Details = advm.Detail
             };
 
-            _context.Units.Add(unit);
-            _context.SaveChanges();
+            await _unitService.AddAsync(unit);
             return RedirectToAction(nameof(List));
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            var unit = await _context.Units.FindAsync(id);
+            var unit = await _unitService.GetByIdAsync(id);
             if (unit == null) return NotFound();
 
             var vm = new AddUnitVm
@@ -66,31 +64,27 @@ namespace ERP_System.Controllers
                 return View(vm);
             }
 
-            var unit = await _context.Units.FindAsync(id);
-            if (unit == null) return NotFound();
+            var unit = new Unit
+            {
+                Id = id,
+                Name = vm.Name,
+                Details = vm.Detail
+            };
 
-            unit.Name = vm.Name;
-            unit.Details = vm.Detail;
-
-            await _context.SaveChangesAsync();
+            await _unitService.UpdateAsync(unit);
             return RedirectToAction(nameof(List));
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var unit = await _context.Units.FindAsync(id);
+            var unit = await _unitService.GetByIdAsync(id);
             if (unit == null) return NotFound();
             return View(unit);
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            var unit = await _context.Units.FindAsync(id);
-            if (unit != null)
-            {
-                _context.Units.Remove(unit);
-                await _context.SaveChangesAsync();
-            }
+            await _unitService.DeleteAsync(id);
             return RedirectToAction(nameof(List));
         }
     }

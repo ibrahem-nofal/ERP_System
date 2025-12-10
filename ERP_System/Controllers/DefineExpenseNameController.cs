@@ -1,25 +1,24 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ERP_System.Models;
-using ERP_System.Data;
 using ERP_System.ViewModels;
-using Microsoft.EntityFrameworkCore;
+using ERP_System.Services.Interfaces;
 
 namespace ERP_System.Controllers
 {
     [Authorize]
     public class DefineExpenseNameController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IExpenseNameService _expenseNameService;
 
-        public DefineExpenseNameController(AppDbContext context)
+        public DefineExpenseNameController(IExpenseNameService expenseNameService)
         {
-            _context = context;
+            _expenseNameService = expenseNameService;
         }
 
         public async Task<IActionResult> List()
         {
-            var items = await _context.ExpenseNames.ToListAsync();
+            var items = await _expenseNameService.GetAllAsync();
             return View(items);
         }
         public IActionResult Index()
@@ -27,7 +26,7 @@ namespace ERP_System.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Index(AddExpenseNameVm advm)
+        public async Task<IActionResult> Index(AddExpenseNameVm advm)
         {
             if (!ModelState.IsValid) return View(advm);
 
@@ -37,15 +36,14 @@ namespace ERP_System.Controllers
                 Description = advm.Detail
             };
 
-            _context.ExpenseNames.Add(exp);
-            _context.SaveChanges();
+            await _expenseNameService.AddAsync(exp);
             TempData["SuccessMessage"] = "تم الحفظ بنجاح";
             return RedirectToAction(nameof(List));
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            var expense = await _context.ExpenseNames.FindAsync(id);
+            var expense = await _expenseNameService.GetByIdAsync(id);
             if (expense == null) return NotFound();
 
             var vm = new AddExpenseNameVm
@@ -66,31 +64,27 @@ namespace ERP_System.Controllers
                 return View(vm);
             }
 
-            var expense = await _context.ExpenseNames.FindAsync(id);
-            if (expense == null) return NotFound();
+            var expense = new ExpenseName
+            {
+                Id = id,
+                Name = vm.Name,
+                Description = vm.Detail
+            };
 
-            expense.Name = vm.Name;
-            expense.Description = vm.Detail;
-
-            await _context.SaveChangesAsync();
+            await _expenseNameService.UpdateAsync(expense);
             return RedirectToAction(nameof(List));
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var expense = await _context.ExpenseNames.FindAsync(id);
+            var expense = await _expenseNameService.GetByIdAsync(id);
             if (expense == null) return NotFound();
             return View(expense);
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            var expense = await _context.ExpenseNames.FindAsync(id);
-            if (expense != null)
-            {
-                _context.ExpenseNames.Remove(expense);
-                await _context.SaveChangesAsync();
-            }
+            await _expenseNameService.DeleteAsync(id);
             return RedirectToAction(nameof(List));
         }
     }

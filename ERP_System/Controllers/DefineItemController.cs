@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ERP_System.Models;
-using ERP_System.Data;
 using ERP_System.ViewModels;
+using ERP_System.Services.Interfaces;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,30 +12,37 @@ namespace ERP_System.Controllers
     [Authorize]
     public class DefineItemController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IItemService _itemService;
+        private readonly ICompanyService _companyService;
+        private readonly IStoreService _storeService;
+        private readonly IUnitService _unitService;
+        private readonly ICategoryService _categoryService;
 
-        public DefineItemController(AppDbContext context)
+        public DefineItemController(
+            IItemService itemService,
+            ICompanyService companyService,
+            IStoreService storeService,
+            IUnitService unitService,
+            ICategoryService categoryService)
         {
-            _context = context;
+            _itemService = itemService;
+            _companyService = companyService;
+            _storeService = storeService;
+            _unitService = unitService;
+            _categoryService = categoryService;
         }
 
         // List all items
         public async Task<IActionResult> List()
         {
-            var items = await _context.Items
-                .Include(i => i.Company)
-                .Include(i => i.Store)
-                .Include(i => i.Unit)
-                .Include(i => i.Codes)
-                .Include(i => i.Images)
-                .ToListAsync();
+            var items = await _itemService.GetAllAsync();
             return View(items);
         }
 
         // Create new item (GET)
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            LoadViewBagData();
+            await LoadViewBagDataAsync();
             return View(new AddItemVm());
         }
 
@@ -45,10 +51,10 @@ namespace ERP_System.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(AddItemVm advm)
         {
-            // ???? ?? ??? ??????? ?????
+            // التحقق من صحة النموذج
             if (!ModelState.IsValid)
             {
-                LoadViewBagData();
+                await LoadViewBagDataAsync();
                 return View(advm);
             }
 
@@ -77,57 +83,7 @@ namespace ERP_System.Controllers
                 UnitNumber = advm.UnitNumber
             };
 
-            try
-            {
-                _context.Items.Add(item);
-
-                // ????? ?????? - ????? ????? ??????? ??? ???????
-                if (advm.Codes != null)
-                {
-                    foreach (var codeValue in advm.Codes.Where(c => !string.IsNullOrWhiteSpace(c)).Select(c => c.Trim()))
-                    {
-                        var code = new ItemCode
-                        {
-                            Item = item,
-                            ItemCodeValue = codeValue
-                        };
-                        _context.ItemCodes.Add(code);
-                    }
-                }
-
-                // ?????????
-                if (advm.CategoryIds != null)
-                {
-                    foreach (var c in advm.CategoryIds.Distinct())
-                    {
-                        var cat = new ItemCategory
-                        {
-                            Item = item,
-                            CategoryId = c,
-                        };
-                        _context.ItemCategories.Add(cat);
-                    }
-                }
-
-                if (imageBytes != null)
-                {
-                    var img = new ItemImage
-                    {
-                        Item = item,
-                        ItemImageData = imageBytes
-                    };
-                    _context.ItemImages.Add(img);
-                }
-
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                // ????? ???? ??????? ???????
-                ModelState.AddModelError("", "????? ??? ?????. ???? ?? ??? ???????? ????? ??? ????.");
-                LoadViewBagData();
-                return View(advm);
-            }
+            await _itemService.AddAsync(item, advm.Codes, advm.CategoryIds, imageBytes);
 
             return RedirectToAction("List");
         }
@@ -135,13 +91,7 @@ namespace ERP_System.Controllers
         // View item details
         public async Task<IActionResult> Details(int id)
         {
-            var item = await _context.Items
-                .Include(i => i.Company)
-                .Include(i => i.Store)
-                .Include(i => i.Unit)
-                .Include(i => i.Codes)
-                .Include(i => i.Images)
-                .FirstOrDefaultAsync(i => i.Id == id);
+            var item = await _itemService.GetByIdAsync(id);
 
             if (item == null) return NotFound();
 
@@ -151,17 +101,10 @@ namespace ERP_System.Controllers
         // Edit item (GET)
         public async Task<IActionResult> Edit(int id)
         {
-            var item = await _context.Items
-                .Include(i => i.Codes)
-                .Include(i => i.Images)
-                .FirstOrDefaultAsync(i => i.Id == id);
-
+            var item = await _itemService.GetByIdAsync(id);
             if (item == null) return NotFound();
 
-            var categoryIds = await _context.ItemCategories
-                .Where(ic => ic.ItemId == id)
-                .Select(ic => ic.CategoryId)
-                .ToListAsync();
+            var categoryIds = await _itemService.GetCategoryIdsAsync(id);
 
             var viewModel = new AddItemVm
             {
@@ -182,13 +125,13 @@ namespace ERP_System.Controllers
                 CategoryIds = categoryIds
             };
 
-            // ?????? ?????? ?????? ?? ??? View ????? ????? Base64 ?? ViewBag (???????)
+            // تحميل الصورة لعرضها
             if (item.Images != null && item.Images.Any() && item.Images.First().ItemImageData != null)
             {
                 ViewBag.ImageBase64 = Convert.ToBase64String(item.Images.First().ItemImageData);
             }
 
-            LoadViewBagData();
+            await LoadViewBagDataAsync();
             ViewBag.ItemId = id;
             return View(viewModel);
         }
@@ -200,103 +143,40 @@ namespace ERP_System.Controllers
         {
             if (!ModelState.IsValid)
             {
-                LoadViewBagData();
+                await LoadViewBagDataAsync();
                 ViewBag.ItemId = id;
                 return View(advm);
             }
 
-            var item = await _context.Items
-                .Include(i => i.Codes)
-                .Include(i => i.Images)
-                .FirstOrDefaultAsync(i => i.Id == id);
-
-            if (item == null) return NotFound();
-
-            // Update item properties (?? Trim ????? ?????)
-            item.Name = advm.Name?.Trim();
-            item.Description = advm.Description?.Trim();
-            item.IsActiveBuy = advm.IsActiveBuy;
-            item.IsActiveSale = advm.IsActiveSale;
-            item.CompanyMade = advm.CompanyMade;
-            item.DefaultStore = advm.DefaultStore;
-            item.UnitNumber = advm.UnitNumber;
-            item.MinimumQuantity = advm.MinimumQuantity;
-            item.MinQuantitySale = advm.MinQuantitySale;
-            item.PreventFraction = advm.PreventFraction;
-            item.PreventDiscount = advm.PreventDiscount;
-            item.BuyPrice = advm.BuyPrice;
-            item.SalePrice = advm.SalePrice;
-
-            // Update codes: ??? ?????? ?? ????? ?????? (??? ?????)
-            _context.ItemCodes.RemoveRange(item.Codes ?? Enumerable.Empty<ItemCode>());
-            if (advm.Codes != null)
+            var item = new Item
             {
-                foreach (var codeValue in advm.Codes.Where(c => !string.IsNullOrWhiteSpace(c)).Select(c => c.Trim()))
-                {
-                    var code = new ItemCode
-                    {
-                        ItemId = item.Id,
-                        ItemCodeValue = codeValue
-                    };
-                    _context.ItemCodes.Add(code);
-                }
-            }
+                Id = id,
+                Name = advm.Name?.Trim(),
+                Description = advm.Description?.Trim(),
+                IsActiveBuy = advm.IsActiveBuy,
+                IsActiveSale = advm.IsActiveSale,
+                CompanyMade = advm.CompanyMade,
+                DefaultStore = advm.DefaultStore,
+                UnitNumber = advm.UnitNumber,
+                MinimumQuantity = advm.MinimumQuantity,
+                MinQuantitySale = advm.MinQuantitySale,
+                PreventFraction = advm.PreventFraction,
+                PreventDiscount = advm.PreventDiscount,
+                BuyPrice = advm.BuyPrice,
+                SalePrice = advm.SalePrice
+            };
 
-            // Update categories: ??? ?????? ?? ????? ??????
-            var existingCategories = await _context.ItemCategories
-                .Where(ic => ic.ItemId == id)
-                .ToListAsync();
-            _context.ItemCategories.RemoveRange(existingCategories);
-
-            if (advm.CategoryIds != null)
-            {
-                foreach (var catId in advm.CategoryIds.Distinct())
-                {
-                    var cat = new ItemCategory
-                    {
-                        ItemId = item.Id,
-                        CategoryId = catId
-                    };
-                    _context.ItemCategories.Add(cat);
-                }
-            }
-
-            // Update image if provided
+            byte[]? imageBytes = null;
             if (advm.Image != null)
             {
-                byte[] imageBytes;
                 using (var ms = new MemoryStream())
                 {
                     await advm.Image.CopyToAsync(ms);
                     imageBytes = ms.ToArray();
                 }
-
-                var existingImage = item.Images?.FirstOrDefault();
-                if (existingImage != null)
-                {
-                    existingImage.ItemImageData = imageBytes;
-                }
-                else
-                {
-                    _context.ItemImages.Add(new ItemImage
-                    {
-                        ItemId = item.Id,
-                        ItemImageData = imageBytes
-                    });
-                }
             }
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                ModelState.AddModelError("", "????? ??? ?????????. ???? ?? ??? ???????? ????? ??? ????.");
-                LoadViewBagData();
-                ViewBag.ItemId = id;
-                return View(advm);
-            }
+            await _itemService.UpdateAsync(item, advm.Codes, advm.CategoryIds, imageBytes);
 
             return RedirectToAction("List");
         }
@@ -306,41 +186,40 @@ namespace ERP_System.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            var item = await _context.Items
-                .Include(i => i.Codes)
-                .Include(i => i.Images)
-                .FirstOrDefaultAsync(i => i.Id == id);
-
-            if (item == null) return NotFound();
-
-            _context.Items.Remove(item);
-            await _context.SaveChangesAsync();
-
+            await _itemService.DeleteAsync(id);
             return RedirectToAction("List");
         }
 
         // Helper method to load ViewBag data
-        private void LoadViewBagData()
+        private async Task LoadViewBagDataAsync()
         {
-            var companies = _context.Companies.Select(s => new CompnayVm
+            // Company VM
+            var companyList = await _companyService.GetAllAsync();
+            var companies = companyList.Select(s => new CompnayVm
             {
                 Id = s.Id,
                 Name = s.Name
             }).ToList();
 
-            var stores = _context.Stores.Select(s => new StoreVm
+            // Store VM
+            var storeList = await _storeService.GetAllAsync();
+            var stores = storeList.Select(s => new StoreVm
             {
                 Id = s.Id,
                 Name = s.Name
             }).ToList();
 
-            var units = _context.Units.Select(s => new UnitVm
+            // Unit VM
+            var unitList = await _unitService.GetAllAsync();
+            var units = unitList.Select(s => new UnitVm
             {
                 Id = s.Id,
                 Name = s.Name
             }).ToList();
 
-            var cats = _context.Categories.Select(s => new CategoryVm
+            // Category VM
+            var categoryList = await _categoryService.GetAllAsync();
+            var cats = categoryList.Select(s => new CategoryVm
             {
                 Id = s.Id,
                 Name = s.Name

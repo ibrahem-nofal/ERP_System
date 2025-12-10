@@ -103,7 +103,8 @@
                             <td>@item.SourceType</td>
                             <td>@(item.AssignedByEmployee?.Name ?? "-")</td>
                             <td>
-                                <a href="#" class="btn-primary" style="padding: 5px 10px; font-size: 12px;">عرض</a>
+                                <a href="@Url.Action("Details", new { id = item.Id })" class="btn-primary"
+                                    style="padding: 5px 10px; font-size: 12px;">عرض</a>
                             </td>
                         </tr>
                     }

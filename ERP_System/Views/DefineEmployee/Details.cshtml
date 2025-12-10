@@ -1,4 +1,31 @@
 @model ERP_System.Models.Employee
+@{
+    var qualifications = new Dictionary<string, string> {
+{"Bachelor", "بكالوريوس"},
+{"Diploma", "دبلوم"},
+{"IntermediateCertificate", "شهادة متوسطة"}
+};
+    var genders = new Dictionary<string, string> {
+{"Male", "ذكر"},
+{"Female", "أنثى"}
+};
+    var roles = new Dictionary<string, string> {
+{"Delegate", "مندوب"},
+{"Employee", "موظف"}
+};
+    var states = new Dictionary<string, string> {
+{"Single", "أعزب"},
+{"Married", "متزوج"},
+{"Widowed", "أرمل"},
+{"Divorced", "مطلق"}
+};
+
+    string Translate(Dictionary<string, string> dict, string? value)
+    {
+        if (string.IsNullOrEmpty(value)) return "غير محدد";
+        return dict.ContainsKey(value) ? dict[value] : value;
+    }
+}
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
@@ -150,7 +177,7 @@
         <div class="employee-header">
             @if (Model.Image != null && Model.Image.EmpImageData != null)
             {
-                <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.Image.EmpImageData)" alt="@Model.Name"
+                <img src="@Url.Action("GetImage", "DefineEmployee", new { id = Model.Id })" alt="@Model.Name"
                     class="employee-image">
             }
             else
@@ -169,12 +196,12 @@
         <div class="details-grid">
             <div class="detail-item">
                 <div class="detail-label">نوع الوظيفة</div>
-                <div class="detail-value">@Model.RoleType</div>
+                <div class="detail-value">@Translate(roles, Model.RoleType)</div>
             </div>
 
             <div class="detail-item">
                 <div class="detail-label">النوع</div>
-                <div class="detail-value">@Model.Gender</div>
+                <div class="detail-value">@Translate(genders, Model.Gender)</div>
             </div>
 
             <div class="detail-item">
@@ -189,12 +216,12 @@
 
             <div class="detail-item">
                 <div class="detail-label">المؤهل الدراسي</div>
-                <div class="detail-value">@(Model.Qualification ?? "غير محدد")</div>
+                <div class="detail-value">@Translate(qualifications, Model.Qualification)</div>
             </div>
 
             <div class="detail-item">
                 <div class="detail-label">الحالة الاجتماعية</div>
-                <div class="detail-value">@(Model.State ?? "غير محدد")</div>
+                <div class="detail-value">@Translate(states, Model.State)</div>
             </div>
 
             <div class="detail-item" style="grid-column: 1 / -1;">

@@ -479,3 +479,28 @@ a {
 a:hover {
     color: #8bb9fe;
 }
+
+/* Fix for Select Options (Dropdowns) to have dark background */
+select option {
+    background-color: #0f1724;
+    color: white;
+}
+
+/* Global Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0f1724;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #302b63;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #7c3aed;
+}

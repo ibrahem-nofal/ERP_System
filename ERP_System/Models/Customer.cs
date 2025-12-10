@@ -19,7 +19,7 @@ namespace ERP_System.Models
         public DateTime? StartDate { get; set; }
         public DateTime? BirthDate { get; set; }
 
-        public string OtherDetails { get; set; }
+        public string? OtherDetails { get; set; }
 
         public ICollection<CustomerPhone> Phones { get; set; }
     }

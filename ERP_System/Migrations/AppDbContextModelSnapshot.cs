@@ -227,7 +227,6 @@ namespace ERP_System.Migrations
                         .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("OtherDetails")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("StartDate")
@@ -454,7 +453,7 @@ namespace ERP_System.Migrations
 
                     b.ToTable("InventoryTransactions", t =>
                         {
-                            t.HasCheckConstraint("CK_InventoryTransaction_TransactionType", "[TransactionType] IN ('Purchase', 'PurchaseReturn', 'Sales', 'SalesReturn', 'Adjustment')");
+                            t.HasCheckConstraint("CK_InventoryTransaction_TransactionType", "[TransactionType] IN ('Purchase', 'PurchaseReturn', 'Sale', 'SaleReturn', 'Adjustment')");
                         });
                 });
 
@@ -558,7 +557,6 @@ namespace ERP_System.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Remarks")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("StoreId")
@@ -770,7 +768,6 @@ namespace ERP_System.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Code")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Date")
@@ -780,7 +777,6 @@ namespace ERP_System.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Remarks")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ToStoreId")
@@ -945,7 +941,7 @@ namespace ERP_System.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AssignedBy")
+                    b.Property<int?>("AssignedBy")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -1092,7 +1088,6 @@ namespace ERP_System.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Remarks")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -1403,7 +1398,7 @@ namespace ERP_System.Migrations
                         .IsRequired();
 
                     b.HasOne("ERP_System.Models.Store", "Store")
-                        .WithMany()
+                        .WithMany("Inventories")
                         .HasForeignKey("StoreId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -1695,8 +1690,7 @@ namespace ERP_System.Migrations
                     b.HasOne("ERP_System.Models.Employee", "AssignedByEmployee")
                         .WithMany()
                         .HasForeignKey("AssignedBy")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERP_System.Models.InvoicePurchaseHeader", "InvoicePurchase")
                         .WithMany()
@@ -1843,6 +1837,8 @@ namespace ERP_System.Migrations
             modelBuilder.Entity("ERP_System.Models.Store", b =>
                 {
                     b.Navigation("Images");
+
+                    b.Navigation("Inventories");
 
                     b.Navigation("Phones");
                 });

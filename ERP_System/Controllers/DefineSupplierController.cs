@@ -1,25 +1,26 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ERP_System.Models;
-using ERP_System.Data;
 using ERP_System.ViewModels;
-using System.Diagnostics;
-using Microsoft.EntityFrameworkCore;
+using ERP_System.Services.Interfaces;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ERP_System.Controllers
 {
     [Authorize]
     public class DefineSupplierController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly ISupplierService _supplierService;
 
-        public DefineSupplierController(AppDbContext context)
+        public DefineSupplierController(ISupplierService supplierService)
         {
-            _context = context;
+            _supplierService = supplierService;
         }
+
         public async Task<IActionResult> List()
         {
-            var suppliers = await _context.Suppliers.ToListAsync();
+            var suppliers = await _supplierService.GetAllAsync();
             return View(suppliers);
         }
 
@@ -29,7 +30,7 @@ namespace ERP_System.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(AddSuppVm advm)
+        public async Task<IActionResult> Index(AddSuppVm advm)
         {
             if (!ModelState.IsValid) return View(advm);
 
@@ -42,32 +43,15 @@ namespace ERP_System.Controllers
                 OwnerPhone = advm.OwnerPhone,
                 Address = advm.Address
             };
-            _context.Suppliers.Add(supp);
-            _context.SaveChanges(); // Save to get ID
 
-            if (advm.Phones != null)
-            {
-                foreach (var ph in advm.Phones)
-                {
-                    if (!string.IsNullOrWhiteSpace(ph))
-                    {
-                        var suppPhone = new SupplierPhone
-                        {
-                            Supplier = supp,
-                            Phone = ph
-                        };
-                        _context.SupplierPhones.Add(suppPhone);
-                    }
-                }
-                _context.SaveChanges();
-            }
+            await _supplierService.AddAsync(supp, advm.Phones);
 
             return RedirectToAction(nameof(List));
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            var supplier = await _context.Suppliers.Include(s => s.Phones).FirstOrDefaultAsync(s => s.Id == id);
+            var supplier = await _supplierService.GetByIdAsync(id);
             if (supplier == null) return NotFound();
 
             var vm = new AddSuppVm
@@ -78,7 +62,7 @@ namespace ERP_System.Controllers
                 OwnerName = supplier.OwnerName,
                 OwnerPhone = supplier.OwnerPhone,
                 Address = supplier.Address,
-                Phones = supplier.Phones.Select(p => p.Phone).ToList()
+                Phones = supplier.Phones?.Select(p => p.Phone).ToList() ?? new List<string>()
             };
 
             ViewBag.Id = id;
@@ -94,49 +78,31 @@ namespace ERP_System.Controllers
                 return View(vm);
             }
 
-            var supplier = await _context.Suppliers.Include(s => s.Phones).FirstOrDefaultAsync(s => s.Id == id);
-            if (supplier == null) return NotFound();
-
-            supplier.Name = vm.Name;
-            supplier.ManagerName = vm.ManagerName;
-            supplier.ManagerPhone = vm.ManagerPhone;
-            supplier.OwnerName = vm.OwnerName;
-            supplier.OwnerPhone = vm.OwnerPhone;
-            supplier.Address = vm.Address;
-
-            // Update phones - simple strategy: remove all and re-add
-            _context.SupplierPhones.RemoveRange(supplier.Phones);
-
-            if (vm.Phones != null)
+            var supplier = new Supplier
             {
-                foreach (var ph in vm.Phones)
-                {
-                    if (!string.IsNullOrWhiteSpace(ph))
-                    {
-                        _context.SupplierPhones.Add(new SupplierPhone { Supplier = supplier, Phone = ph });
-                    }
-                }
-            }
+                Id = id,
+                Name = vm.Name,
+                ManagerName = vm.ManagerName,
+                ManagerPhone = vm.ManagerPhone,
+                OwnerName = vm.OwnerName,
+                OwnerPhone = vm.OwnerPhone,
+                Address = vm.Address
+            };
 
-            await _context.SaveChangesAsync();
+            await _supplierService.UpdateAsync(supplier, vm.Phones);
             return RedirectToAction(nameof(List));
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var supplier = await _context.Suppliers.Include(s => s.Phones).FirstOrDefaultAsync(s => s.Id == id);
+            var supplier = await _supplierService.GetByIdAsync(id);
             if (supplier == null) return NotFound();
             return View(supplier);
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            var supplier = await _context.Suppliers.FindAsync(id);
-            if (supplier != null)
-            {
-                _context.Suppliers.Remove(supplier);
-                await _context.SaveChangesAsync();
-            }
+            await _supplierService.DeleteAsync(id);
             return RedirectToAction(nameof(List));
         }
     }
