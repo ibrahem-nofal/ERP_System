@@ -9,7 +9,7 @@ namespace ERP_System.Models
 
         public int ItemId { get; set; }
 
-        public string TransactionType { get; set; } // Purchase, PurchaseReturn, Sales, SalesReturn, Adjustment
+        public string TransactionType { get; set; } 
 
         public int Quantity { get; set; }
 

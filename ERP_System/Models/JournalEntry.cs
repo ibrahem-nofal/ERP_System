@@ -6,7 +6,7 @@
 
         public string Description { get; set; }
 
-        public string SourceType { get; set; }   // PurchaseCash, SalesCash, Revenue, Expense ...
+        public string SourceType { get; set; }   
 
         public int? InvPurId { get; set; }
 
@@ -16,7 +16,7 @@
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        // Navigation properties
+       
         public InvoicePurchaseHeader InvoicePurchase { get; set; }
         public InvoiceSaleHeader InvoiceSale { get; set; }
         public Employee AssignedByEmployee { get; set; }

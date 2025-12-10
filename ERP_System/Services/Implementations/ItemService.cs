@@ -58,17 +58,9 @@ namespace ERP_System.Services.Implementations
                 }
             }
 
-            // Add Categories
-            // ItemCategory mapping might need DbSet if not navigation properly set up?
-            // Controller used: _context.ItemCategories.Add(...)
-            // Item model DOES NOT have ICollection<ItemCategory>. It seems it just relies on manual join table context access.
-            // Wait, let's check Item.cs again. It had "ICollection<ItemCode> Codes".
-            // It did NOT have ItemCategories.
-            // So we MUST use _context.ItemCategories or _context.Set<ItemCategory>().
-
-            // We need to save Item first to get Id probably if using explicit join table add without navigation.
+            
             await _context.SaveChangesAsync();
-            // Now Item.Id is populated.
+           
 
             if (categoryIds != null && categoryIds.Any())
             {
@@ -84,10 +76,6 @@ namespace ERP_System.Services.Implementations
 
             if (imageData != null)
             {
-                // Check if we can add via collection or need manual.
-                // Controller used _context.ItemImages.Add(...)
-                // Item has ICollection<ItemImage> Images. We could have added it to item.Images before save.
-                // But since we already saved, let's add explicitly.
                 _context.Set<ItemImage>().Add(new ItemImage
                 {
                     ItemId = item.Id,

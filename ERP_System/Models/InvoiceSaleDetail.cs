@@ -25,9 +25,9 @@ namespace ERP_System.Models
         public decimal TotalPrice { get; private set; }
 
         [MaxLength(10)]
-        public string? Status { get; set; } // Purchased, Returned
+        public string? Status { get; set; } 
 
-        // Navigation properties
+        
         public InvoiceSaleHeader? Invoice { get; set; }
         public Item? Item { get; set; }
         [ForeignKey("InvReturnId")]

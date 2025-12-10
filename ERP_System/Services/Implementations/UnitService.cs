@@ -43,9 +43,7 @@ namespace ERP_System.Services.Implementations
 
         public async Task checkDelete(int id)
         {
-            // Optional: check if used in Items before delete if needed, 
-            // but controller didn't seem to have specific check other than DB constraint.
-            // We'll leave it as is.
+            
         }
 
         public async Task DeleteAsync(int id)

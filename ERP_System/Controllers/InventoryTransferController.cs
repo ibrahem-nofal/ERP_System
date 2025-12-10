@@ -124,9 +124,7 @@ namespace ERP_System.Controllers
                     existingTransfer.FromStoreId = transfer.FromStoreId;
                     existingTransfer.ToStoreId = transfer.ToStoreId;
                     existingTransfer.Remarks = transfer.Remarks;
-                    // Date and Code usually shouldn't change on edit, but depends on requirements. Keeping them as is.
-
-                    // Update Details
+                    
                     _context.InvoiceTransferDetails.RemoveRange(existingTransfer.Details);
 
                     if (ItemIds != null && Quantities != null)

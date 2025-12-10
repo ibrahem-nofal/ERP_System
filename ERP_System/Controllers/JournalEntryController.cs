@@ -42,8 +42,6 @@ namespace ERP_System.Controllers
                 return BadRequest("إجمالي المدين يجب أن يساوي إجمالي الدائن.");
             }
 
-            // Implement user ID fetching if available, e.g. from Claims
-            // int? userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)); 
 
             var id = await _journalService.AddAsync(vm);
 

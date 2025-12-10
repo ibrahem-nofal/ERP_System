@@ -18,13 +18,13 @@ namespace ERP_System.Models
         public DateTime PaymentDate { get; set; } = DateTime.Now;
 
         [MaxLength(50)]
-        public string PaymentMethod { get; set; } // cash, visa, vCash, insta
+        public string PaymentMethod { get; set; }
 
         public string? Remarks { get; set; }
 
         public bool In { get; set; } = true;
 
-        // Navigation properties
+    
         [ForeignKey("InvSaleId")]
         public InvoiceSaleHeader? InvoiceSale { get; set; }
         [ForeignKey("InvoiceReturnId")]

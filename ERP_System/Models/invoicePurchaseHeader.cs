@@ -8,7 +8,7 @@ namespace ERP_System.Models
 
         public int? RefInvId { get; set; }
 
-        public string? InvType { get; set; }  // PurchaseCash, PurchaseCredit, PurchaseReturn
+        public string? InvType { get; set; } 
 
         public DateTime DateCreated { get; set; } = DateTime.Now;
 
@@ -19,7 +19,7 @@ namespace ERP_System.Models
         public int? StoreId { get; set; }
 
         [Required(ErrorMessage = "حالة الطلب مطلوبة")]
-        public string OrderStatus { get; set; } // wait, recieved, returned, returning
+        public string OrderStatus { get; set; } 
 
         public DateTime? DeliveryDate { get; set; }
 
@@ -29,7 +29,7 @@ namespace ERP_System.Models
 
         public decimal Discount { get; set; } = 0;
 
-        // Computed column in SQL → set as read-only in EF
+        
         public decimal NetAmount { get; private set; }
 
         public decimal Paid { get; set; } = 0;

@@ -68,22 +68,7 @@ namespace ERP_System.Controllers
                 return NotFound();
             }
 
-            // Note: Service GetByEmployeeIdAsync takes EmpId not Id based on my implementation, controller logic seems to treat id as empId in List view link probably
-            // Wait, List uses `d.Employee.Name` but usually delete links pass ID. Let's check model. DelegateMember key?
-            // DelegateMember has Id? Or EmpId is key? 
-            // In `Models/DelegateMember.cs`, I should double check. Assuming it has an Id.
-            // If `GetByIdAsync` uses PK, and `Delete` passes PK... 
-            // Original code: `m.EmpId == id` in Delete GET, `FindAsync(id)` in Delete POST. This implies `EmpId` might be PK or used as such? 
-            // BUT `FindAsync` uses PK. If `EmpId` is PK, then `FindAsync(id)` works.
-            // Let's assume standard Id PK exists, OR EmpId is PK. 
-            // Service `GetByIdAsync` uses `FindAsync(id)`. 
-            // Service `GetByEmployeeIdAsync` uses `m.EmpId == empId`.
-            // Controller `Delete` GET used `m.EmpId == id`. This implies the `id` param is representing `EmpId`.
-            // Controller `Delete` POST used `FindAsync(id)`. 
-            // If `EmpId` is PK, `FindAsync` works.
-            // I'll use `GetByEmployeeIdAsync` for GET to be safe if that was the intent, or `GetByIdAsync` if `id` is PK?
-            // Let's stick to what original code usually did: `m.EmpId == id`. So I will use `GetByEmployeeIdAsync(id.Value)` if id is passed.
-
+          
             var delegateMember = await _delegateService.GetByEmployeeIdAsync(id.Value);
 
             if (delegateMember == null)
@@ -102,8 +87,7 @@ namespace ERP_System.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            // Original code used `FindAsync(id)`.
-            // My service `DeleteAsync` uses `FindAsync(id)`.
+            
             await _delegateService.DeleteAsync(id);
             return RedirectToAction(nameof(List));
         }

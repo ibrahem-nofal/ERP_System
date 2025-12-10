@@ -12,7 +12,7 @@ namespace ERP_System.Models
         public int? RefInvId { get; set; }
 
         [MaxLength(20)]
-        public string? InvType { get; set; } // SalesCash, SalesReturnCash, SalesCredit, SalesReturnCredit
+        public string? InvType { get; set; } 
 
         public DateTime DateCreated { get; set; } = DateTime.Now;
 

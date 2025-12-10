@@ -43,12 +43,7 @@ namespace ERP_System.Services.Implementations
         public async Task AddAsync(Store store, List<string> phones, byte[]? imageData)
         {
             _context.Stores.Add(store);
-            // Save to generate ID
-            // However, EF Core can define navigation properties before save if using the object directly.
-            // But logic in controller was: Add Store -> Add Phones (with FK) -> Add Image.
-            // We can add them to the collections of the store object if initialized, or add to context.
-            // Controller logic used explicit _context.Set<StorePhone>().Add(...).
-            // Let's stick to explicit add after context.Add(store) to ensure tracking.
+   
 
             if (phones != null && phones.Any())
             {
@@ -65,15 +60,7 @@ namespace ERP_System.Services.Implementations
                 store.Images = new List<StoreImage> { new StoreImage { ImageData = imageData } };
             }
 
-            // A single Add(store) should cascade if configured, but let's be safe and Add
-            // If we didn't SaveChanges yet, store.Id is temporary. EF handles it.
-            // But wait, Controller did strict Save order?
-            // "// قم بإضافة المخزن أولاً حتى يكون له Id" (Add store first so it has ID).
-            // Actually EF Core generates temp persistent IDs or manages FKs in memory for graph adds.
-            // I will do standard Add(store) with graph. It's safer/cleaner.
-
-            // Wait, previous simple add might work better.
-            // Let's stick to the graph approach.
+        
             await _context.SaveChangesAsync();
         }
 

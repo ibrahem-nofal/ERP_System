@@ -142,31 +142,27 @@ namespace ERP_System.Controllers
             {
                 try
                 {
-                    // Set default InvType based on original PayStatus
                     invoice.InvType = invoice.PayStatus == "Paid" ? "PurchaseCash" : "PurchaseCredit";
 
-                    // Map PayStatus to database allowed values (open/closed)
+                    
                     invoice.PayStatus = invoice.PayStatus == "Paid" ? "closed" : "open";
 
-                    // 1. Save Header first to get Id
                     _context.Add(invoice);
                     await _context.SaveChangesAsync();
 
-                    // 2. Process Details
                     decimal totalAmount = 0;
                     if (details != null && details.Count > 0)
                     {
                         foreach (var item in details)
                         {
                             item.InvoiceId = invoice.Id;
-                            item.Status = "Purchased"; // Set default status
+                            item.Status = "Purchased"; 
 
-                            // Calculate TotalPrice for the item
                             totalAmount += item.Quantity * item.UnitPrice;
 
                             _context.Add(item);
 
-                            // Update Inventory
+                           
                             if (invoice.StoreId.HasValue)
                             {
                                 await _inventoryService.AddStockAsync(
@@ -185,8 +181,7 @@ namespace ERP_System.Controllers
                     // 3. Update Header TotalAmount
                     invoice.TotalAmount = totalAmount;
 
-                    // Calculate Paid and Remain based on PayStatus
-                    // Note: NetAmount is computed in DB, so we calculate effective net amount here for logic
+                   
                     decimal effectiveNetAmount = totalAmount - invoice.Discount;
 
                     if (invoice.PayStatus == "closed") // Paid
@@ -194,13 +189,13 @@ namespace ERP_System.Controllers
                         invoice.Paid = effectiveNetAmount;
                         invoice.Remain = 0;
                     }
-                    else // Open (Unpaid or Partial)
+                    else 
                     {
                         invoice.Paid = 0;
                         invoice.Remain = effectiveNetAmount;
                     }
 
-                    // 4. Create Automatic Journal Entry
+                  
                     await CreatePurchaseJournalEntry(invoice);
 
                     _context.Update(invoice);

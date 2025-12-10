@@ -165,12 +165,7 @@ namespace ERP_System.Controllers
                         {
                             item.InvoiceId = invoice.Id;
                             item.Status = "Purchased"; // Set default status
-                            // Ensure we have the price if not passed, or trust the passed price? 
-                            // Usually better to fetch price from DB or trust UI if it allows override. 
-                            // Here we trust the UI passed UnitPrice.
-
-                            // Calculate TotalPrice for the item if it's not computed in DB yet (but it is computed in DB).
-                            // However, we need it for Header TotalAmount.
+                            
                             totalAmount += item.Quantity * item.UnitPrice;
 
                             _context.Add(item);

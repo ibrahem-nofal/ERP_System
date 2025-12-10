@@ -14,7 +14,7 @@
 
         public string Note { get; set; }
 
-        // Navigation
+   
         public JournalEntry Entry { get; set; }
         public ChartOfAccount Account { get; set; }
     }

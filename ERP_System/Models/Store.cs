@@ -17,7 +17,6 @@ namespace ERP_System.Models
         [MaxLength(120)]
         public string? ManagerName { get; set; }
 
-        // غير مهيأ هنا كـ JSON أو علاقة منفصلة — سنخزن الهواتف في جدول EmpPhone مشابه أو كنص مفصول بفواصل.
         public ICollection<StorePhone> Phones { get; set; }
 
         [MaxLength(120)]

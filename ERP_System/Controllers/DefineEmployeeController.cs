@@ -19,38 +19,35 @@ namespace ERP_System.Controllers
             _employeeService = employeeService;
         }
 
-        // ??? ???? ????????
         public async Task<IActionResult> List()
         {
             var employees = await _employeeService.GetAllAsync();
             return View(employees);
         }
 
-        // ???? ????? ???? ???? (GET)
         public IActionResult Index()
         {
             return View(new AddEmpVm());
         }
 
-        // ????? ???? ???? (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(AddEmpVm advm)
         {
-            // ????? ????????
+            
             advm.IdNumber = advm.IdNumber?.Trim();
             advm.Name = advm.Name?.Trim();
             advm.Address = advm.Address?.Trim();
 
-            // ???? ?? ?????
+            
             if (string.IsNullOrWhiteSpace(advm.Name))
                 ModelState.AddModelError(nameof(advm.Name), "?????? ????? ??? ??????.");
 
-            // ???? ?? ??? ??????
+            
             if (string.IsNullOrWhiteSpace(advm.IdNumber))
                 ModelState.AddModelError(nameof(advm.IdNumber), "?????? ????? ??? ??????.");
 
-            // ???? ?? ????? ??? ??????
+            
             if (!string.IsNullOrWhiteSpace(advm.IdNumber) &&
                 await _employeeService.IsIdNumberExistsAsync(advm.IdNumber))
             {
@@ -97,7 +94,7 @@ namespace ERP_System.Controllers
             return RedirectToAction("List");
         }
 
-        // ??? ?????? ????
+        
         public async Task<IActionResult> Details(int id)
         {
             var employee = await _employeeService.GetByIdAsync(id);
@@ -110,7 +107,7 @@ namespace ERP_System.Controllers
             return View(employee);
         }
 
-        // ??? ???? ????? ???? (GET)
+        
         public async Task<IActionResult> Edit(int id)
         {
             var employee = await _employeeService.GetByIdAsync(id);
@@ -137,7 +134,6 @@ namespace ERP_System.Controllers
             return View(viewModel);
         }
 
-        // ????? ???? (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, AddEmpVm advm)
@@ -146,14 +142,14 @@ namespace ERP_System.Controllers
             advm.Name = advm.Name?.Trim();
             advm.Address = advm.Address?.Trim();
 
-            // ?????? ?? ??????
+           
             if (string.IsNullOrWhiteSpace(advm.Name))
                 ModelState.AddModelError(nameof(advm.Name), "?????? ????? ??? ??????.");
 
             if (string.IsNullOrWhiteSpace(advm.IdNumber))
                 ModelState.AddModelError(nameof(advm.IdNumber), "?????? ????? ??? ??????.");
 
-            // ??? ????? ??? ??????
+            
             if (!string.IsNullOrWhiteSpace(advm.IdNumber) &&
                 await _employeeService.IsIdNumberExistsAsync(advm.IdNumber, id))
             {
@@ -166,7 +162,7 @@ namespace ERP_System.Controllers
                 return View(advm);
             }
 
-            // ????? ?????? ??????
+            
             var employee = new Employee
             {
                 Id = id,
@@ -180,7 +176,7 @@ namespace ERP_System.Controllers
                 State = ((State)advm.State).ToString()
             };
 
-            // ????? ??????
+            
             byte[]? imageBytes = null;
             if (advm.EmpImage != null)
             {
@@ -205,7 +201,7 @@ namespace ERP_System.Controllers
             return RedirectToAction("List");
         }
 
-        // ??? ????
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)

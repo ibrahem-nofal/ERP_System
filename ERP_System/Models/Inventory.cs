@@ -15,7 +15,7 @@ namespace ERP_System.Models
 
         public DateTime LastUpdated { get; set; } = DateTime.Now;
 
-        // Navigation properties
+       
         [ForeignKey("StoreId")]
         public Store Store { get; set; }
         public Item Item { get; set; }

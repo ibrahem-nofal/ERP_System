@@ -22,9 +22,6 @@ namespace ERP_System.Controllers
             return View();
         }
 
-        // ==========================================
-        // Company Profile
-        // ==========================================
         [HttpGet]
         public async Task<IActionResult> CompanyProfile()
         {
@@ -96,9 +93,6 @@ namespace ERP_System.Controllers
 
 
 
-        // ==========================================
-        // Financial Settings
-        // ==========================================
         [HttpGet]
         public async Task<IActionResult> Financial()
         {
@@ -133,9 +127,6 @@ namespace ERP_System.Controllers
             return View(model);
         }
 
-        // ==========================================
-        // Inventory Settings
-        // ==========================================
         public async Task<IActionResult> Inventory()
         {
             var settings = await _context.Settings.Where(s => s.Group == "Inventory").ToListAsync();
@@ -152,8 +143,6 @@ namespace ERP_System.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Inventory(InventorySettingsViewModel model)
         {
-            // Note: Units and Categories are managed via their own controllers/actions usually, 
-            // but if we need to reload them for the view in case of error:
             if (ModelState.IsValid)
             {
                 await SaveSettingAsync("StockValuationMethod", model.StockValuationMethod, "Inventory");

@@ -14,6 +14,6 @@ namespace ERP_System.Models
         public string Value { get; set; }
 
         [MaxLength(50)]
-        public string Group { get; set; } // e.g., "Financial", "System", "Inventory"
+        public string Group { get; set; } 
     }
 }

@@ -18,10 +18,10 @@ namespace ERP_System.Models
         [Required(ErrorMessage = "السعر مطلوب")]
         public decimal UnitPrice { get; set; }
 
-        // Computed column → EF should treat it as read-only
+
         public decimal TotalPrice { get; private set; }
 
-        public string? Status { get; set; } // Purchased, Returned
+        public string? Status { get; set; } 
 
         // Navigation properties
         public InvoicePurchaseHeader? Invoice { get; set; }

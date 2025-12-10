@@ -121,13 +121,7 @@ namespace ERP_System.Services.Implementations
             // Total Payments
             var totalPayments = await _context.PurchasePayments.SumAsync(x => x.AmountPaid);
 
-            // New Suppliers is tricky as Supplier doesn't have CreatedDate usually, checking StartDate if exists or fallback
-            // Assuming Supplier doesn't have StartDate in standard schema often, let's check headers for first interaction? Too heavy.
-            // Let's assume 0 for now or if Supplier has Id property. 
-            // In User's Supplier Model? Wait, DefinedSupplierController used "StartDate"? No, Customer had StartDate. Supplier didn't.
-            // I'll return 0 for New Suppliers, or count ALL suppliers created recently if I had a CreatedAt. 
-            // I'll just Count total suppliers as a placeholder or simple count.
-            // Actually, let's just count total suppliers for now as "Suppliers Count" or just 0.
+            
             int newSuppliers = 0;
 
             // Monthly Purchases
@@ -169,19 +163,12 @@ namespace ERP_System.Services.Implementations
 
         public async Task<ReportsInventoryVm> GetInventorySummaryAsync()
         {
-            // Total Inventory Value = Sum (Qty * BuyPrice)
-            // Inventory table has Quantity, but BuyPrice is in Item table.
-            // Fix: Handle nullable BuyPrice by coalescing to 0
             var inventoryValue = await _context.Inventories
                 .Include(i => i.Item)
                 .SumAsync(x => x.CurrentQuantity * (x.Item.BuyPrice ?? 0));
 
             var totalItems = await _context.Items.CountAsync();
 
-            // Low Stock: Where Inventory Qty < Item.LowStockThreshold (if exists) or just < 5
-            // Let's assume 5 for simplicty or check if Item has MinLimit
-            // Item model check: Quantity, but usually Item definition has safety stock.
-            // Let's count items with Quantity < 10 in Inventory.
             var lowStock = await _context.Inventories
                .Where(x => x.CurrentQuantity < 10)
                .CountAsync();
@@ -192,9 +179,7 @@ namespace ERP_System.Services.Implementations
                 .Where(t => t.TransactionDate >= today)
                 .CountAsync();
 
-            // Distribution by Category
-            // Item -> ItemCategory -> Category
-            // We want Count of Items per Category.
+           
             var byCategory = await _context.ItemCategories
                 .Include(ic => ic.Category)
                 .GroupBy(ic => ic.Category.Name)
